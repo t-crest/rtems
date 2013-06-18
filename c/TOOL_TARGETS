@@ -1,5 +1,5 @@
 #
-#  $Id$
+#  $Id: TOOL_TARGETS,v 1.00 2013/06/14 15:17:12 André Rocha $
 #
 
 The following are targets for the GNU tools (gcc, binutils, newlib, and gdb)
@@ -39,6 +39,9 @@ nios2:
     NOTE: Currently there is no native nios2-rtems toolchain;
       Altera's nios2-elf-tools can be used with wrapper scripts.
 
+patmos:
+ patmos-unknown-rtems  ELF 
+	  
 powerpc:
 	powerpc-rtems		ELF
 	powerpcle-rtems		ELF		Little endian

@@ -6,14 +6,14 @@
  */
 
 /*
- *  COPYRIGHT (c) 1989-2009.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
- *  http://www.rtems.com/license/LICENSE.
- *
- *  $Id$
+ *  http://www.rtems.com/license/LICENSE. 
  */
 
 #ifndef _RTEMS_SCORE_THREAD_H
@@ -415,6 +415,10 @@ struct Thread_Control_struct {
   void                                **extensions;
   /** This field points to the set of per task variables. */
   rtems_task_variable_t                *task_variables;
+  /** Shadow stack pointer in PATMOS architecture. */	  
+#ifdef _RTEMS_SCORE_PATMOS_H
+  uint32_t *shadow_stack_base;
+#endif
 };
 
 /**

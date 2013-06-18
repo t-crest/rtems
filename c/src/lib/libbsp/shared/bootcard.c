@@ -39,14 +39,15 @@
  *  Thanks to Chris Johns <cjohns@plessey.com.au> for the idea
  *  to move C++ global constructors into the first task.
  *
- *  COPYRIGHT (c) 1989-2008.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
  *
- *  $Id$
  */
 
 #include <rtems.h>
@@ -113,7 +114,7 @@ static void bootcard_bsp_libc_helper(
  */
 int boot_card(
   const char *cmdline
-)
+) __attribute__((used))
 {
   rtems_interrupt_level  bsp_isr_level;
   void                  *work_area_start = NULL;

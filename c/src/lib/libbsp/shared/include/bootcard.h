@@ -7,17 +7,14 @@
  */
 
 /*
- * Copyright (c) 2008
- * Embedded Brains GmbH
- * Obere Lagerstr. 30
- * D-82178 Puchheim
- * Germany
- * rtems@embedded-brains.de
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  * The license and distribution terms for this file may be found in the file
  * LICENSE in this distribution or at http://www.rtems.com/license/LICENSE.
  *
- * $Id$
  */
 
 /**
@@ -144,7 +141,7 @@ uintptr_t bsp_sbrk_init(
  * This style of initialization ensures that the C++ global constructors are
  * executed after RTEMS is initialized.
  */
-int boot_card(const char *cmdline);
+int boot_card(const char *cmdline) __attribute__((used));
 
 /** @} */
 

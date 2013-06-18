@@ -1,6 +1,6 @@
 ## Process this file with autoconf to produce a configure script.
 ## 
-## $Id$
+## $Id: configure.ac,v 1.00 2013/06/14 15:17:12 André Rocha $
 
 AC_PREREQ([2.68])
 AC_INIT([rtems-cpukit],[_RTEMS_VERSION],[http://www.rtems.org/bugzilla])
@@ -22,7 +22,7 @@ RTEMS_ENABLE_HTTPD
 RTEMS_ENABLE_SHTTPD
 
 RTEMS_ENV_RTEMSCPU
-RTEMS_CHECK_RTEMS_DEBUG
+#RTEMS_CHECK_RTEMS_DEBUG
 
 # Is this a supported CPU?
 AC_MSG_CHECKING([if cpu $RTEMS_CPU is supported])
@@ -315,6 +315,7 @@ score/cpu/m68k/Makefile
 score/cpu/m32c/Makefile
 score/cpu/m32r/Makefile
 score/cpu/mips/Makefile
+score/cpu/patmos/Makefile
 score/cpu/powerpc/Makefile
 score/cpu/sh/Makefile
 score/cpu/sparc/Makefile

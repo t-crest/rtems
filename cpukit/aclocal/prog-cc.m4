@@ -1,5 +1,5 @@
 dnl
-dnl $Id$
+dnl $Id: prog-cc.m4,v 1.00 2013/06/14 15:17:12 André Rocha $
 dnl 
 dnl Check for target gcc
 dnl
@@ -10,6 +10,7 @@ AC_BEFORE([$0], [AC_PROG_CPP])dnl
 AC_BEFORE([$0], [AC_PROG_CC])dnl
 AC_BEFORE([$0], [RTEMS_CANONICALIZE_TOOLS])dnl
 
+RTEMS_CHECK_TOOL(CC,clang)
 RTEMS_CHECK_TOOL(CC,gcc)
 test -z "$CC" && \
   AC_MSG_ERROR([no acceptable cc found in \$PATH])

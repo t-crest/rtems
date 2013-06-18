@@ -5,14 +5,14 @@
  */
 
 /*
- *  COPYRIGHT (c) 1989-2006.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
- *
- *  $Id$
  */
 
 #ifndef _RTEMS_SCORE_CONTEXT_H
@@ -64,9 +64,16 @@ SCORE_EXTERN volatile bool _Context_Switch_necessary;
  *  @param[in] _entry is this thread's entry point
  *  @param[in] _is_fp is set to true if this thread has floating point
  *         enabled
+ *  @param[in] _shadow_stack is a pointer to the top of the shadow stack
  */
+ 
+#ifdef _RTEMS_SCORE_PATMOS_H
+#define _Context_Initialize(_the_context, _stack, _size, _isr, _entry, _shadow_stack) \
+   _CPU_Context_Initialize( _the_context, _stack, _size, _isr, _entry, _shadow_stack )
+#else	
 #define _Context_Initialize(_the_context, _stack, _size, _isr, _entry, _is_fp) \
    _CPU_Context_Initialize( _the_context, _stack, _size, _isr, _entry, _is_fp )
+#endif /* _RTEMS_SCORE_PATMOS_H */
 
 /**
  *  This macro is invoked from _Thread_Handler to do whatever CPU

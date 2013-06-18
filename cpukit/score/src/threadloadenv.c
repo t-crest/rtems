@@ -2,14 +2,15 @@
  *  Thread Handler
  *
  *
- *  COPYRIGHT (c) 1989-1999.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
- *
- *  $Id$
+ * 
  */
 
 #if HAVE_CONFIG_H
@@ -64,6 +65,25 @@ void _Thread_Load_environment(
   the_thread->budget_algorithm = the_thread->Start.budget_algorithm;
   the_thread->budget_callout   = the_thread->Start.budget_callout;
 
+  #ifdef _RTEMS_SCORE_PATMOS_H
+	
+  /* initialize the thread CPU context with:
+   *   the thread CPU registers
+   *   the thread initial stack area
+   *   the thread initial stack size
+   *   the thread isr level
+   *   the thread entry point (is the common entry point to all threads)
+   *   the thread initial shadow stack area */
+  _Context_Initialize(
+	&the_thread->Registers ,
+	the_thread->Start.Initial_stack.area ,
+	the_thread->Start.Initial_stack.size ,
+	the_thread->Start.isr_level ,
+	_Thread_Handler ,
+	the_thread->shadow_stack_base);
+						
+  #else
+  
   _Context_Initialize(
     &the_thread->Registers,
     the_thread->Start.Initial_stack.area,
@@ -72,5 +92,7 @@ void _Thread_Load_environment(
     _Thread_Handler,
     is_fp
   );
+  
+  #endif /* _RTEMS_SCORE_PATMOS_H */
 
 }

@@ -1,5 +1,5 @@
 ##
-## $Id$
+## $Id: Makefile.am,v 1.00 2013/06/14 15:17:12 André Rocha $
 ##
 
 ACLOCAL_AMFLAGS = -I aclocal -I ../aclocal
@@ -31,5 +31,6 @@ endif
 ## use gcc-target-default.cfg only.
 rtems_make_compilersdir = $(rtems_makedir)/compilers
 dist_rtems_make_compilers_DATA = compilers/gcc-target-default.cfg
+dist_rtems_make_compilers_DATA += compilers/patmos-clang.cfg
 
 include $(top_srcdir)/../automake/local.am
