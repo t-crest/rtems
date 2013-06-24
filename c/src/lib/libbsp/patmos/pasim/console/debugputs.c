@@ -1,20 +1,16 @@
 /*
- *  This file contains the TTY driver for the serial ports on the LEON.
+ *  This file contains the TTY driver for the serial ports on the PASIM.
  *
  *  This driver uses the termios pseudo driver.
  *
- *  COPYRIGHT (c) 1989-1999.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
- *  Modified for LEON3 BSP.
- *  COPYRIGHT (c) 2004.
- *  Gaisler Research.
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
- *  http://www.rtems.com/license/LICENSE.
- *
- *  $Id: debugputs.c,v 1.10 2010/05/24 15:05:19 joel Exp $
+ *  http://www.rtems.com/license/LICENSE. 
  */
 
 #include <bsp.h>
@@ -23,57 +19,32 @@
 #include <assert.h>
 
 /*
- * Number of uarts on AMBA bus
- */
-extern int uarts;
-
-static int isinit = 0;
-
-/*
- *  Scan for UARTS in configuration
- */
-int scan_uarts(void)
-{
-  int i;
-  amba_apb_device apbuarts[LEON3_APBUARTS];
-
-  if (isinit == 0) {
-    i = 0;
-    uarts = 0;
-
-    uarts = amba_find_apbslvs(
-      &amba_conf, VENDOR_GAISLER, GAISLER_APBUART, apbuarts, LEON3_APBUARTS);
-    for(i=0; i<uarts; i++) {
-      LEON3_Console_Uart[i] = (volatile LEON3_UART_Regs_Map *)apbuarts[i].start;
-    }
-
-    /* initialize uart 0 if present for printk */
-    if ( uarts ) {
-      LEON3_Console_Uart[0]->ctrl |=
-        LEON_REG_UART_CTRL_RE | LEON_REG_UART_CTRL_TE;
-      LEON3_Console_Uart[0]->status = 0;
-    }
-    isinit = 1;
-  }
-
-  return uarts;
-}
-
-/*
  *  console_outbyte_polled
  *
  *  This routine transmits a character using polling.
  */
-void console_outbyte_polled(
+void console_outbyte_polled( 
   int           port,
   unsigned char ch
 )
-{
-  if ((port >= 0) && (port < uarts)) {
-    int u = LEON3_Cpu_Index+port;
-    while ( (LEON3_Console_Uart[u]->status & LEON_REG_UART_STATUS_THE) == 0 );
-    LEON3_Console_Uart[u]->data = (unsigned int) ch;
-  }
+{ 	
+	if (file == STDOUT_FILENO || file == STDERR_FILENO)
+	{
+		int s;
+		
+		/* 
+		 * Wait for the UART to be ready for transmission 
+		 */
+		do
+		{
+			__PATMOS_UART_STATUS(s);
+		} while((s & __PATMOS_UART_TRE) == 0);
+		
+		/*
+		 * Write data to the UART
+		 */
+		__PATMOS_UART_WR_DATA(ch);
+	}
 }
 
 /*
@@ -83,18 +54,24 @@ void console_outbyte_polled(
  */
 int console_inbyte_nonblocking( int port )
 {
-  if ((port >= 0) && (port < uarts)) {
-    int u = LEON3_Cpu_Index+port;
-    if (LEON3_Console_Uart[u]->status & LEON_REG_UART_STATUS_ERR)
-      LEON3_Console_Uart[u]->status = ~LEON_REG_UART_STATUS_ERR;
+  /* stdin reads from the UART by default */
+  if (port == STDIN_FILENO)
+  {
+    int s, c;
 
-    if ((LEON3_Console_Uart[u]->status & LEON_REG_UART_STATUS_DR) == 0)
-      return -1;
-    return (int) LEON3_Console_Uart[u]->data;
-  } else {
-    assert( 0 );
-  }
-  return -1;
+	/* wait for data to be available from the UART */
+	do
+	{
+		__PATMOS_UART_STATUS(s);
+	} while((s & (__PATMOS_UART_DAV | __PATMOS_UART_PAE)) == 0);
+
+	/* read the data from the UART */
+	__PATMOS_UART_RD_DATA(c);
+
+	return c;
+   }
+   
+  return -1;  
 }
 
 /* putchar/getchar for printk */

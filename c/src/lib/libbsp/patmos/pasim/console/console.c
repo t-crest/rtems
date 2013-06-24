@@ -21,12 +21,6 @@
 #include <rtems/bspIo.h>
 
 /*
- *  Should we use a polled or interrupt drived console?
- *
- *  NOTE: This is defined in the custom/leon.cfg file.
- */
-
-/*
  *  console_outbyte_polled
  *
  *  This routine transmits a character using polling.
@@ -59,11 +53,16 @@ ssize_t console_write_support (int minor, const char *buf, size_t len)
 {
   int nwrite = 0;
 
-  while (nwrite < len) {
-    console_outbyte_polled( minor, *buf++ );
-    nwrite++;
+  if (minor == STDOUT_FILENO || minor == STDERR_FILENO)
+  {
+	  while (nwrite < len) {
+		console_outbyte_polled( minor, *buf++ );
+		nwrite++;
+	  }
+	  return nwrite;
   }
-  return nwrite;
+  
+  return -1;
 }
 
 
@@ -71,8 +70,6 @@ ssize_t console_write_support (int minor, const char *buf, size_t len)
  *  Console Device Driver Entry Points
  *
  */
-int uarts = 0;
-volatile LEON3_UART_Regs_Map *LEON3_Console_Uart[LEON3_APBUARTS];
 
 rtems_device_driver console_initialize(
   rtems_device_major_number  major,
@@ -80,6 +77,17 @@ rtems_device_driver console_initialize(
   void                      *arg
 )
 {  
+  rtems_status_code status;
+
+  status = rtems_io_register_name(
+    "/dev/console",
+    major,
+    (rtems_device_minor_number) 0
+  );
+
+  if (status != RTEMS_SUCCESSFUL)
+    rtems_fatal_error_occurred(status);
+
   return RTEMS_SUCCESSFUL;
 }
 
