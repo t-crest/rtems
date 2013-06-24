@@ -22,13 +22,11 @@
 extern "C" {
 #endif
 
-#define PASIM_SHADOW_STACK_BASE 0x4000000
+#define PASIM_SHADOW_STACK_BASE 0x4000
 
-#define PASIM_STACK_CACHE_BASE 0x3000000
+#define PASIM_STACK_CACHE_BASE 0x3000
 
 #define PASIM_START 0x0001078
-
-#define SYS_exit 1
 
 #ifndef ASM
 
