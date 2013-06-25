@@ -2,79 +2,81 @@
  *
  *  This file implements a benchmark timer using timer 2.
  *
- *  COPYRIGHT (c) 1989-1998.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
- *
- *  Ported to LEON implementation of the SPARC by On-Line Applications
- *  Research Corporation (OAR) under contract to the European Space
- *  Agency (ESA).
- *
- *  LEON modifications of respective RTEMS file: COPYRIGHT (c) 1995.
- *  European Space Agency.
- *
- *  $Id: timer.c,v 1.14 2009/11/29 15:33:27 ralf Exp $
  */
 
-
+#include <rtems.h>
 #include <bsp.h>
 
-#if defined(RTEMS_MULTIPROCESSING)
-  #define LEON3_TIMER_INDEX \
-      ((rtems_configuration_get_user_multiprocessing_table()) ? \
-        (rtems_configuration_get_user_multiprocessing_table()->node) - 1 : 1)
-#else
-  #define LEON3_TIMER_INDEX 0
-#endif
-
+uint32_t         Timer_interrupts;
 bool benchmark_timer_find_average_overhead;
 
-bool benchmark_timer_is_initialized = false;
-
-extern volatile LEON3_Timer_Regs_Map *LEON3_Timer_Regs;
-
-void benchmark_timer_initialize(void)
+void benchmark_timer_initialize( void )
 {
+
   /*
-   *  Timer runs long and accurate enough not to require an interrupt.
+   *  Timer has never overflowed.  This may not be necessary on some
+   *  implemenations of timer but ....
    */
-  if (LEON3_Timer_Regs) {
-    if ( benchmark_timer_is_initialized == false ) {
-      /* approximately 1 us per countdown */
-      LEON3_Timer_Regs->timer[LEON3_TIMER_INDEX].reload = 0xffffff;
-      LEON3_Timer_Regs->timer[LEON3_TIMER_INDEX].value = 0xffffff;
-    } else {
-      benchmark_timer_is_initialized = true;
-    }
-    LEON3_Timer_Regs->timer[LEON3_TIMER_INDEX].conf = LEON3_GPTIMER_EN | LEON3_GPTIMER_LD;
-  }
+
+  Timer_interrupts = 0;
+
+  /*
+   *  Somehow start the timer
+   */
 }
 
-#define AVG_OVERHEAD      3  /* It typically takes 3.0 microseconds */
-                             /*     to start/stop the timer. */
-#define LEAST_VALID       2  /* Don't trust a value lower than this */
+/*
+ *  The following controls the behavior of benchmark_timer_read().
+ *
+ *  AVG_OVEREHAD is the overhead for starting and stopping the timer.  It
+ *  is usually deducted from the number returned.
+ *
+ *  LEAST_VALID is the lowest number this routine should trust.  Numbers
+ *  below this are "noise" and zero is returned.
+ */
 
-int benchmark_timer_read(void)
+#define AVG_OVERHEAD      0  /* It typically takes X.X microseconds */
+                             /* (Y countdowns) to start/stop the timer. */
+                             /* This value is in microseconds. */
+#define LEAST_VALID       1  /* Don't trust a clicks value lower than this */
+
+int benchmark_timer_read( void )
 {
-  uint32_t total;
+  uint32_t         clicks;
+  uint32_t         total;
 
-  if (LEON3_Timer_Regs) {
-    total = LEON3_Timer_Regs->timer[LEON3_TIMER_INDEX].value;
+  /*
+   *  Read the timer and see how many clicks it has been since we started.
+   */
 
-    total = 0xffffff - total;
+  clicks = 0;   /* XXX: read some HW here */
 
-    if ( benchmark_timer_find_average_overhead == true )
-      return total;          /* in one microsecond units */
+  /*
+   *  Total is calculated by taking into account the number of timer overflow
+   *  interrupts since the timer was initialized and clicks since the last
+   *  interrupts.
+   */
 
+  total = clicks * 0;
+
+  if ( benchmark_timer_find_average_overhead == true )
+    return total;          /* in XXX microsecond units */
+  else {
     if ( total < LEAST_VALID )
       return 0;            /* below timer resolution */
-
-    return total - AVG_OVERHEAD;
-  }
-  return 0;
+  /*
+   *  Somehow convert total into microseconds
+   */
+      return (total - AVG_OVERHEAD);
+    }
 }
 
 void benchmark_timer_disable_subtracting_average_overhead(
