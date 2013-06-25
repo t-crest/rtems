@@ -38,8 +38,7 @@ libbsp_a_SOURCES =
 libbsp_a_SOURCES += ../../shared/bspclean.c ../../shared/bsplibc.c \
     ../../shared/bsppost.c ../../shared/bootcard.c startup/bspstart.c \
     ../../patmos/shared/bsppretaskinghook.c ../../shared/bsppredriverhook.c \
-    ../../patmos/shared/bspgetworkarea.c ../../shared/sbrk.c \
-    startup/spurious.c startup/bspidle.S
+    ../../patmos/shared/bspgetworkarea.c ../../shared/sbrk.c
 # console
 libbsp_a_SOURCES += console/console.c
 # debugio
@@ -49,8 +48,6 @@ libbsp_a_SOURCES += clock/ckinit.c ../../../shared/clockdrv_shell.h
 
 # timer
 libbsp_a_SOURCES += timer/timer.c
-
-EXTRA_DIST += times
 
 include $(srcdir)/preinstall.am
 include $(top_srcdir)/../../../../automake/local.am
