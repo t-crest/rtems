@@ -23,9 +23,9 @@
 	PUBLIC(hard_reset)
 SYM(hard_reset):
 
-  /**
+  /*
   * setup stack cache and stack frame    
-  **/
+  */
   mov	  %r29 = PASIM_SHADOW_STACK_BASE /* Initialize shadow stack pointer */
   mts	  %s5 = PASIM_STACK_CACHE_BASE /* Initialize the stack cache's spill bottom pointer */
   mts	  %s6 = PASIM_STACK_CACHE_BASE /* Initialize the stack cache's spill top pointer */
@@ -34,7 +34,7 @@ SYM(hard_reset):
    * invoke main function                    
    */
   
-  li	  %r30 = PASIM_START /* set function base */  
+  li	  %r30 = hard_reset /* set function base */  
   call	  SYM(boot_card) /* invoke boot_card function */
   li	  %r3 = 0 /* pass argument argc */
   li	  %r4 = 0 /* pass argument argv */

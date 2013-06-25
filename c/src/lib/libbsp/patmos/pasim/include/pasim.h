@@ -26,8 +26,6 @@ extern "C" {
 
 #define PASIM_STACK_CACHE_BASE 0x3000
 
-#define PASIM_START 0x0001078
-
 #ifndef ASM
 
 extern char _iomap_base; /* linker symbol giving the base address of the IO map address range */

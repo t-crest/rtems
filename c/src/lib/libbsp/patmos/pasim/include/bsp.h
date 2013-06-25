@@ -36,38 +36,6 @@ extern "C" {
 void *bsp_idle_thread( uintptr_t ignored );
 #define BSP_IDLE_TASK_BODY bsp_idle_thread
 
-/*
- * Network driver configuration
- */
-struct rtems_bsdnet_ifconfig;
-extern int rtems_leon_open_eth_driver_attach(
-  struct rtems_bsdnet_ifconfig *config,
-  int attach
-);
-extern int rtems_smc91111_driver_attach_leon3(
-  struct rtems_bsdnet_ifconfig *config,
-  int attach
-);
-extern int rtems_leon_greth_driver_attach(
-  struct rtems_bsdnet_ifconfig *config,
-  int attach
-);
-
-#define RTEMS_BSP_NETWORK_DRIVER_NAME_OPENETH	"open_eth1"
-#define RTEMS_BSP_NETWORK_DRIVER_ATTACH_OPENETH	 rtems_leon_open_eth_driver_attach
-#define RTEMS_BSP_NETWORK_DRIVER_NAME_SMC91111	"smc_eth1"
-#define RTEMS_BSP_NETWORK_DRIVER_ATTACH_SMC91111 rtems_smc91111_driver_attach_leon3
-#define RTEMS_BSP_NETWORK_DRIVER_NAME_GRETH	 "gr_eth1"
-#define RTEMS_BSP_NETWORK_DRIVER_ATTACH_GRETH    rtems_leon_greth_driver_attach
-
-#ifndef RTEMS_BSP_NETWORK_DRIVER_NAME
-#define RTEMS_BSP_NETWORK_DRIVER_NAME   RTEMS_BSP_NETWORK_DRIVER_NAME_GRETH
-#define RTEMS_BSP_NETWORK_DRIVER_ATTACH RTEMS_BSP_NETWORK_DRIVER_ATTACH_GRETH
-#endif
-
-extern int   CPU_SPARC_HAS_SNOOPING;
-
-
 /* Constants */
 
 /*

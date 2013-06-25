@@ -17,87 +17,134 @@
  *
  */
 
-#include <bsp.h>
-#include <bspopts.h>
+#include <stdlib.h>
 
-#if SIMSPARC_FAST_IDLE==1
-#define CLOCK_DRIVER_USE_FAST_IDLE
-#endif
+#include <rtems.h>
+#include <bsp.h>
+
+void Clock_exit( void );
+rtems_isr Clock_isr( rtems_vector_number vector );
 
 /*
- *  The Real Time Clock Counter Timer uses this trap type.
+ *  The interrupt vector number associated with the clock tick device
+ *  driver.
  */
 
-#if defined(RTEMS_MULTIPROCESSING)
-  #define LEON3_CLOCK_INDEX \
-    (rtems_configuration_get_user_multiprocessing_table() ? LEON3_Cpu_Index : 0)
-#else
-  #define LEON3_CLOCK_INDEX 0
-#endif
+#define CLOCK_VECTOR    4
 
+/*
+ *  Clock_driver_ticks is a monotonically increasing counter of the
+ *  number of clock ticks since the driver was initialized.
+ */
 
-volatile LEON3_Timer_Regs_Map *LEON3_Timer_Regs = 0;
-static int clkirq;
+volatile uint32_t         Clock_driver_ticks;
 
-#define CLOCK_VECTOR LEON_TRAP_TYPE( clkirq )
+/*
+ *  Clock_isrs is the number of clock ISRs until the next invocation of
+ *  the RTEMS clock tick routine.  The clock tick device driver
+ *  gets an interrupt once a millisecond and counts down until the
+ *  length of time between the user configured microseconds per tick
+ *  has passed.
+ */
 
-#define Clock_driver_support_at_tick()
+uint32_t         Clock_isrs;              /* ISRs until next tick */
 
-#if defined(RTEMS_MULTIPROCESSING)
-  #define Adjust_clkirq_for_node() \
-    do { \
-      if (rtems_configuration_get_user_multiprocessing_table() != NULL) { \
-        clkirq += LEON3_Cpu_Index; \
-      } \
-    } while(0)
-#else
-  #define Adjust_clkirq_for_node()
-#endif
+/*
+ * These are set by clock driver during its init
+ */
 
-#define Clock_driver_support_find_timer() \
-  do { \
-    int cnt; \
-    amba_apb_device dev; \
-    \
-    /* Find LEON3 GP Timer */ \
-    cnt = amba_find_apbslv(&amba_conf,VENDOR_GAISLER,GAISLER_GPTIMER,&dev); \
-    if ( cnt > 0 ){ \
-      /* Found APB GPTIMER Timer */ \
-      LEON3_Timer_Regs = (volatile LEON3_Timer_Regs_Map *) dev.start; \
-      clkirq = (LEON3_Timer_Regs->status & 0xfc) >> 3; \
-      \
-      Adjust_clkirq_for_node(); \
-    } \
-  } while (0)
+rtems_device_major_number rtems_clock_major = ~0;
+rtems_device_minor_number rtems_clock_minor;
 
-#define Clock_driver_support_install_isr( _new, _old ) \
-  do { \
-    _old = set_vector( _new, CLOCK_VECTOR, 1 ); \
-  } while(0)
+/*
+ *  The previous ISR on this clock tick interrupt vector.
+ */
 
-#define Clock_driver_support_initialize_hardware() \
-  do { \
-    LEON3_Timer_Regs->timer[LEON3_CLOCK_INDEX].reload = \
-      rtems_configuration_get_microseconds_per_tick() - 1; \
-    \
-    LEON3_Timer_Regs->timer[LEON3_CLOCK_INDEX].conf = \
-      LEON3_GPTIMER_EN | LEON3_GPTIMER_RL | \
-        LEON3_GPTIMER_LD | LEON3_GPTIMER_IRQEN; \
-  } while (0)
+rtems_isr_entry  Old_ticker;
 
-#define Clock_driver_support_shutdown_hardware() \
-  do { \
-    LEON_Mask_interrupt(LEON_TRAP_TYPE(clkirq)); \
-    LEON3_Timer_Regs->timer[LEON3_CLOCK_INDEX].conf = 0; \
-  } while (0)
+void Clock_exit( void );
 
-uint32_t bsp_clock_nanoseconds_since_last_tick(void)
-{  
-  return 0;
+/*
+ *  Isr Handler
+ */
+
+rtems_isr Clock_isr(
+  rtems_vector_number vector
+)
+{
+/*
+ * bump the number of clock driver ticks since initialization
+ *
+ * determine if it is time to announce the passing of tick as configured
+ * to RTEMS through the rtems_clock_tick directive
+ *
+ * perform any timer dependent tasks
+ */
 }
 
+/*
+ *  Install_clock
+ *
+ *  Install a clock tick handler and reprograms the chip.  This
+ *  is used to initially establish the clock tick.
+ */
 
-#define Clock_driver_nanoseconds_since_last_tick \
-        bsp_clock_nanoseconds_since_last_tick
+void Install_clock(
+  rtems_isr_entry clock_isr
+)
+{
+  /*
+   *  Initialize the clock tick device driver variables
+   */
 
-#include "../../../shared/clockdrv_shell.h"
+  Clock_driver_ticks = 0;
+  Clock_isrs = rtems_configuration_get_microseconds_per_tick() / 1000;
+
+  Old_ticker = (rtems_isr_entry) set_vector( clock_isr, CLOCK_VECTOR, 1 );
+  /*
+   *  Hardware specific initialize goes here
+   */
+
+  /* XXX */
+
+  /*
+   *  Schedule the clock cleanup routine to execute if the application exits.
+   */
+
+  atexit( Clock_exit );
+}
+
+/*
+ *  Clean up before the application exits
+ */
+
+void Clock_exit( void )
+{
+  /* XXX: turn off the timer interrupts */
+
+  /* XXX: If necessary, restore the old vector */
+}
+
+/*
+ *  Clock_initialize
+ *
+ *  Device driver entry point for clock tick driver initialization.
+ */
+
+rtems_device_driver Clock_initialize(
+  rtems_device_major_number major,
+  rtems_device_minor_number minor,
+  void *pargp
+)
+{
+  Install_clock( Clock_isr );
+
+  /*
+   * make major/minor avail to others such as shared memory driver
+   */
+
+  rtems_clock_major = major;
+  rtems_clock_minor = minor;
+
+  return RTEMS_SUCCESSFUL;
+}
