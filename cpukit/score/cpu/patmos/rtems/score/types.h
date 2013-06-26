@@ -4,16 +4,16 @@
 
 /*
  *  This include file contains type definitions pertaining to the
- *  SPARC processor family.
+ *  Patmos processor family.
  *
- *  COPYRIGHT (c) 1989-1999.
- *  On-Line Applications Research Corporation (OAR).
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
+ *
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
  *  http://www.rtems.com/license/LICENSE.
- *
- *  $Id: types.h,v 1.16 2009/12/02 09:46:16 ralf Exp $
  */
 
 #ifndef _RTEMS_SCORE_TYPES_H
@@ -33,8 +33,6 @@ extern "C" {
  */
 
 typedef uint16_t         Priority_Bit_map_control;
-typedef void sparc_isr;
-typedef void ( *sparc_isr_entry )( void );
 
 #ifdef RTEMS_DEPRECATED_TYPES
 typedef bool	boolean;              /* Boolean value   */

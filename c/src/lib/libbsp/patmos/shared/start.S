@@ -23,12 +23,49 @@
 	PUBLIC(hard_reset)
 SYM(hard_reset):
 
+  li      %r0 = 0
+	
   /*
-  * setup stack cache and stack frame    
+   * setup stack cache and stack frame    
+   */
+  li	  %r29 = PASIM_SHADOW_STACK_BASE /* Initialize shadow stack pointer */
+  li	  %r9 = PASIM_STACK_CACHE_BASE
+  mts	  %s5 = %r9 /* Initialize the stack cache's spill bottom pointer */
+  mts	  %s6 = %r9 /* Initialize the stack cache's spill top pointer */
+  
+ /*
+  *  Copy the initialized data to RAM
+  *
+  *  FROM:   _etext
+  *  TO:     _data_start
+  *  LENGTH: (__bss_start - _data_start) bytes
   */
-  mov	  %r29 = PASIM_SHADOW_STACK_BASE /* Initialize shadow stack pointer */
-  mts	  %s5 = PASIM_STACK_CACHE_BASE /* Initialize the stack cache's spill bottom pointer */
-  mts	  %s6 = PASIM_STACK_CACHE_BASE /* Initialize the stack cache's spill top pointer */
+  
+  li	  %r9 = _etext /* r9 = start of initialized data in ROM */
+  li	  %r10 = _data_start /* r10 = start of initialized data in RAM */
+  li	  %r11 = _bss_start /* r11 = end of initialized data in RAM */
+
+copy_data:
+  lwc     %r12 = [ %r9 + 0 ]
+  swc     [ %r10 + 0 ] = %r12      /* copy this word */
+  add     %r9 = %r9 + 4            /* bump the source pointer */
+  add     %r10 = %r10 + 4          /* bump the destination pointer */  
+  cmplt   p2 = %r10 < %r11         /* Is the pointer past the end of dest? */
+  bs      copy_data
+  nop
+  nop
+  nop
+
+	/* clear the bss */
+  li	  %r9 = _edata /* r9 = start of bss */
+  li	  %r10 = _end /* r10 = end of bss */
+zerobss:
+  swc     [ %r9 + 0 ] = %r0      /* zero the bss */
+  add     %r9 = %r9 + 4          /* bump the bss pointer */
+  cmple   p2 = %r10 <= %r11
+  bs      zerobss
+  nop
+  nop
   
   /*
    * invoke main function                    

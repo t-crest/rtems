@@ -12,14 +12,14 @@
  *  NOTE: The spacing in the use of these macros
  *        is critical to them working as advertised.
  *
- *  COPYRIGHT:
+ *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
- *  This file is based on similar code found in newlib available
- *  from ftp.cygnus.com.  The file which was used had no copyright
- *  notice.  This file is freely distributable as long as the source
- *  of the file is noted.
+ *  Copyright (C) GMVIS Skysoft S.A., 2013
+ *  @author André Rocha
  *
- *  $Id: asm.h,v 1.18 2009/12/02 09:46:15 ralf Exp $
+ *  The license and distribution terms for this file may be
+ *  found in the file LICENSE in this distribution or at
+ *  http://www.rtems.com/license/LICENSE.
  */
 
 #ifndef _RTEMS_ASM_H
@@ -95,25 +95,5 @@
 
 #define PUBLIC(sym) .globl SYM (sym)
 #define EXTERN(sym) .globl SYM (sym)
-
-/*
- *  Entry for traps which jump to a programmer-specified trap handler.
- */
-
-#define TRAP(_vector, _handler)  \
-  mov   %psr, %l0 ; \
-  sethi %hi(_handler), %l4 ; \
-  jmp   %l4+%lo(_handler); \
-  mov   _vector, %l3
-
-/*
- *  Used for the reset trap to avoid a supervisor instruction
- */
-
-#define RTRAP(_vector, _handler)  \
-  mov   %g0, %l0 ; \
-  sethi %hi(_handler), %l4 ; \
-  jmp   %l4+%lo(_handler); \
-  mov   _vector, %l3
 
 #endif

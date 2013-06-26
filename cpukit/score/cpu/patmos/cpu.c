@@ -20,35 +20,16 @@
 #include <rtems/score/isr.h>
 #include <rtems/rtems/cache.h>
 
-/*
- *  This initializes the set of opcodes placed in each trap
- *  table entry.  The routine which installs a handler is responsible
- *  for filling in the fields for the _handler address and the _vector
- *  trap type.
- *
- *  The constants following this structure are masks for the fields which
- *  must be filled in when the handler is installed.
- */
-
-const CPU_Trap_table_entry _CPU_Trap_slot_template = {
-  0xa1480000,      /* mov   %psr, %l0           */
-  0x29000000,      /* sethi %hi(_handler), %l4  */
-  0x81c52000,      /* jmp   %l4 + %lo(_handler) */
-  0xa6102000       /* mov   _vector, %l3        */
-};
-
 /*PAGE
  *
  *  _CPU_Initialize
  *
  *  This routine performs processor dependent initialization.
  *
- *  INPUT PARAMETERS: NONE
+ *  Input Parameters: NONE
  *
  *  Output Parameters: NONE
  *
- *  NOTE: There is no need to save the pointer to the thread dispatch routine.
- *        The PATMOS's assembly code can reference it directly with no problems.
  */
 
 void _CPU_Initialize(void)
@@ -86,26 +67,6 @@ uint32_t   _CPU_ISR_Get_level( void )
  *  Output Parameters: NONE
  *    *new_handler - address of the handler previously installed
  *
- *  NOTE:
- *
- *  On the SPARC, there are really only 256 vectors.  However, the executive
- *  has no easy, fast, reliable way to determine which traps are synchronous
- *  and which are asynchronous.  By default, synchronous traps return to the
- *  instruction which caused the interrupt.  So if you install a software
- *  trap handler as an executive interrupt handler (which is desirable since
- *  RTEMS takes care of window and register issues), then the executive needs
- *  to know that the return address is to the trap rather than the instruction
- *  following the trap.
- *
- *  So vectors 0 through 255 are treated as regular asynchronous traps which
- *  provide the "correct" return address.  Vectors 256 through 512 are assumed
- *  by the executive to be synchronous and to require that the return address
- *  be fudged.
- *
- *  If you use this mechanism to install a trap handler which must reexecute
- *  the instruction which caused the trap, then it should be installed as
- *  an asynchronous trap.  This will avoid the executive changing the return
- *  address.
  */
 
 void _CPU_ISR_install_raw_handler(
@@ -150,11 +111,11 @@ void _CPU_ISR_install_vector(
  *
  *  Input parameters:
  *    the_context  - pointer to the context area
- *    stack_base   - address of memory for the SPARC
+ *    stack_base   - address of memory for the Patmos stack
  *    size         - size in bytes of the stack area
  *    new_level    - interrupt level for this context area
  *    entry_point  - the starting execution point for this this context
- *    is_fp        - TRUE if this context is associated with an FP thread
+ *    shadow_stack_base   - address of memory for the Patmos shadow stack
  *
  *  Output parameters: NONE
  */
@@ -167,29 +128,19 @@ void _CPU_Context_Initialize(
                              void *entry_point ,
                              uint32_t *shadow_stack_base
                              )
-{
-    /* highest "stack aligned" address */
-    uint32_t stack_high;
-
-    /* On CPUs with stacks which grow down (i.e. PATMOS), we build the stack
-     * based on the stack_high address */
-
-    /* add the to the stack address the size of the stack */
-    stack_high = ((uint32_t) (stack_base) + size);
-
-    /* then align it */
-    stack_high &= ~(CPU_STACK_ALIGNMENT - 1);
-
-    /* see the README in this directory for a diagram of the stack */
-
-    /* set the entry point */
-    the_context->s9 = ((uint32_t) entry_point) - 8;
-
-    /* set the stack pointer */
-    the_context->s6 = stack_high;  
-	
+{  
+    
 	/* set the shadow stack pointer */
-    the_context->r29 = (uint32_t)shadow_stack_base;  
+    the_context->r29 = (uint32_t)shadow_stack_base;
+	
+    /* set the stack pointer */
+    the_context->s6 = (uint32_t)stack_base;  
+	
+	/* set the return address */
+    the_context->r30 = (uint32_t)_CPU_Context_restore;
+	
+	/* set the entry point */
+    the_context->s9 = (uint32_t)entry_point;  
 }
 
 void _CPU_Context_switch(

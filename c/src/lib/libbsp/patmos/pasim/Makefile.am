@@ -29,7 +29,7 @@ noinst_LIBRARIES = libbspstart.a
 libbspstart_a_SOURCES = ../../patmos/shared/start.S
 project_lib_DATA = start.$(OBJEXT)
 
-dist_project_lib_DATA += startup/linkcmds
+dist_project_lib_DATA += ../shared/startup/linkcmds.base startup/linkcmds
 
 noinst_LIBRARIES += libbsp.a
 libbsp_a_SOURCES =
