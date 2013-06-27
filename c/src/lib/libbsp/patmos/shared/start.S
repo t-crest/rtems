@@ -23,7 +23,7 @@
 	PUBLIC(hard_reset)
 SYM(hard_reset):
 
-  li      %r0 = 0
+  and      %r0 = %r0, 0x0 /* Reset r0 to 0 */
 	
   /*
    * setup stack cache and stack frame    
@@ -34,7 +34,7 @@ SYM(hard_reset):
   mts	  %s6 = %r9 /* Initialize the stack cache's spill top pointer */
   
  /*
-  *  Copy the initialized data to RAM
+  *  Copy the initialized data from ROM to RAM
   *
   *  FROM:   _etext
   *  TO:     _data_start
@@ -44,33 +44,47 @@ SYM(hard_reset):
   li	  %r9 = _etext /* r9 = start of initialized data in ROM */
   li	  %r10 = _data_start /* r10 = start of initialized data in RAM */
   li	  %r11 = _bss_start /* r11 = end of initialized data in RAM */
+  
+  cmplt   %p2 = %r10, %r11         /* Is the pointer past the end of dest? */
+  (!%p2)br      clear_bss
+  nop
+  nop
+  nop
 
 copy_data:
   lwc     %r12 = [ %r9 + 0 ]
-  swc     [ %r10 + 0 ] = %r12      /* copy this word */
-  add     %r9 = %r9 + 4            /* bump the source pointer */
-  add     %r10 = %r10 + 4          /* bump the destination pointer */  
-  cmplt   p2 = %r10 < %r11         /* Is the pointer past the end of dest? */
-  bs      copy_data
+  swc     [ %r10 + 0 ] = %r12     /* copy this word */
+  add     %r9 = %r9, 4            /* bump the source pointer */
+  add     %r10 = %r10, 4          /* bump the destination pointer */  
+  cmplt   %p2 = %r10, %r11         /* Is the pointer past the end of dest? */
+  (%p2)br      copy_data
   nop
   nop
   nop
 
-	/* clear the bss */
+clear_bss:	/* clear the bss */
   li	  %r9 = _edata /* r9 = start of bss */
   li	  %r10 = _end /* r10 = end of bss */
-zerobss:
+  
+  cmple   %p2 = %r9, %r10
+  (!%p2)br      call_boot
+  nop
+  nop
+  nop
+  
+zero_bss:
   swc     [ %r9 + 0 ] = %r0      /* zero the bss */
-  add     %r9 = %r9 + 4          /* bump the bss pointer */
-  cmple   p2 = %r10 <= %r11
-  bs      zerobss
+  add     %r9 = %r9, 4           /* bump the bss pointer */
+  cmple   %p2 = %r9, %r10
+  (%p2)br      zero_bss
   nop
   nop
   
   /*
    * invoke main function                    
    */
-  
+ 
+call_boot: 
   li	  %r30 = hard_reset /* set function base */  
   call	  SYM(boot_card) /* invoke boot_card function */
   li	  %r3 = 0 /* pass argument argc */

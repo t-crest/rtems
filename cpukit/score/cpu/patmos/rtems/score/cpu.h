@@ -49,10 +49,6 @@ extern "C" {
  *  If TRUE, then the loops are unrolled.
  *  If FALSE, then the loops are not unrolled.
  *
- *  This parameter could go either way on the PATMOS.  The interrupt flash
- *  code is relatively lengthy given the requirements for nops following
- *  writes to the psr.  But if the clock speed were high enough, this would
- *  not represent a great deal of time.
  */
 
 #define CPU_UNROLL_ENQUEUE_PRIORITY      TRUE
@@ -62,9 +58,7 @@ extern "C" {
  *
  *  If TRUE, then a stack is allocated in _ISR_Handler_initialization.
  *  If FALSE, nothing is done.
- *
- *  The PATMOS does not have a dedicated HW interrupt stack and one has
- *  been implemented in SW.
+ * 
  */
 
 #define CPU_HAS_SOFTWARE_INTERRUPT_STACK   TRUE
@@ -76,9 +70,6 @@ extern "C" {
  *  If FALSE, then the BSP is assumed to allocate and manage the vector
  *  table
  *
- *  PATMOS Specific Information:
- *
- *  XXX document implementation including references if appropriate
  */
 #define CPU_SIMPLE_VECTORED_INTERRUPTS TRUE
 
@@ -190,10 +181,7 @@ extern "C" {
  *  of critical data structures.  On some processors it may make
  *  sense to have these aligned on tighter boundaries than
  *  the minimum requirements of the compiler in order to have as
- *  much of the critical data area as possible in a cache line.
- *
- *  The PATMOS does not appear to have particularly strict alignment
- *  requirements.  This value was chosen to take advantages of caches.
+ *  much of the critical data area as possible in a cache line. 
  */
 
 #define CPU_STRUCTURE_ALIGNMENT          __attribute__ ((aligned (16)))
@@ -211,79 +199,9 @@ extern "C" {
  *  interrupt field of the task mode.  How those bits map to the
  *  CPU interrupt levels is defined by the routine _CPU_ISR_Set_level().
  *
- *  The PATMOS has 16 interrupt levels in the PIL field of the PSR.
  */
 
-#define CPU_MODES_INTERRUPT_MASK   0x0000000F
-
-/*
- *  This structure represents the organization of the minimum stack frame
- *  for the PATMOS.  More framing information is required in certain situaions
- *  such as when there are a large number of out parameters or when the callee
- *  must save floating point registers.
- */
-
-#ifndef ASM
-
-typedef struct {
-  uint32_t    l0;
-  uint32_t    l1;
-  uint32_t    l2;
-  uint32_t    l3;
-  uint32_t    l4;
-  uint32_t    l5;
-  uint32_t    l6;
-  uint32_t    l7;
-  uint32_t    i0;
-  uint32_t    i1;
-  uint32_t    i2;
-  uint32_t    i3;
-  uint32_t    i4;
-  uint32_t    i5;
-  uint32_t    i6_fp;
-  uint32_t    i7;
-  void       *structure_return_address;
-  /*
-   *  The following are for the callee to save the register arguments in
-   *  should this be necessary.
-   */
-  uint32_t    saved_arg0;
-  uint32_t    saved_arg1;
-  uint32_t    saved_arg2;
-  uint32_t    saved_arg3;
-  uint32_t    saved_arg4;
-  uint32_t    saved_arg5;
-  uint32_t    pad0;
-}  CPU_Minimum_stack_frame;
-
-#endif /* ASM */
-
-#define CPU_STACK_FRAME_L0_OFFSET             0x00
-#define CPU_STACK_FRAME_L1_OFFSET             0x04
-#define CPU_STACK_FRAME_L2_OFFSET             0x08
-#define CPU_STACK_FRAME_L3_OFFSET             0x0c
-#define CPU_STACK_FRAME_L4_OFFSET             0x10
-#define CPU_STACK_FRAME_L5_OFFSET             0x14
-#define CPU_STACK_FRAME_L6_OFFSET             0x18
-#define CPU_STACK_FRAME_L7_OFFSET             0x1c
-#define CPU_STACK_FRAME_I0_OFFSET             0x20
-#define CPU_STACK_FRAME_I1_OFFSET             0x24
-#define CPU_STACK_FRAME_I2_OFFSET             0x28
-#define CPU_STACK_FRAME_I3_OFFSET             0x2c
-#define CPU_STACK_FRAME_I4_OFFSET             0x30
-#define CPU_STACK_FRAME_I5_OFFSET             0x34
-#define CPU_STACK_FRAME_I6_FP_OFFSET          0x38
-#define CPU_STACK_FRAME_I7_OFFSET             0x3c
-#define CPU_STRUCTURE_RETURN_ADDRESS_OFFSET   0x40
-#define CPU_STACK_FRAME_SAVED_ARG0_OFFSET     0x44
-#define CPU_STACK_FRAME_SAVED_ARG1_OFFSET     0x48
-#define CPU_STACK_FRAME_SAVED_ARG2_OFFSET     0x4c
-#define CPU_STACK_FRAME_SAVED_ARG3_OFFSET     0x50
-#define CPU_STACK_FRAME_SAVED_ARG4_OFFSET     0x54
-#define CPU_STACK_FRAME_SAVED_ARG5_OFFSET     0x58
-#define CPU_STACK_FRAME_PAD0_OFFSET           0x5c
-
-#define CPU_MINIMUM_STACK_FRAME_SIZE          0x60
+#define CPU_MODES_INTERRUPT_MASK   0x00000001
 
 /*
  * Contexts
@@ -414,7 +332,9 @@ typedef struct {
 #define s14_OFFSET   45
 #define s15_OFFSET   46
 
-#define CONTEXT_CONTROL_SIZE 0x118
+#define CONTEXT_CONTROL_SIZE 0xC0
+
+#define MAX_STACK_CACHE_SIZE 0x3FFFF
 
 /*
  *  The floating point context area.
@@ -473,32 +393,10 @@ typedef struct {
 /*
  *  Context saved on stack for an interrupt.
  *
- *  NOTE:  The PSR, PC, and NPC are only saved in this structure for the
- *         benefit of the user's handler.
  */
 
 typedef struct {
-  CPU_Minimum_stack_frame  Stack_frame;
-  uint32_t                 psr;
-  uint32_t                 pc;
-  uint32_t                 npc;
-  uint32_t                 g1;
-  uint32_t                 g2;
-  uint32_t                 g3;
-  uint32_t                 g4;
-  uint32_t                 g5;
-  uint32_t                 g6;
-  uint32_t                 g7;
-  uint32_t                 i0;
-  uint32_t                 i1;
-  uint32_t                 i2;
-  uint32_t                 i3;
-  uint32_t                 i4;
-  uint32_t                 i5;
-  uint32_t                 i6_fp;
-  uint32_t                 i7;
-  uint32_t                 y;
-  uint32_t                 tpc;
+  Context_Control  		   Stack_frame;
 } CPU_Interrupt_frame;
 
 #endif /* ASM */
@@ -508,28 +406,9 @@ typedef struct {
  */
 
 #define ISF_STACK_FRAME_OFFSET 0x00
-#define ISF_PSR_OFFSET         CPU_MINIMUM_STACK_FRAME_SIZE + 0x00
-#define ISF_PC_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x04
-#define ISF_NPC_OFFSET         CPU_MINIMUM_STACK_FRAME_SIZE + 0x08
-#define ISF_G1_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x0c
-#define ISF_G2_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x10
-#define ISF_G3_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x14
-#define ISF_G4_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x18
-#define ISF_G5_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x1c
-#define ISF_G6_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x20
-#define ISF_G7_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x24
-#define ISF_I0_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x28
-#define ISF_I1_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x2c
-#define ISF_I2_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x30
-#define ISF_I3_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x34
-#define ISF_I4_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x38
-#define ISF_I5_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x3c
-#define ISF_I6_FP_OFFSET       CPU_MINIMUM_STACK_FRAME_SIZE + 0x40
-#define ISF_I7_OFFSET          CPU_MINIMUM_STACK_FRAME_SIZE + 0x44
-#define ISF_Y_OFFSET           CPU_MINIMUM_STACK_FRAME_SIZE + 0x48
-#define ISF_TPC_OFFSET         CPU_MINIMUM_STACK_FRAME_SIZE + 0x4c
 
-#define CONTEXT_CONTROL_INTERRUPT_FRAME_SIZE CPU_MINIMUM_STACK_FRAME_SIZE + 0x50
+#define CONTEXT_CONTROL_INTERRUPT_FRAME_SIZE CONTEXT_CONTROL_SIZE
+
 #ifndef ASM
 /*
  *  This variable is contains the initialize context for the FP unit.
@@ -548,12 +427,10 @@ SCORE_EXTERN Context_Control_fp  _CPU_Null_fp_context CPU_STRUCTURE_ALIGNMENT;
  *  code the option of picking the version it wants to use.  Thus
  *  both must be present if either is.
  *
- *  The PATMOS supports a software based interrupt stack and these
- *  are required.
  */
 
-SCORE_EXTERN void *_CPU_Interrupt_stack_low;
-SCORE_EXTERN void *_CPU_Interrupt_stack_high;
+SCORE_EXTERN void *_CPU_Interrupt_stack_low; /* This variable points to the lowest physical address of the interrupt stack */
+SCORE_EXTERN void *_CPU_Interrupt_stack_high; /* This variable points to the highest physical address of the interrupt stack */
 
 /*
  *  This flag is context switched with each thread.  It indicates
@@ -565,40 +442,12 @@ SCORE_EXTERN void *_CPU_Interrupt_stack_high;
 SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
 
 /*
- *  The following type defines an entry in the PATMOS's trap table.
- *
- *  NOTE: The instructions chosen are RTEMS dependent although one is
- *        obligated to use two of the four instructions to perform a
- *        long jump.  The other instructions load one register with the
- *        trap type (a.k.a. vector) and another with the psr.
- */
-
-typedef struct {
-  uint32_t     mov_psr_l0;                     /* mov   %psr, %l0           */
-  uint32_t     sethi_of_handler_to_l4;         /* sethi %hi(_handler), %l4  */
-  uint32_t     jmp_to_low_of_handler_plus_l4;  /* jmp   %l4 + %lo(_handler) */
-  uint32_t     mov_vector_l3;                  /* mov   _vector, %l3        */
-} CPU_Trap_table_entry;
-
-/*
- *  This is the set of opcodes for the instructions loaded into a trap
- *  table entry.  The routine which installs a handler is responsible
- *  for filling in the fields for the _handler address and the _vector
- *  trap type.
- *
- *  The constants following this structure are masks for the fields which
- *  must be filled in when the handler is installed.
- */
-
-extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
-
-/*
  *  The size of the floating point context area.
  */
 
 #define CPU_CONTEXT_FP_SIZE sizeof( Context_Control_fp )
 
-#endif
+#endif /* ASM */
 
 /*
  *  Amount of extra stack (above minimum stack size) required by
@@ -611,35 +460,10 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
 /*
  *  This defines the number of entries in the ISR_Vector_table managed
  *  by the executive.
- *
- *  On the PATMOS, there are really only 256 vectors.  However, the executive
- *  has no easy, fast, reliable way to determine which traps are synchronous
- *  and which are asynchronous.  By default, synchronous traps return to the
- *  instruction which caused the interrupt.  So if you install a software
- *  trap handler as an executive interrupt handler (which is desirable since
- *  RTEMS takes care of window and register issues), then the executive needs
- *  to know that the return address is to the trap rather than the instruction
- *  following the trap.
- *
- *  So vectors 0 through 255 are treated as regular asynchronous traps which
- *  provide the "correct" return address.  Vectors 256 through 512 are assumed
- *  by the executive to be synchronous and to require that the return address
- *  be fudged.
- *
- *  If you use this mechanism to install a trap handler which must reexecute
- *  the instruction which caused the trap, then it should be installed as
- *  an asynchronous trap.  This will avoid the executive changing the return
- *  address.
  */
 
-#define CPU_INTERRUPT_NUMBER_OF_VECTORS     256
-#define CPU_INTERRUPT_MAXIMUM_VECTOR_NUMBER 511
-
-#define SPARC_SYNCHRONOUS_TRAP_BIT_MASK     0x100
-#define SPARC_ASYNCHRONOUS_TRAP( _trap )    (_trap)
-#define SPARC_SYNCHRONOUS_TRAP( _trap )     ((_trap) + 256 )
-
-#define SPARC_REAL_TRAP_NUMBER( _trap )     ((_trap) % 256)
+#define CPU_INTERRUPT_NUMBER_OF_VECTORS     0
+#define CPU_INTERRUPT_MAXIMUM_VECTOR_NUMBER 0 /* This defines the highest interrupt vector number for this port. */
 
 /*
  *  This is defined if the port has a special way to report the ISR nesting
@@ -651,10 +475,6 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
 /*
  *  Should be large enough to run all tests.  This ensures
  *  that a "reasonable" small application should not have any problems.
- *
- *  This appears to be a fairly generous number for the PATMOS since
- *  represents a call depth of about 20 routines based on the minimum
- *  stack frame.
  */
 
 #define CPU_STACK_MINIMUM_SIZE  (1024*4)
@@ -662,8 +482,6 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
 /*
  *  CPU's worst alignment requirement for data types on a byte boundary.  This
  *  alignment does not take into account the requirements for the stack.
- *
- *  On the PATMOS, this is required for double word loads and stores.
  */
 
 #define CPU_ALIGNMENT      8
@@ -703,14 +521,9 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
  *  is strict enough for the stack, then this should be set to 0.
  *
  *  NOTE:  This must be a power of 2 either 0 or greater than CPU_ALIGNMENT.
- *
- *  The alignment restrictions for the PATMOS are not that strict but this
- *  should unsure that the stack is always sufficiently alignment that the
- *  window overflow, underflow, and flush routines can use double word loads
- *  and stores.
  */
 
-#define CPU_STACK_ALIGNMENT        16
+#define CPU_STACK_ALIGNMENT        0
 
 #ifndef ASM
 
@@ -729,8 +542,7 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
  *  level is returned in _level.
  */
 
-#define _CPU_ISR_Disable( _level ) \
-  (_level) = sparc_disable_interrupts()
+#define _CPU_ISR_Disable( _level )  
 
 /*
  *  Enable interrupts to the previous level (returned by _CPU_ISR_Disable).
@@ -738,8 +550,7 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
  *  _level is not modified.
  */
 
-#define _CPU_ISR_Enable( _level ) \
-  sparc_enable_interrupts( _level )
+#define _CPU_ISR_Enable( _level )  
 
 /*
  *  This temporarily restores the interrupt to _level before immediately
@@ -748,17 +559,25 @@ extern const CPU_Trap_table_entry _CPU_Trap_slot_template;
  *  modified.
  */
 
-#define _CPU_ISR_Flash( _level ) \
-  sparc_flash_interrupts( _level )
+#define _CPU_ISR_Flash( _level )
 
 /*
  *  Map interrupt level in task mode onto the hardware that the CPU
  *  actually provides.  Currently, interrupt levels which do not
- *  map onto the CPU in a straight fashion are undefined.
+ *  map onto the CPU in a straight fashion are undefined. Someday,
+ *  it would be nice if these were "mapped" by the application
+ *  via a callout.  For example, m68k has 8 levels 0 - 7, levels
+ *  8 - 255 would be available for bsp/application specific meaning.
+ *  This could be used to manage a programmable interrupt controller
+ *  via the rtems_task_mode directive.
  */
 
-#define _CPU_ISR_Set_level( _newlevel ) \
-   sparc_enable_interrupts( _newlevel << 8)
+#define _CPU_ISR_Set_level( _newlevel )   
+
+/*
+ *  Return the current interrupt disable level for this task in
+ *  the format used by the interrupt level portion of the task mode.
+ */
 
 uint32_t   _CPU_ISR_Get_level( void );
 
@@ -772,10 +591,9 @@ uint32_t   _CPU_ISR_Get_level( void );
  *  involves:
  *
  *     - setting a starting address
- *     - preparing the stack
- *     - preparing the stack and frame pointers
- *     - setting the proper interrupt level in the context
- *     - setting the address of the shadow cache memory for the PATMOS
+ *     - preparing the stack and shadow stack
+ *     - preparing the stack and frame pointers for both the stack and the shadow stack
+ *     - setting the proper interrupt level in the context 
  *
  *  NOTE:  Implemented as a subroutine for the PATMOS port.
  */
@@ -790,39 +608,25 @@ uint32_t *shadow_stack_base
 );
 
 /*
- *  This macro is invoked from _Thread_Handler to do whatever CPU
- *  specific magic is required that must be done in the context of
- *  the thread when it starts.
- *
- *  On the PATMOS, this is setting the frame pointer so GDB is happy.
- *  Make GDB stop unwinding at _Thread_Handler, previous register window
- *  Frame pointer is 0 and calling address must be a function with starting
- *  with a SAVE instruction. If return address is leaf-function (no SAVE)
- *  GDB will not look at prev reg window fp.
- *
- *  _Thread_Handler is known to start with SAVE.
- */
-
-#define _CPU_Context_Initialization_at_thread_begin() \
-  do { \
-    asm volatile ("set _Thread_Handler,%%i7\n"::); \
-  } while (0)
-
-/*
  *  This routine is responsible for somehow restarting the currently
  *  executing task.
- *
- *  On the PATMOS, this is is relatively painless but requires a small
- *  amount of wrapper code before using the regular restore code in
- *  of the context switch.
  */
 
 #define _CPU_Context_Restart_self( _the_context ) \
    _CPU_Context_restore( (_the_context) );
 
 /*
- *  The FP context area for the PATMOS is a simple structure and nothing
- *  special is required to find the "starting load point"
+ *  The purpose of this macro is to allow the initial pointer into
+ *  a floating point context area (used to save the floating point
+ *  context) to be at an arbitrary place in the floating point
+ *  context area.
+ *
+ *  This is necessary because some FP units are designed to have
+ *  their context saved as a stack which grows into lower addresses.
+ *  Other FP units can be saved by simply moving registers into offsets
+ *  from the base of the context area.  Finally some FP units provide
+ *  a "dump context" instruction which could fill in from high to low
+ *  or low to high based on the whim of the CPU designers.
  */
 
 #define _CPU_Context_Fp_start( _base, _offset ) \
@@ -830,11 +634,15 @@ uint32_t *shadow_stack_base
 
 /*
  *  This routine initializes the FP context area passed to it to.
+ *  There are a few standard ways in which to initialize the
+ *  floating point context.  The code included for this macro assumes
+ *  that this is a CPU in which a "initial" FP context was saved into
+ *  _CPU_Null_fp_context and it simply copies it to the destination
+ *  context passed to it.
  *
- *  The PATMOS allows us to use the simple initialization model
- *  in which an "initial" FP context was saved into _CPU_Null_fp_context
- *  at CPU initialization and it is simply copied into the destination
- *  context.
+ *  Other floating point context save/restore models include:
+ *    -# not doing anything, and
+ *    -# putting a "null FP status word" in the correct place in the FP context.
  */
 
 #define _CPU_Context_Initialize_fp( _destination ) \
@@ -855,9 +663,8 @@ uint32_t *shadow_stack_base
 #define _CPU_Fatal_halt( _error ) \
   do { \
     uint32_t   level; \
-    \
-    level = sparc_disable_interrupts(); \
-    asm volatile ( "mov  %0, %%g1 " : "=r" (level) : "0" (level) ); \
+    \    
+    asm volatile ( "li  $r9 = %0 \n\t" : "=r" (level) : "0" (level) ); \
     while (1); /* loop forever */ \
   } while (0)
 
@@ -932,8 +739,7 @@ void _CPU_ISR_install_vector(
 /*
  *  _CPU_Thread_Idle_body
  *
- *  Some PATMOS implementations have low power, sleep, or idle modes.  This
- *  tries to take advantage of those models.
+ *  This routine is the CPU dependent IDLE thread body. 
  */
 
 void *_CPU_Thread_Idle_body( uintptr_t ignored );
@@ -996,9 +802,6 @@ void _CPU_Context_restore_fp(
  *     swap upper and lower 16-bits
  *     swap most significant two bytes with 16-bit rotate
  *
- *  It is not obvious how the PATMOS can do significantly better than the
- *  generic code.  gcc 2.7.0 only generates about 12 instructions for the
- *  following code at optimization level four (i.e. -O4).
  */
 
 static inline uint32_t CPU_swap_u32(
@@ -1015,6 +818,12 @@ static inline uint32_t CPU_swap_u32(
   swapped = (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
   return( swapped );
 }
+
+/*
+ *  CPU_swap_u16
+ *
+ *  This routine swaps a 16 bit quantity.
+ */
 
 #define CPU_swap_u16( value ) \
   (((value&0xff) << 8) | ((value >> 8)&0xff))

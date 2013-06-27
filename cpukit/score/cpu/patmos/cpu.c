@@ -133,14 +133,12 @@ void _CPU_Context_Initialize(
 	/* set the shadow stack pointer */
     the_context->r29 = (uint32_t)shadow_stack_base;
 	
-    /* set the stack pointer */
-    the_context->s6 = (uint32_t)stack_base;  
+    /* set the stack pointer and spill pointer */
+	the_context->s5 = (uint32_t)stack_base;
+    the_context->s6 = (uint32_t)stack_base;
 	
 	/* set the return address */
-    the_context->r30 = (uint32_t)_CPU_Context_restore;
-	
-	/* set the entry point */
-    the_context->s9 = (uint32_t)entry_point;  
+    the_context->r30 = (uint32_t)entry_point; /* Or _Thread_Initialize */		
 }
 
 void _CPU_Context_switch(
@@ -148,9 +146,12 @@ void _CPU_Context_switch(
                             Context_Control *heir
                             )
 {
-	/* save general-purpose registers (skip r0 which is always 0) 
-	 * address of the previous task is passed as function argument in register r3*/	
-	asm volatile("\tsres %0 \n\t" 						//reserve space in cache
+	/* 
+	 * save general-purpose registers (skip r0 which is always 0) 
+	 * address of the previous task is passed as function argument in register r3
+	 */	
+	asm volatile("and $r0 = $r0, 0x0 \n\t"				//reset r0 to 0
+				 "sres %0 \n\t" 						//reserve space in cache
 				 "swc   [ $r3 + %1 ]  = $r1 \n\t"		//save r1
 				 "swc   [ $r3 + %2 ]  = $r2 \n\t"		//save r2
 				 "swc   [ $r3 + %3 ]  = $r3 \n\t"		//save r3
@@ -190,8 +191,10 @@ void _CPU_Context_switch(
 				 "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET),
 				 "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 		
-	/* save special-purpose registers 
-	 * use r1 as intermediate register to save special-purpose registers (no instruction to do it directly)*/
+	/* 
+	 * save special-purpose registers 
+	 * use r1 as intermediate register to save special-purpose registers (no instruction to do it directly)
+	 */
 	 asm volatile("mfs $r1 = $s0 \n\t"					//move s0 to r1
 				  "swc   [ $r3 + %0 ] = $r1 \n\t"	 	//save s0
 				  "mfs $r1 = $s1 \n\t"					//move s1 to r1
@@ -229,9 +232,11 @@ void _CPU_Context_switch(
 				 "i" (s8_OFFSET), "i" (s9_OFFSET), "i" (s10_OFFSET),"i" (s11_OFFSET),
 				 "i" (s12_OFFSET), "i" (s13_OFFSET), "i" (s14_OFFSET), "i" (s15_OFFSET));
 				 
-	/* load general-purpose registers (skip r0 which is always 0) 
+	/* 
+	 * load general-purpose registers (skip r0 which is always 0) 
 	 * address of the current task is passed as function argument in register r4
-	 * r4 is the last register to be loaded so that the memory address of the current task is not lost */	
+	 * r4 is the last register to be loaded so that the memory address of the current task is not lost 
+	 */	
 	asm volatile("lwc   $r2  = [ $r4 + %0 ] \n\t"		//load r2
 				 "lwc   $r3  = [ $r4 + %1 ] \n\t"		//load r3				 
 				 "lwc   $r5  = [ $r4 + %2 ] \n\t"		//load r5
@@ -268,8 +273,10 @@ void _CPU_Context_switch(
 				 "i" (r23_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
 				 "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 				 
-	/* load special-purpose registers
-	 * use r1 as intermediate register to load special-purpose registers (no instruction to do it directly)*/
+	/* 
+	 * load special-purpose registers
+	 * use r1 as intermediate register to load special-purpose registers (no instruction to do it directly)
+	 */
 	asm volatile("lwc   $r1  = [ $r4 + %0 ] \n\t"		//load s0
 				 "mts $s0 = $r1 \n\t"					//move r1 to s0
 				 "lwc   $r1  = [ $r4 + %1 ] \n\t"		//load s1
@@ -321,10 +328,13 @@ void _CPU_Context_restore(
                              )
 {
 
-	/* load general-purpose registers (skip r0 which is always 0) 
+	/* 
+	 * load general-purpose registers (skip r0 which is always 0) 
 	 * address of the current task is passed as function argument in register r3
-	 * r3 is the last register to be loaded so that the memory address of the current task is not lost */	
-	asm volatile("lwc   $r2  = [ $r3 + %0 ] \n\t"		//load r2
+	 * r3 is the last register to be loaded so that the memory address of the current task is not lost 
+	 */	
+	asm volatile("and $r0 = $r0, 0x0 \n\t"				//reset r0 to 0
+				 "lwc   $r2  = [ $r3 + %0 ] \n\t"		//load r2
 				 "lwc   $r4  = [ $r3 + %1 ] \n\t"		//load r4				 
 				 "lwc   $r5  = [ $r3 + %2 ] \n\t"		//load r5
 				 "lwc   $r6  = [ $r3 + %3 ] \n\t"		//load r6
@@ -360,8 +370,17 @@ void _CPU_Context_restore(
 				 "i" (r23_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
 				 "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 				 
-	/* load special-purpose registers
-	 * use r1 as intermediate register to load special-purpose registers (no instruction to do it directly)*/
+	/*
+     * Spill everything from the stack cache	 
+	 */
+	asm volatile("sres %0 \n\t"						//reserve space in cache
+				 "sfree %0 \n\t"					//free space in cache
+				 : : "i" (MAX_STACK_CACHE_SIZE));
+	
+	/*
+     * load special-purpose registers
+	 * use r1 as intermediate register to load special-purpose registers (no instruction to do it directly)
+	 */
 	asm volatile("lwc   $r1  = [ $r3 + %0 ] \n\t"		//load s0
 				 "mts $s0 = $r1 \n\t"					//move r1 to s0
 				 "lwc   $r1  = [ $r3 + %1 ] \n\t"		//load s1
@@ -395,12 +414,11 @@ void _CPU_Context_restore(
 				 "lwc   $r1 = [ $r3 + %15 ] \n\t"		//load s15
 				 "mts $s15 = $r1 \n\t"					//move r1 to s15				 
 				 "lwc   $r1  = [ $r3 + %16 ] \n\t"		//load r1
-				 "lwc   $r3  = [ $r3 + %17] \n\t"		//load r3
-				 "sfree %18 \n\t"						//free space in cache
+				 "lwc   $r3  = [ $r3 + %17] \n\t"		//load r3				 
 				 : : "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET), "i" (s4_OFFSET),
 				 "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET), "i" (s9_OFFSET),
 				 "i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET), "i" (s14_OFFSET),
-				 "i" (s15_OFFSET), "i" (r1_OFFSET), "i" (r3_OFFSET), "i" (CONTEXT_CONTROL_SIZE));
+				 "i" (s15_OFFSET), "i" (r1_OFFSET), "i" (r3_OFFSET));
 				 
 	 /* Return from the function */
 	 asm volatile("ret $r30, $r31 \n\t"
