@@ -30,6 +30,9 @@ extern "C" {
 /* PATMOS CPU variant: PASIM */
 #define PASIM 1
 
+#define STDOUT_FILENO   0       /* standard output file descriptor */
+#define STDERR_FILENO   1       /* standard error file descriptor */
+
 /*
  *  BSP provides its own Idle thread body
  */

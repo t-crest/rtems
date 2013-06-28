@@ -18,12 +18,7 @@ DISTCLEANFILES = include/bspopts.h
 
 noinst_PROGRAMS =
 
-# wrapup is the one that actually builds and installs the library
-# from the individual .rel files built in other directories
-SUBDIRS = . tools
-
 include_HEADERS += include/pasim.h
-include_HEADERS += ../../shared/include/coverhd.h
 
 noinst_LIBRARIES = libbspstart.a
 libbspstart_a_SOURCES = ../../patmos/shared/start.S

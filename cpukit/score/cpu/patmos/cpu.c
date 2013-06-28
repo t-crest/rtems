@@ -151,7 +151,7 @@ void _CPU_Context_switch(
 	 * address of the previous task is passed as function argument in register r3
 	 */	
 	asm volatile("and $r0 = $r0, 0x0 \n\t"				//reset r0 to 0
-				 "sres %0 \n\t" 						//reserve space in cache
+				 "sres %0 \n\t" 						/* reserve space in cache (1) reserve space for entire stack or just for current context? (2) if we reserve space, do we alter the address of the next context? */
 				 "swc   [ $r3 + %1 ]  = $r1 \n\t"		//save r1
 				 "swc   [ $r3 + %2 ]  = $r2 \n\t"		//save r2
 				 "swc   [ $r3 + %3 ]  = $r3 \n\t"		//save r3
@@ -371,7 +371,7 @@ void _CPU_Context_restore(
 				 "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 				 
 	/*
-     * Spill everything from the stack cache	 
+     * Spill everything from the stack cache (why? why here and not at the end?)
 	 */
 	asm volatile("sres %0 \n\t"						//reserve space in cache
 				 "sfree %0 \n\t"					//free space in cache
@@ -426,7 +426,7 @@ void _CPU_Context_restore(
 
 }							 
 
-void abort_trap() __attribute__((used))
+void abort_trap()
 {
 }
 

@@ -828,6 +828,14 @@ static inline uint32_t CPU_swap_u32(
 #define CPU_swap_u16( value ) \
   (((value&0xff) << 8) | ((value >> 8)&0xff))
 
+/*
+ *  abort_trap
+ *
+ *  This routine implements the abort function referenced by the linker.
+ */
+ 
+void abort_trap(void) __attribute__((used));
+
 #endif /* ASM */
 
 #ifdef __cplusplus

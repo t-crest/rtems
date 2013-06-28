@@ -114,7 +114,7 @@ static void bootcard_bsp_libc_helper(
  */
 int boot_card(
   const char *cmdline
-) __attribute__((used))
+)
 {
   rtems_interrupt_level  bsp_isr_level;
   void                  *work_area_start = NULL;
