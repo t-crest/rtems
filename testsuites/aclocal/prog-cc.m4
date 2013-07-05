@@ -14,6 +14,7 @@ case "$host" in
 *-*-rtems*) ac_cv_exeext=.exe;;
 esac
 
+RTEMS_CHECK_TOOL(CC,clang)
 RTEMS_CHECK_TOOL(CC,gcc)
 test -z "$CC" && \
   AC_MSG_ERROR([no acceptable cc found in \$PATH])
@@ -28,9 +29,13 @@ RTEMS_PROG_CC
 
 AS_IF([test x"$GCC" = xyes],[
 AS_IF([test "${enable_cpukit_root+set}"],[
-  GCCSPECS="-B\$(CPUKIT_ROOT)/lib/"])
+AS_IF([ test "$CC" = "patmos-unknown-rtems-clang"],[
+GCCSPECS="-L=\$(CPUKIT_ROOT)/lib/ -I\$(CPUKIT_ROOT)/lib/include"
+], [GCCSPECS="-B\$(CPUKIT_ROOT)/lib/"])])
 AS_IF([test "${enable_project_root+set}"],[
-  GCCSPECS="$GCCSPECS -B\$(PROJECT_ROOT)/lib/"])
-GCCSPECS="${GCCSPECS} -specs bsp_specs -qrtems"])
+AS_IF([ test "$CC" = "patmos-unknown-rtems-clang"],[
+GCCSPECS="$GCCSPECS -L=\$(PROJECT_ROOT)/lib/ -I\$(PROJECT_ROOT)/lib/include"
+], [GCCSPECS="$GCCSPECS -B\$(PROJECT_ROOT)/lib/"
+GCCSPECS="${GCCSPECS} -specs bsp_specs -qrtems"])])])
 AC_SUBST(GCCSPECS)
 ])

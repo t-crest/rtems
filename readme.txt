@@ -50,7 +50,7 @@ renamed to patmos-unknown-rtems-clang:
 
 'cp patmos-clang patmos-unknown-rtems-clang'
 
-In this folder there is a script to be placed in the misc directory, that 
+In this folder there is a script ('target-change.sh') to be placed in the misc directory, that 
 copies all the patmos tools to the required nomenclature.
 
 Finally, the Patmos executables must be added to the path environment variable

@@ -7,3 +7,5 @@ config.sub
 install-sh
 Makefile.in
 missing
+.project
+patmos.sh

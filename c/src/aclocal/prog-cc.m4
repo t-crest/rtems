@@ -32,8 +32,8 @@ dnl check if the compiler supports --specs
 RTEMS_GCC_SPECS
 
 AS_IF([test x"$rtems_cv_gcc_specs" = xyes],[
-AS_IF([ test "$CC" = patmos-unknown-rtems-clang --pipe], [
-GCCSPECS="-L\$(PROJECT_ROOT)/lib/ -L\$(PROJECT_ROOT)/$RTEMS_BSP/lib/"
+AS_IF([ test "$CC" = "patmos-unknown-rtems-clang --pipe"], [
+GCCSPECS="-L=\$(PROJECT_ROOT)/lib/ -L=\$(PROJECT_ROOT)/$RTEMS_BSP/lib/"
 ], [GCCSPECS="-B\$(PROJECT_ROOT)/lib/ -B\$(PROJECT_ROOT)/$RTEMS_BSP/lib/"
 GCCSPECS="${GCCSPECS} -specs bsp_specs -qrtems"])])
 AC_SUBST(GCCSPECS)
@@ -44,8 +44,8 @@ AS_IF([test x"$rtems_cv_gcc_isystem" = xyes],[
 ])
 AC_SUBST(RTEMS_CPPFLAGS)
 
- AS_IF([test "$GCC" = yes],[
-AS_IF([ test "$CC" = patmos-unknown-rtems-clang --pipe], [
+AS_IF([test "$GCC" = yes],[
+AS_IF([ test "$CC" = "patmos-unknown-rtems-clang --pipe"], [
 RTEMS_RELLDFLAGS="-fpatmos-link-object"
 ], [RTEMS_RELLDFLAGS="-qnolinkcmds -nostdlib -Wl,-r"])])
 AC_SUBST(RTEMS_RELLDFLAGS)

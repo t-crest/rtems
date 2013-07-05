@@ -36,7 +36,8 @@ RTEMS_CPPFLAGS="-I\$(top_builddir) -I\$(PROJECT_INCLUDE)"
 AC_SUBST(RTEMS_CPPFLAGS)
 
 AS_IF([test "$GCC" = yes],[
-  RTEMS_RELLDFLAGS="-qnolinkcmds -nostdlib -r"
-])
+AS_IF([ test "$CC" = "patmos-unknown-rtems-clang --pipe"], [
+RTEMS_RELLDFLAGS="-fpatmos-link-object"
+], [RTEMS_RELLDFLAGS="-qnolinkcmds -nostdlib -Wl,-r"])])
 AC_SUBST(RTEMS_RELLDFLAGS)
 ])

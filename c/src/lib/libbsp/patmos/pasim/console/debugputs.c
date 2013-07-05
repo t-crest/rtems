@@ -28,7 +28,7 @@ void console_outbyte_polled(
   unsigned char ch
 )
 { 	
-	if (file == STDOUT_FILENO || file == STDERR_FILENO)
+	if (port == STDOUT_FILENO || port == STDERR_FILENO)
 	{
 		int s;
 		
