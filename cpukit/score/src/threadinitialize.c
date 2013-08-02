@@ -29,6 +29,7 @@
 #include <rtems/score/userext.h>
 #include <rtems/score/watchdog.h>
 #include <rtems/score/wkspace.h>
+#include <pasim.h>
 
 /*PAGE
  *
@@ -62,6 +63,10 @@ bool _Thread_Initialize(
   void                *extensions_area;
   bool                 extension_status;
   int                  i;
+
+ #ifdef _RTEMS_SCORE_PATMOS_H
+  the_thread->shadow_stack_base = PASIM_SHADOW_STACK_BASE;
+ #endif /* _RTEMS_SCORE_PATMOS_H */
 
   /*
    *  Initialize the Ada self pointer

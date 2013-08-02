@@ -8,4 +8,6 @@ install-sh
 Makefile.in
 missing
 .project
+.cproject
 patmos.sh
+compile

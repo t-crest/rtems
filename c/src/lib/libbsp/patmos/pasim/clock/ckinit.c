@@ -100,7 +100,6 @@ void Install_clock(
   Clock_driver_ticks = 0;
   Clock_isrs = rtems_configuration_get_microseconds_per_tick() / 1000;
 
-  Old_ticker = (rtems_isr_entry) set_vector( clock_isr, CLOCK_VECTOR, 1 );
   /*
    *  Hardware specific initialize goes here
    */

@@ -6,7 +6,7 @@
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author AndrÃ© Rocha
+ *  @author André Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -27,24 +27,21 @@ void console_outbyte_polled(
   int           port,
   unsigned char ch
 )
-{ 	
-	if (port == STDOUT_FILENO || port == STDERR_FILENO)
+{
+	int s;
+
+	/*
+	 * Wait for the UART to be ready for transmission
+	 */
+	do
 	{
-		int s;
-		
-		/* 
-		 * Wait for the UART to be ready for transmission 
-		 */
-		do
-		{
-			__PATMOS_UART_STATUS(s);
-		} while((s & __PATMOS_UART_TRE) == 0);
-		
-		/*
-		 * Write data to the UART
-		 */
-		__PATMOS_UART_WR_DATA(ch);
-	}
+		__PATMOS_UART_STATUS(s);
+	} while((s & __PATMOS_UART_TRE) == 0);
+
+	/*
+	 * Write data to the UART
+	 */
+	__PATMOS_UART_WR_DATA(ch);
 }
 
 /*
@@ -54,10 +51,7 @@ void console_outbyte_polled(
  */
 int console_inbyte_nonblocking( int port )
 {
-  /* stdin reads from the UART by default */
-  if (port == STDIN_FILENO)
-  {
-    int s, c;
+	int s, c;
 
 	/* wait for data to be available from the UART */
 	do
@@ -69,9 +63,6 @@ int console_inbyte_nonblocking( int port )
 	__PATMOS_UART_RD_DATA(c);
 
 	return c;
-   }
-   
-  return -1;  
 }
 
 /* putchar/getchar for printk */

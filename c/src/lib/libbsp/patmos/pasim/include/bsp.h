@@ -33,25 +33,19 @@ extern "C" {
 #define STDOUT_FILENO   0       /* standard output file descriptor */
 #define STDERR_FILENO   1       /* standard error file descriptor */
 
-/*
- *  BSP provides its own Idle thread body
- */
-void *bsp_idle_thread( uintptr_t ignored );
-#define BSP_IDLE_TASK_BODY bsp_idle_thread
-
 /* Constants */
 
 /*
  *  Information placed in the linkcmds file.
  */
 
-extern int   RAM_START;
-extern int   RAM_END;
-extern int   RAM_SIZE;
+#define RAM_START 0x001C0000
+#define RAM_SIZE 4M
+#define RAM_END RAM_START + RAM_SIZE
 
-extern int   PROM_START;
-extern int   PROM_END;
-extern int   PROM_SIZE;
+#define PROM_START 0x00000000
+#define PROM_SIZE 256M
+#define PROM_END PROM_START + PROM_SIZE
 
 extern int   CLOCK_SPEED;
 

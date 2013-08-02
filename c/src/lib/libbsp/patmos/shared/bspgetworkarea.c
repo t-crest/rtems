@@ -61,7 +61,7 @@ void bsp_get_work_area(
   *work_area_start = WorkAreaBase;
   *work_area_size  = ram_end - (uintptr_t) WorkAreaBase;
   *heap_start      = BSP_BOOTCARD_HEAP_USES_WORK_AREA;
-  *heap_size       = (uintptr_t) HeapSize;
+  *heap_size       = BSP_BOOTCARD_HEAP_SIZE_DEFAULT;
 
   /*
    *  The following may be helpful in debugging what goes wrong when

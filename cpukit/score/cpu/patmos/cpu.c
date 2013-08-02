@@ -19,6 +19,7 @@
 #include <rtems/system.h>
 #include <rtems/score/isr.h>
 #include <rtems/rtems/cache.h>
+#include <bsp.h>
 
 /*PAGE
  *
@@ -138,7 +139,7 @@ void _CPU_Context_Initialize(
     the_context->s6 = (uint32_t)stack_base;
 	
 	/* set the return address */
-    the_context->r30 = (uint32_t)entry_point; /* Or _Thread_Initialize */		
+    the_context->r30 = (uint32_t)entry_point;
 }
 
 void _CPU_Context_switch(
@@ -150,7 +151,14 @@ void _CPU_Context_switch(
 	 * save general-purpose registers (skip r0 which is always 0) 
 	 * address of the previous task is passed as function argument in register r3
 	 */	
-	asm volatile("and $r0 = $r0, 0x0 \n\t"				//reset r0 to 0				 
+	asm volatile("li $r0 = %31\n\t"
+				 "cmplt $p1 = $r3, $r0\n\t"				//check if r3 is pointing to null
+				 "($p1) lwc   $r3  = [ $r2 + 0 ] \n\t"	//load thread_executing to r3 (idle_thread)
+				 "cmplt $p1 = $r4, $r0\n\t"				//check if r4 is pointing to null
+				 "($p1) lwc   $r4  = [ $r2 + 1 ] \n\t"  //load thread_heir to r4 (idle_thread)
+				 "nop \n\t"								//enable r4 loading
+				 "cmpeq $p1 = $r3, $r4\n\t"				// if executing thread is the same as heir, load heir (idle_thread)
+				 "($p1) br load_context\n\t"			//load idle thread
 				 "swc   [ $r3 + %0 ]  = $r1 \n\t"		//save r1
 				 "swc   [ $r3 + %1 ]  = $r2 \n\t"		//save r2
 				 "swc   [ $r3 + %2 ]  = $r3 \n\t"		//save r3
@@ -182,13 +190,13 @@ void _CPU_Context_switch(
 				 "swc   [ $r3 + %28 ] = $r29 \n\t"		//save r29
 				 "swc   [ $r3 + %29 ] = $r30 \n\t"		//save r30
 				 "swc   [ $r3 + %30 ] = $r31 \n\t"		//save r31
-				 : : "i" (r1_OFFSET),"i" (r2_OFFSET), "i" (r3_OFFSET),
-				 "i" (r4_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET),
-				 "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET),
-				 "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET),
-				 "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET), "i" (r23_OFFSET),
-				 "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET),
-				 "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
+				 : : "i" (r1_OFFSET),"i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET),
+				 "i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET),
+				 "i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET),
+				 "i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET),
+				 "i" (r21_OFFSET), "i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET),
+				 "i" (r26_OFFSET), "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET),
+				 "i" (r31_OFFSET), "i" (RAM_START));
 		
 	/* 
 	 * save special-purpose registers 
@@ -245,7 +253,8 @@ void _CPU_Context_switch(
 	 * r4 is the last register to be loaded so that the memory address of the current task is not lost 
 	 * r1, r2 and r3 will be used as auxiliary registers, so they are not loaded yet
 	 */	
-	asm volatile("lwc   $r5  = [ $r4 + %0 ] \n\t"		//load r5
+	asm volatile("load_context: \n\t"
+				 "lwc   $r5  = [ $r4 + %0 ] \n\t"		//load r5
 				 "lwc   $r6  = [ $r4 + %1 ] \n\t"		//load r6
 				 "lwc   $r7  = [ $r4 + %2 ] \n\t"		//load r7
 				 "lwc   $r8  = [ $r4 + %3 ] \n\t"		//load r8
@@ -272,12 +281,12 @@ void _CPU_Context_switch(
 				 "lwc   $r29 = [ $r4 + %24 ] \n\t"		//load r29
 				 "lwc   $r30 = [ $r4 + %25 ] \n\t"		//load r30
 				 "lwc   $r31 = [ $r4 + %26 ] \n\t"		//load r31
-				 : : "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET),
-				 "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET),
-				 "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET),
-				 "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET),
-				 "i" (r23_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
-				 "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
+				 : : "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET),
+				 "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET),
+				 "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET),
+				 "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET),
+				 "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET),
+				 "i" (r30_OFFSET), "i" (r31_OFFSET));
 				 
 	/* 
 	 * load special-purpose registers
@@ -334,12 +343,9 @@ void _CPU_Context_switch(
 				 "lwc   $r1  = [ $r4 + %0 ] \n\t"		//load r1
 				 "lwc   $r2  = [ $r4 + %1 ] \n\t"		//load r2
 				 "lwc   $r3  = [ $r4 + %2 ] \n\t"		//load r3
-				 "lwc   $r4  = [ $r4 + %3 ] \n\t"		//load r4				 
+				 "lwc   $r4  = [ $r4 + %3 ] \n\t"		//load r4
+				 "and   $r0  = $r0, 0"					//reset r0
 				 : : "i" (r1_OFFSET), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET));			 
-				 
-	 /* Return from the function */
-	 asm volatile("ret $r30, $r31 \n\t"
-				 : : );
 				 				 				 				 
 }		
 
@@ -353,8 +359,7 @@ void _CPU_Context_restore(
 	 * address of the current task is passed as function argument in register r3
 	 * r3 is the last register to be loaded so that the memory address of the current task is not lost 
 	 */	
-	asm volatile("and $r0 = $r0, 0x0 \n\t"				//reset r0 to 0				 				 
-				 "lwc   $r5  = [ $r3 + %0 ] \n\t"		//load r5
+	asm volatile("lwc   $r5  = [ $r3 + %0 ] \n\t"		//load r5
 				 "lwc   $r6  = [ $r3 + %1 ] \n\t"		//load r6
 				 "lwc   $r7  = [ $r3 + %2 ] \n\t"		//load r7
 				 "lwc   $r8  = [ $r3 + %3 ] \n\t"		//load r8
@@ -381,12 +386,12 @@ void _CPU_Context_restore(
 				 "lwc   $r29 = [ $r3 + %24 ] \n\t"		//load r29
 				 "lwc   $r30 = [ $r3 + %25 ] \n\t"		//load r30
 				 "lwc   $r31 = [ $r3 + %26 ] \n\t"		//load r31
-				 : : "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET),
-				 "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET),
-				 "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET),
-				 "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET),
-				 "i" (r23_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
-				 "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));				 	
+				 : : "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET),  "i" (r8_OFFSET), "i" (r9_OFFSET),
+				 "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET),
+				 "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET),
+				 "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET),
+				 "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET),
+				 "i" (r30_OFFSET), "i" (r31_OFFSET));
 	
 	/*
      * load special-purpose registers
@@ -446,12 +451,7 @@ void _CPU_Context_restore(
 				 "lwc   $r4  = [ $r3 + %3 ] \n\t"		//load r4
 				 "lwc   $r3  = [ $r3 + %4 ] \n\t"		//load r3				 
 				 : : "i" (MAX_STACK_CACHE_SIZE), "i" (r1_OFFSET), "i" (r2_OFFSET), "i" (r4_OFFSET), "i" (r3_OFFSET));	
-	 
-	 /* Return from the function */
-	 asm volatile("ret $r30, $r31 \n\t"
-				 : : );
-
-}							 
+}
 
 void abort_trap()
 {

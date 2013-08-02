@@ -53,16 +53,11 @@ ssize_t console_write_support (int minor, const char *buf, size_t len)
 {
   int nwrite = 0;
 
-  if (minor == STDOUT_FILENO || minor == STDERR_FILENO)
-  {
-	  while (nwrite < len) {
-		console_outbyte_polled( minor, *buf++ );
-		nwrite++;
-	  }
-	  return nwrite;
+  while (nwrite < len) {
+	console_outbyte_polled( minor, *buf++ );
+	nwrite++;
   }
-  
-  return -1;
+  return nwrite;
 }
 
 
@@ -78,6 +73,8 @@ rtems_device_driver console_initialize(
 )
 {  
   rtems_status_code status;
+
+  rtems_termios_initialize();
 
   status = rtems_io_register_name(
     "/dev/console",
@@ -97,6 +94,21 @@ rtems_device_driver console_open(
   void                    * arg
 )
 {  
+  rtems_status_code sc;
+
+  static const rtems_termios_callbacks pollCallbacks = {
+	NULL,                        /* firstOpen */
+	NULL,                        /* lastClose */
+	console_inbyte_nonblocking,  /* pollRead */
+	console_write_support,       /* write */
+	NULL,                        /* setAttributes */
+	NULL,                        /* stopRemoteTx */
+	NULL,                        /* startRemoteTx */
+	0                            /* outputUsesInterrupts */
+  };
+
+  sc = rtems_termios_open (major, minor, arg, &pollCallbacks);
+
   return RTEMS_SUCCESSFUL;
 }
 

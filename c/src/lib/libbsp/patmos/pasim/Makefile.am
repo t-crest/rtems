@@ -24,7 +24,8 @@ noinst_LIBRARIES = libbspstart.a
 libbspstart_a_SOURCES = ../../patmos/shared/start.S
 project_lib_DATA = start.$(OBJEXT)
 
-dist_project_lib_DATA += ../shared/startup/linkcmds.base startup/linkcmds
+dist_project_lib_DATA += startup/linkcmds
+dist_project_lib_DATA += ../shared/libsyms.ll
 
 noinst_LIBRARIES += libbsp.a
 libbsp_a_SOURCES =
@@ -33,7 +34,7 @@ libbsp_a_SOURCES =
 libbsp_a_SOURCES += ../../shared/bspclean.c ../../shared/bsplibc.c \
     ../../shared/bsppost.c ../../shared/bootcard.c startup/bspstart.c \
     ../../shared/bsppretaskinghook.c ../../shared/bsppredriverhook.c \
-    ../../shared/bspgetworkarea.c ../../shared/sbrk.c
+    ../shared/bspgetworkarea.c ../../shared/sbrk.c
 # console
 libbsp_a_SOURCES += console/console.c
 # debugio
