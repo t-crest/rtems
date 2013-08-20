@@ -50,8 +50,13 @@ renamed to patmos-unknown-rtems-clang:
 
 'cp patmos-clang patmos-unknown-rtems-clang'
 
-In this folder there is a script ('target-change.sh') to be placed in the misc directory, that 
-copies all the patmos tools to the required nomenclature.
+In this folder there is a script named 'build-rtems.sh' that installs the
+Patmos toolchain as required by RTEMS, including renaming the Patmos binary 
+files. The file 'target-change.sh' is responsible for renaming the Patmos 
+tools, thus needs to be placed in the same directory as the 'build-rtems.sh' 
+script. Alternatively, and assuming that the Patmos toolchain is already
+installed, the 'target-change.sh' script can be used alone to copy the Patmos
+tools, e.g. like this: './target-change.sh ROOT_DIR'.
 
 Finally, the Patmos executables must be added to the path environment variable
 (e.g. 'export PATH=${PATH}:/ROOT_DIR/local/bin').
@@ -60,7 +65,7 @@ Finally, the Patmos executables must be added to the path environment variable
 Installing RTEMS 4.10.2
 =======================
 
-Use the command 'git clone https://github.com/t-crest/rtems rtems-4.10.2' to 
+Use the command 'git clone https://github.com/t-crest/rtems ~/rtems/rtems-4.10.2' to 
 download the build files of RTEMS 4.10.2. Prior to the installation process, it
 is necessary to run the bootstrap script. The bootstrap script found in the 
 top level directory of the RTEMS source tree is executed to produce the 
@@ -84,27 +89,27 @@ Configure for Patmos Pasim
 Prior to configuring RTEMS with the Pasim BSP, create and go to the
 configuration directory:
 
-'mkdir ~/rtems-4.10.2-build'
-'cd ~/rtems-4.10.2-build'
+'mkdir ~/rtems/rtems-4.10.2-build'
+'cd ~/rtems/rtems-4.10.2-build'
 
 To configure RTEMS using the Patmos Pasim BSP, use the following command:
 
-'~/rtems-4.10.2/configure --target=patmos-unknown-rtems --disable-posix 
+'~/rtems/rtems-4.10.2/configure --target=patmos-unknown-rtems --disable-posix 
 --disable-networking --disable-cxx --enable-rtemsbsp=pasim --prefix=INSTALL-DIR'
 
 It is assumed that the source files for the installation are placed at
-'~/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
-the installation directory (e.g. '~/rtems-4.10.2-install'). The script shoud be
-executed from the configuration directory (e.g. '~/rtems-4.10.2-build').
+'~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
+the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
+executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
 
 Finish installation
 -------------------
 
 After configuring RTEMS for the specific CPU and board target, use
 'make install' to install RTEMS 4.10.2. Next, set the path to the RTEMS
-specific installation. Assuming 'INSTALL-DIR=~/rtems-4.10.2-install':
+specific installation. Assuming 'INSTALL-DIR=~/rtems/rtems-4.10.2-install':
 
-'export RTEMS_MAKEFILE_PATH=~/rtems-4.10.2-install/patmos-unknown-rtems/pasim'
+'export RTEMS_MAKEFILE_PATH=~/rtems/rtems-4.10.2-install/patmos-unknown-rtems/pasim'
 
 Test installation
 -----------------
@@ -159,7 +164,7 @@ available for use.
 Installing RTEMS 4.10.2
 =======================
 
-Use the command 'git clone https://github.com/t-crest/rtems rtems-4.10.2' to 
+Use the command 'git clone https://github.com/t-crest/rtems ~/rtems/rtems-4.10.2' to 
 download the build files of RTEMS 4.10.2. Prior to the installation process, it
 is necessary to run the bootstrap script. The bootstrap script found in the 
 top level directory of the RTEMS source tree is executed to produce the 
@@ -183,27 +188,27 @@ Configure for SPARC Leon3
 Prior to configuring RTEMS with the Leon3 BSP, create and go to the
 configuration directory:
 
-'mkdir ~/rtems-4.10.2-build'
-'cd ~/rtems-4.10.2-build'
+'mkdir ~/rtems/rtems-4.10.2-build'
+'cd ~/rtems/rtems-4.10.2-build'
 
 To configure RTEMS using the SPARC Leon3 BSP, use the following command:
 
-'~/rtems-4.10.2/configure --target=sparc-rtems4.10 --disable-posix
+'~/rtems/rtems-4.10.2/configure --target=sparc-rtems4.10 --disable-posix
 --disable-networking --disable-cxx --enable-rtemsbsp=leon3 --prefix=INSTALL-DIR'
 
 It is assumed that the source files for the installation are placed at
-'~/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
-the installation directory (e.g. '~/rtems-4.10.2-install'). The script shoud be
-executed from the configuration directory (e.g. '~/rtems-4.10.2-build').
+'~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
+the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
+executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
 
 Finish installation
 -------------------
 
 After configuring RTEMS for the specific CPU and board target, use
 'make install' to install RTEMS 4.10.2. Next, set the path to the RTEMS
-specific installation. Assuming 'INSTALL-DIR=~/rtems-4.10.2-install':
+specific installation. Assuming 'INSTALL-DIR=~/rtems/rtems-4.10.2-install':
 
-'export RTEMS_MAKEFILE_PATH=~/rtems-4.10.2-install/sparc-rtems4.10/leon3'
+'export RTEMS_MAKEFILE_PATH=~/rtems/rtems-4.10.2-install/sparc-rtems4.10/leon3'
 
 Test installation
 -----------------
