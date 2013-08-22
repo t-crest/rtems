@@ -64,10 +64,6 @@ bool _Thread_Initialize(
   bool                 extension_status;
   int                  i;
 
- #ifdef _RTEMS_SCORE_PATMOS_H
-  the_thread->shadow_stack_base = PASIM_SHADOW_STACK_BASE;
- #endif /* _RTEMS_SCORE_PATMOS_H */
-
   /*
    *  Initialize the Ada self pointer
    */
@@ -117,6 +113,10 @@ bool _Thread_Initialize(
      stack,
      actual_stack_size
   );
+
+#ifdef _RTEMS_SCORE_PATMOS_H
+  the_thread->shadow_stack_base = stack + actual_stack_size/2;
+ #endif /* _RTEMS_SCORE_PATMOS_H */
 
   /*
    *  Allocate the floating point area for this thread

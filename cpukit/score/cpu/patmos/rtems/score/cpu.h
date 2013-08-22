@@ -269,6 +269,8 @@ typedef struct {
 	  uint32_t s14;
 	  uint32_t s15;
 
+	  uint32_t ssize;
+
    } Context_Control;
 
 #endif /* ASM */
@@ -278,64 +280,77 @@ typedef struct {
  *	Offset of 52 in Context_Control is due to the other variables in Thread_Control structure.
  */
 
-#define r1_OFFSET    52
-#define r2_OFFSET    53
-#define r3_OFFSET    54
-#define r4_OFFSET    55
-#define r5_OFFSET    56
-#define r6_OFFSET    57
-#define r7_OFFSET    58
+#define r1_OFFSET    0
+#define r2_OFFSET    1
+#define r3_OFFSET    2
+#define r4_OFFSET    3
+#define r5_OFFSET    4
+#define r6_OFFSET    5
+#define r7_OFFSET    6
 
-#define r8_OFFSET    59
-#define r9_OFFSET    60
-#define r10_OFFSET   61
-#define r11_OFFSET   62
-#define r12_OFFSET   63
-#define r13_OFFSET   64
-#define r14_OFFSET   65
-#define r15_OFFSET   66
+#define r8_OFFSET    7
+#define r9_OFFSET    8
+#define r10_OFFSET   9
+#define r11_OFFSET   10
+#define r12_OFFSET   11
+#define r13_OFFSET   12
+#define r14_OFFSET   13
+#define r15_OFFSET   14
 
-#define r16_OFFSET   67
-#define r17_OFFSET   68
-#define r18_OFFSET   69
-#define r19_OFFSET   70
-#define r20_OFFSET   71
-#define r21_OFFSET   72
-#define r22_OFFSET   73
-#define r23_OFFSET   74
+#define r16_OFFSET   15
+#define r17_OFFSET   16
+#define r18_OFFSET   17
+#define r19_OFFSET   18
+#define r20_OFFSET   19
+#define r21_OFFSET   20
+#define r22_OFFSET   21
+#define r23_OFFSET   22
 
-#define r24_OFFSET   75
-#define r25_OFFSET   76
-#define r26_OFFSET   77
-#define r27_OFFSET   78
-#define r28_OFFSET   79
-#define r29_OFFSET   80
-#define r30_OFFSET   81
-#define r31_OFFSET   82
+#define r24_OFFSET   23
+#define r25_OFFSET   24
+#define r26_OFFSET   25
+#define r27_OFFSET   26
+#define r28_OFFSET   27
+#define r29_OFFSET   28
+#define r30_OFFSET   29
+#define r31_OFFSET   30
 
-#define s0_OFFSET    83
-#define s1_OFFSET    84
-#define s2_OFFSET    85
-#define s3_OFFSET    86
-#define s4_OFFSET    87
-#define s5_OFFSET    88
-#define s6_OFFSET    89
-#define s7_OFFSET    90
+#define s0_OFFSET    31
+#define s1_OFFSET    32
+#define s2_OFFSET    33
+#define s3_OFFSET    34
+#define s4_OFFSET    35
+#define s5_OFFSET    36
+#define s6_OFFSET    37
+#define s7_OFFSET    38
 
-#define s8_OFFSET    91
-#define s9_OFFSET    92
-#define s10_OFFSET   93
-#define s11_OFFSET   94
-#define s12_OFFSET   95
-#define s13_OFFSET   96
-#define s14_OFFSET   97
-#define s15_OFFSET   98
+#define s8_OFFSET    39
+#define s9_OFFSET    40
+#define s10_OFFSET   41
+#define s11_OFFSET   42
+#define s12_OFFSET   43
+#define s13_OFFSET   44
+#define s14_OFFSET   45
+#define s15_OFFSET   46
+
+#define ssize_OFFSET 47
 
 /*
  *  context control size (in number of bytes)
  */
 
-#define CONTEXT_CONTROL_SIZE 188
+#define CONTEXT_CONTROL_SIZE 192
+
+/**
+*
+*  This macro returns the stack pointer associated with _context.
+*
+*  In: _context is the thread context area to access
+*
+*  Out: This method returns the stack pointer.
+*/
+#define _CPU_Context_Get_SP( _context ) \
+ (_context)->s6
 
 #define MAX_STACK_CACHE_SIZE 0x3FFFF
 
