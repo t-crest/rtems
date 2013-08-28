@@ -21,8 +21,10 @@ declare i32 @_close_r(%struct._reent* nocapture %ptr, i32 %fd) nounwind
 declare i32 @boot_card(i32 %argc, i8** nocapture %argv, i8** nocapture %envp) nounwind
 declare i32 @getdents(i32 %dd_fd, i32 %dd_buf, i32 %dd_len) nounwind
 declare i32 @_rename_r(%struct._reent* nocapture %ptr, i32 %old, i32 %new) nounwind
+declare i32 @rtems_clock_set_nanoseconds_extension(i32 ()* nocapture %routine) nounwind
+declare i32 @rtems_clock_tick() nounwind
 
-@llvm.used = appending global [17 x i8*] [
+@llvm.used = appending global [19 x i8*] [
 i8* bitcast (i32 (i8*)* @rtems_termios_write to i8*),
 i8* bitcast (i32 (i8*, i32, i32)* @rtems_io_register_name to i8*),
 i8* bitcast (void ()* @libc_init to i8*),
@@ -39,7 +41,9 @@ i8* bitcast (i32 (%struct._reent*, i32, i32, i32)* @_lseek_r to i8*),
 i8* bitcast (i32 (%struct._reent*, i32)* @_close_r to i8*),
 i8* bitcast (i32 (i32, i8**, i8**)* @boot_card to i8*),
 i8* bitcast (i32 (i32, i32, i32)* @getdents to i8*),
-i8* bitcast (i32 (%struct._reent*, i32, i32)* @_rename_r to i8*)
+i8* bitcast (i32 (%struct._reent*, i32, i32)* @_rename_r to i8*),
+i8* bitcast (i32 (i32()*)* @rtems_clock_set_nanoseconds_extension to i8*),
+i8* bitcast (i32 ()* @rtems_clock_tick to i8*)
 ], section "llvm.metadata"
 
 ; End of libsyms.ll

@@ -22,24 +22,23 @@
 extern "C" {
 #endif
 
-/*
-#define PASIM_SHADOW_STACK_BASE 0x4000
-#define PASIM_STACK_CACHE_BASE 0x3000
-*/
 #define PASIM_SHADOW_STACK_BASE 0x4000000
 #define PASIM_STACK_CACHE_BASE 0x3000000
 
 #ifndef ASM
 
-extern char _iomap_base; /* linker symbol giving the base address of the IO map address range */
-
 #define _IODEV __attribute__((address_space(1)))
 
 typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
+typedef unsigned long long u64;
 
-extern char _uart_status_base; /* linker symbol giving the address of the UART status register */
+/*
+ * UART Management
+ */
 
-extern char _uart_data_base; /* linker symbol giving the address of the UART data register */
+extern char _iomap_base; /* linker symbol giving the base address of the IO map address range */
+
+extern char _uart_base; /* linker symbol giving the address of the UART */
 
 #endif
 
@@ -52,8 +51,15 @@ extern char _uart_data_base; /* linker symbol giving the address of the UART dat
 #define __PATMOS_UART_PAE 4 /* Bit mask for the parity-error bit (PAE) */
 #define __PATMOS_UART_TFL 8 /* Bit mask for the transmit-flush bit (TFL) */
 
-#define __PATMOS_UART_STATUS_ADDR (&_uart_status_base) /* Address to access the status register of the UART coming with Patmos */
-#define __PATMOS_UART_DATA_ADDR (&_uart_data_base) /* Address to access the data register of the UART coming with Patmos */
+/*
+ * Address to access the status register of the UART coming with Patmos
+ */
+#define __PATMOS_UART_STATUS_ADDR (&_uart_base + 0x00)
+
+/*
+ * Address to access the data register of the UART coming with Patmos
+ */
+#define __PATMOS_UART_DATA_ADDR (&_uart_base + 0x04)
 
 #ifndef ASM
 
@@ -72,6 +78,69 @@ extern char _uart_data_base; /* linker symbol giving the address of the UART dat
  
 /* Macro to write the UART's data register */
 #define __PATMOS_UART_WR_DATA(data) *((_iodev_ptr_t)__PATMOS_UART_DATA_ADDR) = data;
+
+/*
+ * End of UART Management
+ */
+
+
+/*
+ * RTC Management
+ */
+
+extern char _timer_base; /* linker symbol giving the address of the RTC */
+
+#define PATMOS_FREQ_MHZ 74
+#define PATMOS_FREQ_HZ ( PATMOS_FREQ_MHZ * 1000000U)
+
+/* Address to access the cycle counter low register of the RTC */
+#define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x00)
+
+/* Address to access the cycle counter up register of the RTC */
+#define __PATMOS_RTC_CYCLE_UP_ADDR (&_timer_base + 0x04)
+
+/* Address to access the time in microseconds low register of the RTC */
+#define __PATMOS_RTC_TIME_LOW_ADDR (&_timer_base + 0x08)
+
+/* Address to access the time in microseconds up register of the RTC */
+#define __PATMOS_RTC_TIME_UP_ADDR (&_timer_base + 0x0C)
+
+/* Address to access the interrupt interval register of the RTC */
+#define __PATMOS_RTC_INTERVAL_ADDR (&_timer_base + 0x10)
+
+/* Address to access the ISR address register of the RTC */
+#define __PATMOS_RTC_ISR_ADDR (&_timer_base + 0x14)
+
+/* Macro to read the RTC's cycle counter low register of the RTC */
+#define __PATMOS_RTC_RD_CYCLE_LOW(res) res = *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_LOW_ADDR);
+
+/* Macro to read the RTC's cycle counter up register of the RTC */
+#define __PATMOS_RTC_RD_CYCLE_UP(res) res = *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_UP_ADDR);
+
+/* Macro to read the RTC's time in microseconds low register of the RTC */
+#define __PATMOS_RTC_RD_TIME_LOW(res) res = *((_iodev_ptr_t)__PATMOS_RTC_TIME_LOW_ADDR);
+
+/* Macro to read the RTC's time in microseconds up register of the RTC */
+#define __PATMOS_RTC_RD_TIME_UP(res) res = *((_iodev_ptr_t)__PATMOS_RTC_TIME_UP_ADDR);
+
+/* Macro to read the RTC's interrupt interval register */
+#define __PATMOS_RTC_RD_INTERVAL(interval) interval = *((_iodev_ptr_t)__PATMOS_RTC_INTERVAL_ADDR);
+
+/* Macro to write the RTC's cycle counter low register */
+#define __PATMOS_RTC_WR_CYCLE_LOW(val) *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_LOW_ADDR) = val;
+
+/* Macro to write the RTC's cycle counter up register */
+#define __PATMOS_RTC_WR_CYCLE_UP(val) *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_UP_ADDR) = val;
+
+/* Macro to write the RTC's interrupt interval register */
+#define __PATMOS_RTC_WR_INTERVAL(interval) *((_iodev_ptr_t)__PATMOS_RTC_INTERVAL_ADDR) = interval;
+
+/* Macro to write the RTC's ISR address register */
+#define __PATMOS_RTC_WR_ISR(address) *((_iodev_ptr_t)__PATMOS_RTC_ISR_ADDR) = address;
+
+/*
+ * End of RTC Management
+ */
 
 #endif /* !ASM */
 

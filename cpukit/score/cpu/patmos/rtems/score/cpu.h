@@ -335,11 +335,15 @@ typedef struct {
 
 #define ssize_OFFSET 47
 
+#define r0_OFFSET    48
+
 /*
  *  context control size (in number of bytes)
  */
 
 #define CONTEXT_CONTROL_SIZE 192
+
+#define CONTEXT_OFFSET 200
 
 /**
 *
@@ -541,7 +545,7 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  *  NOTE:  This must be a power of 2 either 0 or greater than CPU_ALIGNMENT.
  */
 
-#define CPU_STACK_ALIGNMENT        0
+#define CPU_STACK_ALIGNMENT        16
 
 #ifndef ASM
 
