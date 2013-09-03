@@ -29,7 +29,7 @@
 #include <rtems/score/userext.h>
 #include <rtems/score/watchdog.h>
 #include <rtems/score/wkspace.h>
-#include <pasim.h>
+#include <bsp.h>
 
 /*PAGE
  *

@@ -16,6 +16,10 @@
 
 #include <rtems/asm.h>
 #include <pasim.h>
+
+.type   hard_reset, @function
+.size   hard_reset, .Ltmp0-hard_reset
+.fstart hard_reset, .Ltmp0-hard_reset, 4
  
   /*
    *  This is the hard reset code.
@@ -94,6 +98,7 @@ SYM(hard_reset):
   mov	  $r3 = $r1 /* get exit code (in first delay slot) */
   nop
   nop
+.Ltmp0:
   
   /*
    * Halt the CPU. If boot_card returns, also halt the CPU.
