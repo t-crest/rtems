@@ -108,7 +108,7 @@ rtems_task Init(
   rtems_test_assert( !remaining );
 
   /* print new times to make sure it has changed and we can get the realtime */
-  sc = clock_gettime( CLOCK_PROCESS_CPUTIME, &tv );
+  sc = clock_gettime( CLOCK_PROCESS_CPUTIME_ID, &tv );
   rtems_test_assert( !sc );
   printf("Time since boot: (%" PRItime_t ", %ld)\n", tv.tv_sec,tv.tv_nsec );
 
@@ -222,7 +222,7 @@ rtems_task Init(
   #if defined(_POSIX_THREAD_CPUTIME)
     {
       struct timespec tp;
-      sc = clock_gettime( CLOCK_THREAD_CPUTIME, &tp );
+      sc = clock_gettime( CLOCK_THREAD_CPUTIME_ID, &tp );
       check_enosys( sc );
     }
   #endif
@@ -231,7 +231,7 @@ rtems_task Init(
   #if defined(_POSIX_CPUTIME)
     {
       struct timespec tp;
-      sc = clock_settime( CLOCK_PROCESS_CPUTIME, &tp );
+      sc = clock_settime( CLOCK_PROCESS_CPUTIME_ID, &tp );
       check_enosys( sc );
     }
   #endif
@@ -240,7 +240,7 @@ rtems_task Init(
   #if defined(_POSIX_THREAD_CPUTIME)
     {
       struct timespec tp;
-      sc = clock_settime( CLOCK_THREAD_CPUTIME, &tp );
+      sc = clock_settime( CLOCK_THREAD_CPUTIME_ID, &tp );
       check_enosys( sc );
     }
   #endif
