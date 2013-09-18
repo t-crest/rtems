@@ -5,12 +5,20 @@ Installing RTEMS 4.10.2
 In this installation guide we present the steps to install RTEMS 4.10.2 for the
 Patmos Pasim BSP. Additionally, for testing/comparison purposes, we present the
 same install process for the SPARC Leon3 BSP.
-Currently, only the Leon3 BSP is completely functional.
+Currently, both the Leon3 BSP and the Pasim BSP are completely functional.
 
 Documentation on RTEMS can be found on:
 http://www.rtems.org/onlinedocs/releases/
 Documentation on version 4.10.2 of RTEMS can be found on:
 http://www.rtems.org/onlinedocs/releases/rtemsdocs-4.10.2/share/rtems/html/
+
+As an alternative to this manual installation process, the 'build.sh' script in
+the T-CREST misc repository automatically goes through all the steps required
+to instal RTEMS 4.10.2 for Patmos. To do so, run the script as follows:
+
+'./build.sh rtems'
+
+
 
 
 ==================================
@@ -44,11 +52,11 @@ Assuming that we are using the Build Script to build the Tool Chain:
 	
 The RTEMS build system requires compiler, assembler and linker tools to be 
 compliant with the target of the installation (CPU-Vendor-OS). Therefore, 
-the Patmos executables created in this installation must be renamed or copied 
-under different names. E.g. the patmos-clang compiler tool will have to be 
-renamed to patmos-unknown-rtems-clang:
+the Patmos executables created in this installation must be renamed, copied or 
+symbolically linked under different names. E.g. the patmos-clang compiler tool
+will have to be renamed to patmos-unknown-rtems-clang:
 
-'cp patmos-clang patmos-unknown-rtems-clang'
+'ln -s patmos-clang patmos-unknown-rtems-clang'
 
 In this folder there is a script named 'build-rtems.sh' that installs the
 Patmos toolchain as required by RTEMS, including renaming the Patmos binary 
@@ -79,6 +87,13 @@ of the following manners:
 
 (c) bootstrap -p to regenerate preinstall.am files.
 
+After cloning the RTEMS repository, the bootstrap script should be run in the
+following manner:
+
+ (a) ./bootstrap -p
+ 
+ (b) ./bootstrap
+
 Once the RTEMS 4.10.2 is bootstraped, the configure script should run. The
 configure process specializes the Makefile.in files at the time that RTEMS is 
 configured for a specific development host and target.
@@ -94,13 +109,22 @@ configuration directory:
 
 To configure RTEMS using the Patmos Pasim BSP, use the following command:
 
-'~/rtems/rtems-4.10.2/configure --target=patmos-unknown-rtems --disable-posix 
+'~/rtems/rtems-4.10.2/configure --target=patmos-unknown-rtems --enable-posix 
 --disable-networking --disable-cxx --enable-rtemsbsp=pasim --prefix=INSTALL-DIR'
 
 It is assumed that the source files for the installation are placed at
 '~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
 the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
 executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
+
+The options passed to the configure script will determine which tools RTEMS
+will include in the installation. In this case, the '--enable-posix' option
+specifies that the POSIX API (profile 52) will be available in this
+installation. Moreover, networking was disabled because the current version of
+Patmos does not have an Ethernet interface. As for the '--disable-cxx' option,
+since typical avionics applications do not rely on C++, there is no need to
+enable it in RTEMS. An additional '--enable-tests' option can be added to this
+script to instruct RTEMS to compile its testsuite.
 
 Finish installation
 -------------------
@@ -124,6 +148,29 @@ checkout the RTEMS Classic API examples at Github, using
 (b) use 'make' to create the executable
 
 (c) run the executable, using 'pasim o-optimize/triple_period.exe'
+
+In case RTEMS was configured with tests enabled, the testsuite was compiled
+in the configuration directory. Then:
+
+(a) go to the testsuite folder in the configuration drectory, using
+	'cd ~/rtems/rtems-4.10.2-build/patmos-unknown-rtems/c/pasim/testsuites'
+ 
+(b) go through all the test folders and execute each test individually e.g.
+	'cd sptests/sp01'
+	'pasim o-optimize/sp01.exe'
+	 
+(c) compare the output of the test with the expected successful output
+	contained in the .scn files located in the RTEMS source tree (e.g.
+	'~/rtems/rtems-4.10.2/testsuites/sptests/sp01/sp01.scn') to check if the
+	test passed
+	 
+Alternatively, the 'build.sh' script in the T-CREST misc repository includes
+the '-t' option that runs the complete RTEMS testsuite for Patmos and checks
+its results.
+
+
+
+
 	
 
 	
@@ -178,6 +225,13 @@ of the following manners:
 
 (c) bootstrap -p to regenerate preinstall.am files.
 
+After cloning the RTEMS repository, the bootstrap script should be run in the
+following manner:
+
+ (a) ./bootstrap -p
+ 
+ (b) ./bootstrap
+
 Once the RTEMS 4.10.2 is bootstraped, the configure script should run. The
 configure process specializes the Makefile.in files at the time that RTEMS is 
 configured for a specific development host and target.
@@ -193,13 +247,21 @@ configuration directory:
 
 To configure RTEMS using the SPARC Leon3 BSP, use the following command:
 
-'~/rtems/rtems-4.10.2/configure --target=sparc-rtems4.10 --disable-posix
+'~/rtems/rtems-4.10.2/configure --target=sparc-rtems4.10 --enable-posix
 --disable-networking --disable-cxx --enable-rtemsbsp=leon3 --prefix=INSTALL-DIR'
 
 It is assumed that the source files for the installation are placed at
 '~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
 the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
 executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
+
+The options passed to the configure script will determine which tools RTEMS
+will include in the installation. In this case, the '--enable-posix' option
+specifies that the POSIX API (profile 52) will be available in this
+installation. As for the '--disable-cxx' option, since typical avionics
+applications do not rely on C++, there is no need to enable it in RTEMS. An 
+additional '--enable-tests' option can be added to this script to instruct
+RTEMS to compile its testsuite.
 
 Finish installation
 -------------------
@@ -223,3 +285,18 @@ checkout the RTEMS Classic API examples at Github, using
 (b) use 'make' to create the executable
 
 (c) run the executable, using 'tsim-leon3 o-optimize/triple_period.exe'
+
+In case RTEMS was configured with tests enabled, the testsuite was compiled
+in the configuration directory. Then:
+
+(a) go to the testsuite folder in the configuration drectory, using
+	'cd ~/rtems/rtems-4.10.2-build/sparc-rtems4.10/c/leon3/testsuites'
+ 
+(b) go through all the test folders and execute each test individually e.g.
+	'cd sptests/sp01'
+	'tsim-leon3 o-optimize/sp01.exe'
+	 
+(c) compare the output of the test with the expected successful output
+	contained in the .scn files located in the RTEMS source tree (e.g.
+	'~/rtems/rtems-4.10.2/testsuites/sptests/sp01/sp01.scn') to check if the
+	test passed

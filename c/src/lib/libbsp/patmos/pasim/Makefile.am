@@ -43,6 +43,8 @@ libbsp_a_SOURCES += console/console.c
 libbsp_a_SOURCES += console/debugputs.c
 # clock
 libbsp_a_SOURCES += clock/ckinit.c ../../../shared/clockdrv_shell.h
+# timer
+libbsp_a_SOURCES += timer/timer.c
 
 include $(srcdir)/preinstall.am
 include $(top_srcdir)/../../../../automake/local.am

@@ -44,7 +44,7 @@ sed -i 's/TARGET="'$old_target'"/TARGET="'$new_target'"/g' $misc/build.sh
 sed -i 's/GOLD_ARGS=\"$GOLD_ARGS --target='$old_target'\"/GOLD_ARGS=\"$GOLD_ARGS --target='$new_target'\"/g' $misc/build.sh
 sed -i 's/#GOLD_CXXFLAGS/GOLD_CXXFLAGS/g' $misc/build.sh
 
-$misc/./build.sh
+$misc/./build.sh $1
 if [[ $new_target=="patmos-unknown-rtems" ]]; then
 	./target-change.sh $(pwd)/$build
 fi
