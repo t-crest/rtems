@@ -43,13 +43,6 @@ Assuming that we are using the Build Script to build the Tool Chain:
 		  TARGET="patmos-unknown-rtems"
 	(c.3) uncomment GOLD_CXXFLAGS="-Wno-narrowing"
 	
-(d) edit build.sh to:
-	(d.1) change TARGET="patmos-unknown-unknown-elf" to 
-		  TARGET="patmos-unknown-rtems"
-	(d.2) change GOLD_ARGS="$GOLD_ARGS --target=patmos-unknown-unknown-elf" to
-		  GOLD_ARGS="$GOLD_ARGS --target=patmos-unknown-rtems"
-	(d.3) uncomment GOLD_CXXFLAGS="-Wno-narrowing"
-	
 The RTEMS build system requires compiler, assembler and linker tools to be 
 compliant with the target of the installation (CPU-Vendor-OS). Therefore, 
 the Patmos executables created in this installation must be renamed, copied or 
