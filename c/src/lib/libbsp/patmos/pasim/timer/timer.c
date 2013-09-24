@@ -18,19 +18,44 @@
 
 #include <bsp.h>
 
+bool benchmark_timer_find_average_overhead;
+
+#define AVG_OVERHEAD      0  /* It typically takes 0 microseconds */
+/*     to start/stop the timer. */
+#define LEAST_VALID       1  /* Don't trust a value lower than this */
+
 void benchmark_timer_initialize(void)
 {
-
+	/*
+	 *  Timer runs long and accurate enough not to require an interrupt.
+	 */
+	__PATMOS_RTC_WR_INTERVAL(PATMOS_INF);
 }
 
 int benchmark_timer_read(void)
 {
-  return 0;
+	uint32_t total;
+
+	/*
+	 *  Read the timer and see how many clicks it has been since we started.
+	 */
+
+	__PATMOS_RTC_RD_INTERVAL(total);
+
+	total = (PATMOS_INF - total)/PATMOS_FREQ_MHZ;
+
+	if ( benchmark_timer_find_average_overhead == true )
+		return total;          /* in one microsecond units */
+
+	if ( total < LEAST_VALID )
+		return 0;            /* below timer resolution */
+
+	return total - AVG_OVERHEAD;
 }
 
 void benchmark_timer_disable_subtracting_average_overhead(
-  bool find_flag
+		bool find_flag
 )
 {
-
+	benchmark_timer_find_average_overhead = find_flag;
 }

@@ -161,9 +161,6 @@ Alternatively, the 'build.sh' script in the T-CREST misc repository includes
 the '-t' option that runs the complete RTEMS testsuite for Patmos and checks
 its results.
 
-
-
-
 	
 
 	
