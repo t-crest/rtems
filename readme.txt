@@ -159,7 +159,9 @@ in the configuration directory. Then:
 	 
 Alternatively, the 'build.sh' script in the T-CREST misc repository includes
 the '-t' option that runs the complete RTEMS testsuite for Patmos and checks
-its results.
+its results. The 'run-testsuite.sh' script present in this repository also
+performs these functions. The script should be executed from this source dir.
+Run './run-testsuite.sh -h' to check the script options.
 
 	
 
