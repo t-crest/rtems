@@ -8,11 +8,12 @@
 #
 #################################################
 
-cdlevel=1
+cdlevel=0
 partest=
 simargs=("--interrupt=1" "--freq=5")
 sourcedir=$(pwd)/testsuites
 builddir=$(pwd)/../rtems-4.10.2-build-patmos/patmos-unknown-rtems/c/pasim/testsuites
+testdir=
 
 # defaults are set after options are read
 resultsdir=
@@ -29,7 +30,7 @@ resumetests=()
 
 function usage() {
  cat <<EOT
- Usage: $0 [-h] [-c] [-r] [-p <pasim args>] [-t <tests>] [-l <log file>]
+ Usage: $0 [-h] [-c] [-r] [-p <pasim args>] [-t <tests>] [-s <source dir>] [-b <build dir>] [-o <report dir>] [-l <log file>]
  
  -h				Display help contents
  -c				Clean files created during testsuite runs
@@ -61,49 +62,62 @@ function writeFile() {
 	echo $2 >> $1
 }
 
-function testsOnResume() {	
-	while read line
-	do
-		resumetests=( "${resumetests[@]}" $(echo "${line%%:*}"))		
-	done < $1
+function checkDefaults() {
+	if [[ "$resultsdir" == "" ]]; then
+		resultsdir=$sourcedir/results
+	fi
+	if [[ "$log" == "" ]]; then
+		log=$resultsdir/testsuite-log.txt
+	else
+		log=$resultsdir/$(basename $log)
+	fi
 }
 
-function runTest() {	
+function testsOnResume() {
+	if [[ -f $1 ]]; then
+		while read line
+		do
+			resumetests=( "${resumetests[@]}" $(echo "${line%%:*}"))		
+		done < $1
+	fi
+}
+
+function runTest() {		
 	local bin=$(find $builddir -iname "$1.exe")	
 	if [[ $bin ]]; then
 		pasim "${simargs[@]}" $bin -O $resultsdir/$1-tmp.txt > $resultsdir/$1-stats.txt 2>&1
 		local retcode=$?
 		if [[ $retcode != 0 ]]; then
-			writeFile $log "$1: Test executed: Failed with return code $retcode!"
-			echo "$(tput setaf 1)$1: Test executed: Failed with return code $retcode!$(tput setaf 7)"
+			writeFile $log "$3: Test executed: Failed with return code $retcode!"
+			echo "$(tput setaf 1)$3: Test executed: Failed with return code $retcode!$(tput setaf 7)"
 			let "failtests += 1 "
 		elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
 			# TODO for some reasons, the pasim output has two empty lines at the beginning and windows newlines,
 			#      should be fixed (?), for now we just ignore this
 			diff --ignore-blank-lines <(sed "s/\r//" $resultsdir/$1-tmp.txt) $1.scn > $resultsdir/$1-log.txt
 			if [[ -s $resultsdir/$1-log.txt ]]; then
-				writeFile $log "$1: Test executed: Failed!"
+				writeFile $log "$3: Test executed: Failed!"
 				cp -f $resultsdir/$1-tmp.txt $resultsdir/$1-out.txt
-				echo "$(tput setaf 1)$1: Test executed: Failed!$(tput setaf 7)"
+				echo "$(tput setaf 1)$3: Test executed: Failed!$(tput setaf 7)"
 				let "failtests += 1 "
 			else
-				writeFile $log "$1: Test executed: Passed!"
-				echo "$(tput setaf 2)$1: Test executed: Passed!$(tput setaf 7)"
+				writeFile $log "$3: Test executed: Passed!"
+				echo "$(tput setaf 2)$3: Test executed: Passed!$(tput setaf 7)"
 				rm -rf $resultsdir/$1-log.txt
 				let "successtests += 1 "
-			fi			
+			fi
 		else
-			writeFile $resultsdir/$2-log.txt "##### $1 #####"
+			writeFile $resultsdir/$2-log.txt "##### $3 #####"
 			cat $resultsdir/$1-tmp.txt >> $resultsdir/$2-log.txt
-			writeFile $resultsdir/$2-log.txt "##### $1 #####"
-			writeFile $log "$1: Test executed: check $2-log.txt"
-			echo "$1: Test executed: check $2-log.txt"	
+			writeFile $resultsdir/$2-log.txt "##### $3 #####"
+			writeFile $log "$3: Test executed: check $2-log.txt"
+			echo "$3: Test executed: check $2-log.txt"	
 			let "noresulttests += 1 "
 		fi
 		rm -rf $resultsdir/$1-tmp.txt
 	elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
-			writeFile $log "$1: Test not executed: $1.exe file not found"
-			echo "$(tput setaf 3)$1: Test not executed: $1.exe file not found$(tput setaf 7)"
+			writeFile $log "$3: Test not executed: $1.exe file not found"
+			echo "$(tput setaf 3)$3: Test not executed: $1.exe file not found$(tput setaf 7)"
 			let "noexectests += 1 "
 	fi
 }
@@ -113,20 +127,26 @@ function recurseDirs
 	for f in "$@"
 	do
 		local testflag=1
-		if [[ $cdlevel == 1 ]]; then
-			partest="$f"
+		if [[ $cdlevel == 0 ]]; then	
+			testdir="$f"
 			containsElement "$f" "${runtests[@]}"
 			if [[ $? == 0 && ${#runtests[@]} -gt 0 ]]; then
 				testflag=0
-			fi
+			fi		
 		fi
-		if [[ -d "$f" && $testflag == 1 ]]; then			
+		if [[ -d "$f" && $testflag == 1 ]]; then
 			cd "$f"
 			let "cdlevel += 1"
-			containsElement "$f" "${resumetests[@]}"
-			if [[ $? == 0 || ${#resumetests[@]} == 0 ]]; then
-				runTest "$f" "$partest"
-			fi
+			if [[ $cdlevel -gt 1 ]]; then
+				testdir="$testdir/$f"
+			fi			
+			containsElement "$testdir" "${resumetests[@]}"
+			if [[ $? == 0 || ${#resumetests[@]} == 0 ]]; then				
+				runTest "$f" $(echo "${testdir%%/*}") "$testdir"				
+			fi			
+			if [[ $cdlevel != 1 ]]; then				
+				testdir=$(echo "${testdir%%/*}")
+			fi			
 			recurseDirs $(ls -1)
 			cd ..
 			let "cdlevel -= 1"
@@ -137,7 +157,7 @@ function recurseDirs
 while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:" opt; do	
 	case "$opt" in	
 	h|H) 
-		usage
+		usage		
 		exit 1
 	;;
 	p|P) 		
@@ -160,11 +180,13 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:" opt; do
 		log="$OPTARG"
 	;;
 	c|C)
+		checkDefaults
 		cleanFiles
 		exit 1
 	;;
 	r|R)
 		resumeflag=1
+		checkDefaults
 		testsOnResume $log		
 	;;
 	s|S)
@@ -189,15 +211,7 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:" opt; do
 	esac	
 done
 
-if [[ "$resultsdir" == "" ]]; then
-    resultsdir=$sourcedir/results
-fi
-if [[ "$log" == "" ]]; then
-    log=$resultsdir/testsuite-log.txt
-else
-    log=$resultsdir/$log
-fi
-
+checkDefaults
 if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."
 	exit 1
@@ -205,7 +219,9 @@ fi
 
 cd $sourcedir
 if [[ $resumeflag == 0 ]]; then
-	cleanFiles
+	rm -rf $log	
+fi
+if [[ ! -d $resultsdir ]]; then
 	mkdir $resultsdir
 fi
 recurseDirs $(ls -1)
