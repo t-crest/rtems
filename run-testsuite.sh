@@ -10,7 +10,7 @@
 
 cdlevel=1
 partest=
-simargs=("--interrupt=1")
+simargs=("--interrupt=1" "--freq=5")
 sourcedir=$(pwd)/testsuites
 builddir=$(pwd)/../rtems-4.10.2-build-patmos/patmos-unknown-rtems/c/pasim/testsuites
 
@@ -78,7 +78,9 @@ function runTest() {
 			echo "$(tput setaf 1)$1: Test executed: Failed with return code $retcode!$(tput setaf 7)"
 			let "failtests += 1 "
 		elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
-			diff --ignore-blank-lines $resultsdir/$1-tmp.txt $1.scn > $resultsdir/$1-log.txt
+			# TODO for some reasons, the pasim output has two empty lines at the beginning and windows newlines,
+			#      should be fixed (?), for now we just ignore this
+			diff --ignore-blank-lines <(sed "s/\r//" $resultsdir/$1-tmp.txt) $1.scn > $resultsdir/$1-log.txt
 			if [[ -s $resultsdir/$1-log.txt ]]; then
 				writeFile $log "$1: Test executed: Failed!"
 				echo "$(tput setaf 1)$1: Test executed: Failed!$(tput setaf 7)"
