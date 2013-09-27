@@ -83,6 +83,7 @@ function runTest() {
 			diff --ignore-blank-lines <(sed "s/\r//" $resultsdir/$1-tmp.txt) $1.scn > $resultsdir/$1-log.txt
 			if [[ -s $resultsdir/$1-log.txt ]]; then
 				writeFile $log "$1: Test executed: Failed!"
+				cp -f $resultsdir/$1-tmp.txt $resultsdir/$1-out.txt
 				echo "$(tput setaf 1)$1: Test executed: Failed!$(tput setaf 7)"
 				let "failtests += 1 "
 			else
