@@ -29,7 +29,7 @@ void benchmark_timer_initialize(void)
 	/*
 	 *  Timer runs long and accurate enough not to require an interrupt.
 	 */
-	__PATMOS_RTC_WR_INTERVAL(PATMOS_INF);
+	__PATMOS_RTC_WR_INTERVAL(__PATMOS_INF);
 }
 
 int benchmark_timer_read(void)
@@ -42,7 +42,7 @@ int benchmark_timer_read(void)
 
 	__PATMOS_RTC_RD_INTERVAL(total);
 
-	total = (PATMOS_INF - total)/PATMOS_FREQ_MHZ;
+	total = (__PATMOS_INF - total)/__PATMOS_FREQ_MHZ;
 
 	if ( benchmark_timer_find_average_overhead == true )
 		return total;          /* in one microsecond units */

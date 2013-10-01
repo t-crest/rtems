@@ -94,9 +94,11 @@ extern void set_cpu_cycles (u64 time_warp);
 extern u64 get_cpu_cycles(void);
 extern u64 get_cpu_time(void);
 
-#define PATMOS_FREQ_MHZ 74
-#define PATMOS_FREQ_HZ ( PATMOS_FREQ_MHZ * 1000000U)
-#define PATMOS_INF 0xFFFFFFFF
+extern char __cycles_per_sec; /* linker symbol giving the CPU frequency */
+
+#define __PATMOS_CPU_FREQ (int)(&__cycles_per_sec) /* CPU frequency in Hz */
+#define __PATMOS_FREQ_MHZ __PATMOS_CPU_FREQ/1000000U
+#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
 
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x00)

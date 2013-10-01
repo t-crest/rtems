@@ -93,7 +93,7 @@ uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
 	uint32_t usecs;
 
-	usecs = get_cpu_cycles()/PATMOS_FREQ_MHZ - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick() - usecs_offset;
+	usecs = get_cpu_cycles()/__PATMOS_FREQ_MHZ - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick() - usecs_offset;
 
 	return usecs * 1000;
 }
@@ -214,7 +214,7 @@ rtems_isr Clock_isr(
 	 */
 	Clock_driver_ticks += 1;
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * PATMOS_FREQ_MHZ);
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * __PATMOS_FREQ_MHZ);
 
 	rtems_clock_tick();
 
@@ -330,12 +330,12 @@ void Install_clock(
 	);
 #endif
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * PATMOS_FREQ_MHZ);
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * __PATMOS_FREQ_MHZ);
 
 	/*
 	 * reset the cpu_cycles count to determine clock_nanoseconds_since_last_tick
 	 */
-	//usecs_offset = get_cpu_cycles()/PATMOS_FREQ_MHZ;
+	//usecs_offset = get_cpu_cycles()/__PATMOS_FREQ_MHZ;
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

@@ -143,11 +143,11 @@ function recurseDirs
 			containsElement "$testdir" "${resumetests[@]}"
 			if [[ $? == 0 || ${#resumetests[@]} == 0 ]]; then				
 				runTest "$f" $(echo "${testdir%%/*}") "$testdir"				
-			fi			
+			fi								
+			recurseDirs $(ls -1)			
 			if [[ $cdlevel != 1 ]]; then				
-				testdir=$(echo "${testdir%%/*}")
+				testdir=$(echo "${testdir%/*}")
 			fi			
-			recurseDirs $(ls -1)
 			cd ..
 			let "cdlevel -= 1"
 		fi
