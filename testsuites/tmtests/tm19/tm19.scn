@@ -1,0 +1,9 @@
+
+
+*** TIME TEST 19 ***
+rtems_signal_catch 1
+rtems_signal_send: returns to caller 7
+rtems_signal_send: signal to self 14
+exit ASR overhead: returns to calling task 11
+exit ASR overhead: returns to preempting task 30
+*** END OF TEST 19 ***

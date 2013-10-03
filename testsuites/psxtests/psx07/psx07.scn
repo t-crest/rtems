@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST 7 ***
 Init's ID is 0x0b010001
 Init - pthread_attr_init - EINVAL (NULL attr)
@@ -83,9 +85,9 @@ Init - current detach state attribute = 1
 
 Init - pthread_attr_getschedparam - SUCCESSFUL
 Init - sched priority      = 2
-Init - ss_low_priority     = 0
-Init - ss_replenish_period = (0, 0)
-Init - ss_initial_budget = (0, 0)
+Init - sched_ss_low_priority     = 0
+Init - sched_ss_replenish_period = (0, 0)
+Init - sched_sched_ss_initial_budget = (0, 0)
 Init - pthread_attr_setschedparam - EINVAL (NULL attr)
 Init - pthread_attr_setschedparam - EINVAL (not initialized attr)
 Init - pthread_attr_setschedparam - EINVAL (NULL schedparam)
@@ -100,9 +102,9 @@ Init - pthread_getschedparam - ESRCH (bad thread)
 Init - pthread_getschedparam - SUCCESSFUL
 Init - policy = 1
 Init - sched priority      = 2
-Init - ss_low_priority     = 0
-Init - ss_replenish_period = (0, 0)
-Init - ss_initial_budget = (0, 0)
+Init - sched_ss_low_priority     = 0
+Init - sched_ss_replenish_period = (0, 0)
+Init - sched_sched_ss_initial_budget = (0, 0)
 
 Init - pthread_setschedparam - EINVAL (NULL schedparam)
 Init - pthread_setschedparam - EINVAL (invalid priority)

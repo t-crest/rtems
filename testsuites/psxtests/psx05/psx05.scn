@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST 5 ***
 Init's ID is 0x0b010001
 Init: pthread_mutexattr_init - EINVAL (NULL attr)

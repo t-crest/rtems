@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST -- CONDITION VARIABLE 01 ***
 Init - pthread_mutex_init - Mutex1 - OK
 Init - pthread_mutex_init - Mutex2 - OK

@@ -1,0 +1,10 @@
+
+
+*** TIME TEST 15 ***
+rtems_event_receive: obtain current events 0
+rtems_event_receive: not available -- NO_WAIT 5
+rtems_event_receive: not available -- caller blocks 37
+rtems_event_send: no task readied 7
+rtems_event_receive: available 4
+rtems_event_send: task readied -- returns to caller 16
+*** END OF TEST 15 ***

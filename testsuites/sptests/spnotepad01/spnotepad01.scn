@@ -1,3 +1,5 @@
+
+
 *** TEST NOTEPADS DISABLED ***
 Init - rtems_task_get_note - RTEMS_NOT_CONFIGURED
 Init - rtems_task_set_note - RTEMS_NOT_CONFIGURED

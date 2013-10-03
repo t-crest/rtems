@@ -1,3 +1,5 @@
+
+
 *** POSIX SPINLOCK TEST 02 ***
 pthread_spin_init( &Spinlock, PTHREAD_PROCESS_PRIVATE ) -- OK
 pthread_spin_lock( &Spinlock ) -- OK

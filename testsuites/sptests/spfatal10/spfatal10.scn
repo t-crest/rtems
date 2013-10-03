@@ -1,3 +1,7 @@
+
+
+
 *** TEST FATAL 10 ***
-assertion "forced" failed: file "../../../../../../../rtems/c/src/../../testsuites/sptests/spfatal10/testcase.h", line 20, function: Init
+assertion "forced" failed: file "/home/andre/rtems/rtems-4.10.2-patmos/c/src/../../testsuites/sptests/spfatal10/testcase.h", line 23, function: Init
 Fatal error (asserting with non-NULL strings...) hit
+Simulation time overflow (2^32) - halting

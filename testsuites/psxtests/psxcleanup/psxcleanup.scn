@@ -1,6 +1,11 @@
+
+
 *** POSIX CLEANUP TEST ***
 Lock for read
 cleanup push for read
 cleanup pop for read
 Lock for write
+Call pthread_cleanup_push with NULL handler
+Call pthread_cleanup_pop with no push
 *** END OF POSIX CLEANUP TEST ***
+

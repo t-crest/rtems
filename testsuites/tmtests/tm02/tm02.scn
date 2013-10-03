@@ -1,0 +1,5 @@
+
+
+*** TIME TEST 2 ***
+rtems_semaphore_obtain: not available -- caller blocks 40
+*** END OF TEST 2 ***

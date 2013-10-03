@@ -1,3 +1,5 @@
+
+
 *** TEST 66 ***
 Creating semaphore
 Calling rtems_semaphore_obtain

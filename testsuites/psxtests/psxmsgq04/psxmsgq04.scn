@@ -1,3 +1,5 @@
+
+
 *** POSIX MESSAGE QUEUE TEST 4 ***
 Init - Open message queue instance 1
 Init - Open message queue instance 2 - FAIL - ENFILE 

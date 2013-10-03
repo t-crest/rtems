@@ -1,3 +1,5 @@
+
+
 *** HEAP WALK TEST ***
 start with a system state != SYSTEM_STATE_UP
 testing the _Heap_Walk_check_control() function
@@ -30,8 +32,8 @@ test the _Heap_Walk_check_free_block() function
 test the output-function for the _Heap_Walk()
 therefore use the (already tested) case with a page size of 0
 PASS[0]: page size 0, min block size 16
-	area begin 0x0202C4BC, area end 0x0202D4BC
-	first block 0x0202C4C0, last block 0x0202D4B0
-	first free 0x0202C4C0, last free 0x0202C4C0
+	area begin 0x40022F8C, area end 0x40023F8C
+	first block 0x40022F90, last block 0x40023F80
+	first free 0x40022F90, last free 0x40022F90
 FAIL[0]: page size is zero
 *** END OF HEAP WALK TEST ***

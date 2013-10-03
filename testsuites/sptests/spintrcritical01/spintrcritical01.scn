@@ -1,3 +1,5 @@
+
+
 *** TEST INTERRUPT CRITICAL SECTION 01 ***
 Init - Trying to generate semaphore release from ISR while blocking
 Init - Variation is: FIFO/Without Timeout

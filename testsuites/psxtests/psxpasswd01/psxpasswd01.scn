@@ -15,7 +15,6 @@ Init - getpwnam("rtems") -- OK
   real name: 
   home directory: /
   shell program: /bin/sh
-
 Init - getgrnam("root") -- OK
   group name: root
   group  password: x
@@ -25,4 +24,3 @@ Init - getgrnam("rtems") -- OK
   group  password: x
   group  ID: 1
 *** END OF PASSWORD/GROUP TEST ***
-

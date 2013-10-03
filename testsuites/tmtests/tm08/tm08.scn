@@ -1,0 +1,14 @@
+
+
+*** TIME TEST 8 ***
+rtems_task_set_priority: obtain current priority 4
+rtems_task_set_priority: returns to caller 14
+rtems_task_mode: obtain current mode 1
+rtems_task_mode: no reschedule 3
+rtems_task_mode: reschedule -- returns to caller 4
+rtems_task_mode: reschedule -- preempts caller 29
+rtems_task_set_note 5
+rtems_task_get_note 5
+rtems_clock_set 13
+rtems_clock_get_tod 66
+*** END OF TEST 8 ***

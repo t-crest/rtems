@@ -1,3 +1,5 @@
+
+
 *** TEST 2 ***
 INIT - rtems_task_wake_after - yielding processor
 PREEMPT - rtems_task_delete - deleting self
@@ -6,6 +8,7 @@ TA1 - rtems_task_wake_after - sleep 1 second
 TA2 - rtems_task_wake_after - sleep 1 minute
 TA3 - rtems_task_wake_after - sleep 5 seconds
 TA1 - rtems_task_ident - tid of TA2 (0x0a010004)
+TA1 - rtems_get_classic_name - id -> name of TA2 OK
 TA1 - rtems_task_ident - tid of TA3 (0x0a010002)
 TA1 - rtems_task_set_priority - set TA3's priority to 2
 TA1 - rtems_task_suspend - suspend TA2

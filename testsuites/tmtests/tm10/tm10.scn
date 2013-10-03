@@ -1,0 +1,6 @@
+
+
+*** TIME TEST 10 ***
+rtems_message_queue_receive: not available -- NO_WAIT 7
+rtems_message_queue_receive: not available -- caller blocks 40
+*** END OF TEST 10 ***

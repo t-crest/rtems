@@ -1,3 +1,5 @@
+
+
 *** TEST KEY 03 ***
 Init - pthread_key_create with NULL destructor - OK
 Init - pthread_create - OK

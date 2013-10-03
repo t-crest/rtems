@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST 4 ***
 Init's ID is 0x0b010001
 Init: sigwait - EINVAL (NULL set)
@@ -102,10 +104,5 @@ Init: sigpending - EINVAL (set invalid)
 Init: pthread_sigmask - EINVAL (timout->nsec invalid < 0)
 Init: pthread_sigmask - EINVAL (timout->nsec invalid to large)
 Init: pthread_kill - EINVAL (sig invalid)
-Init: pthread_kill - ESRCH (signal SA_SIGINFO)
-Init: pthread_kill - EINVAL (signal = 0)
-Init: pthread_kill - SUCCESSFUL (signal = SIG_IGN)
-Init: kill - ESRCH (pid invalid)
-Init: kill - EINVAL (signal = 0)
-Init: kill - EINVAL (sig invalid)
-*** END OF POSIX TEST 4 ***
+status = 0
+/home/andre/rtems/rtems-4.10.2-patmos/c/src/../../testsuites/psxtests/psx04/init.c: 547 errno == ESRCH

@@ -1,3 +1,5 @@
+
+
 *** TEST WORKSPACE CLASSIC API ***
 rtems_workspace_get_information - null pointer
 rtems_workspace_get_information - OK

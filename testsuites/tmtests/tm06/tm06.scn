@@ -1,0 +1,8 @@
+
+
+*** TIME TEST 6 ***
+rtems_task_restart: calling task 29
+rtems_task_suspend: returns to caller 10
+rtems_task_resume: task readied -- returns to caller 9
+rtems_task_delete: ready task 86
+*** END OF TEST 6 ***

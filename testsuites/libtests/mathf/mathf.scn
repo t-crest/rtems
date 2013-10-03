@@ -1,6 +1,6 @@
 *** FLOAT MATH TEST ***
 acosf          : 1.570796
-acoshf         : -nan
+acoshf         : nan
 asinf          : 1.570796
 asinhf         : 0.881374
 atanf          : 0.665774
@@ -50,7 +50,7 @@ lroundf        : 1.000000
 logf           : 3.737670
 log10f         : 1.623249
 log1pf         : 3.761200
-log2f          : 5.392317
+log2f          : 5.392318
 logbf          : 5.000000
 lrintf         : 0.000000
 lrintf         : 0.000000
@@ -77,7 +77,7 @@ tanf           : 1.000000
 tanhf          : 0.655794
 tgammaf        : 1.046486
 truncf         : 3.000000
-y0f            : 0.228083
+y0f            : 0.228084
 y1f            : -0.621136
 ynf            : -3.589899
 *** END OF FLOAT MATH TEST ***

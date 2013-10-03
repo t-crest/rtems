@@ -1,0 +1,10 @@
+
+
+*** TIME TEST 27 ***
+interrupt entry overhead: returns to interrupted task 2
+interrupt exit overhead: returns to interrupted task 1
+interrupt entry overhead: returns to nested interrupt 0
+interrupt exit overhead: returns to nested interrupt 0
+interrupt entry overhead: returns to preempting task 1
+interrupt exit overhead: returns to preempting task 27
+*** END OF TEST 27 ***

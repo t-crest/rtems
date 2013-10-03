@@ -1,4 +1,3 @@
-Exception handling initialization done
 
 
 *** TEST 35 ***
@@ -16,44 +15,44 @@ High_Exec (0) begins...
 Medium_Exec (0) begins...
 Medium_Exec (1) begins...
 Medium_Exec (2) begins...
-Low_Exec (0) begins...
 LocalHwSim_Exec begins...
-  AccessLocalHw called by MED0 -- 100
-  AccessLocalHw called by MED2 -- 100
-  AccessLocalHw called by MED1 -- 100
-AccessRemoteHw called by LOW  -- 200
-AccessRemoteHw access local LOW  -- 200
-  AccessLocalHw called by LOW  -- 200
-  AccessLocalHw returns to MED0 -- 100
-  AccessLocalHw called by MED0 -- 100
-AccessRemoteHw called by HIGH -- 10
-  AccessLocalHw returns to MED2 -- 100
-  AccessLocalHw called by MED2 -- 100
-  AccessLocalHw returns to LOW  -- 10
-AccessRemoteHw access local HIGH -- 10
-  AccessLocalHw called by HIGH -- 10
-AccessRemoteHw returns to LOW  -- 200
-AccessRemoteHw called by LOW  -- 200
-  AccessLocalHw returns to MED1 -- 100
-  AccessLocalHw called by MED1 -- 100
-  AccessLocalHw returns to HIGH -- 10
-AccessRemoteHw returns to HIGH -- 10
-AccessRemoteHw called by HIGH -- 10
-AccessRemoteHw access local LOW  -- 10
-  AccessLocalHw called by LOW  -- 10
-  AccessLocalHw returns to MED0 -- 100
-  AccessLocalHw called by MED0 -- 100
-  AccessLocalHw returns to LOW  -- 10
-AccessRemoteHw access local HIGH -- 10
-  AccessLocalHw called by HIGH -- 10
-AccessRemoteHw returns to LOW  -- 200
-AccessRemoteHw called by LOW  -- 200
-  AccessLocalHw returns to MED2 -- 100
-  AccessLocalHw called by MED2 -- 100
-  AccessLocalHw returns to HIGH -- 10
-AccessRemoteHw returns to HIGH -- 10
-AccessRemoteHw called by HIGH -- 10
-AccessRemoteHw access local LOW  -- 10
-  AccessLocalHw called by LOW  -- 10
-  AccessLocalHw returns to MED1 -- 100
+  AccessLocalHw called by MED0 -- 128
+  AccessLocalHw called by MED2 -- 128
+  AccessLocalHw called by MED1 -- 128
+Low_Exec (0) begins...
+  AccessLocalHw returns to MED0 -- 128
+  AccessLocalHw called by MED0 -- 128
+AccessRemoteHw called by LOW  -- 254
+AccessRemoteHw access local LOW  -- 254
+  AccessLocalHw called by LOW  -- 254
+AccessRemoteHw called by HIGH -- 127
+  AccessLocalHw returns to MED2 -- 128
+  AccessLocalHw called by MED2 -- 128
+  AccessLocalHw returns to LOW  -- 127
+AccessRemoteHw access local HIGH -- 127
+  AccessLocalHw called by HIGH -- 127
+AccessRemoteHw returns to LOW  -- 254
+AccessRemoteHw called by LOW  -- 254
+  AccessLocalHw returns to MED1 -- 128
+  AccessLocalHw called by MED1 -- 128
+  AccessLocalHw returns to HIGH -- 127
+AccessRemoteHw returns to HIGH -- 127
+AccessRemoteHw called by HIGH -- 127
+AccessRemoteHw access local LOW  -- 127
+  AccessLocalHw called by LOW  -- 127
+  AccessLocalHw returns to MED0 -- 128
+  AccessLocalHw called by MED0 -- 128
+  AccessLocalHw returns to LOW  -- 127
+AccessRemoteHw access local HIGH -- 127
+  AccessLocalHw called by HIGH -- 127
+AccessRemoteHw returns to LOW  -- 254
+AccessRemoteHw called by LOW  -- 254
+  AccessLocalHw returns to MED2 -- 128
+  AccessLocalHw called by MED2 -- 128
+  AccessLocalHw returns to HIGH -- 127
+AccessRemoteHw returns to HIGH -- 127
+AccessRemoteHw called by HIGH -- 127
+AccessRemoteHw access local LOW  -- 127
+  AccessLocalHw called by LOW  -- 127
+  AccessLocalHw returns to MED1 -- 128
 *** END OF TEST 35 ***

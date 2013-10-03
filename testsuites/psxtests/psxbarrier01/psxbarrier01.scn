@@ -1,3 +1,5 @@
+
+
 *** POSIX BARRIER TEST 01 ***
 pthread_barrierattr_init( NULL ) -- EINVAL
 pthread_barrierattr_setpshared( NULL, private ) -- EINVAL

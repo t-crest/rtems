@@ -1,0 +1,24 @@
+
+
+*** TIME TEST 26 ***
+_ISR_Disable 0
+_ISR_Flash -1
+_ISR_Enable 0
+_Thread_Disable_dispatch 0
+_Thread_Enable_dispatch 0
+_Thread_Set_state 4
+_Thread_Dispatch (NO FP) 20
+context switch: no floating point contexts 10
+context switch: self 3
+context switch: to another task 3
+fp context switch: restore 1st FP task - NA
+fp context switch: save idle, restore initialized - NA
+fp context switch: save idle, restore idle - NA
+fp context switch: save initialized, restore initialized - NA
+_Thread_Resume 4
+_Thread_Unblock 3
+_Thread_Ready 4
+_Thread_Get 1
+_Semaphore_Get 0
+_Thread_Get: invalid id 0
+*** END OF TEST 26 ***

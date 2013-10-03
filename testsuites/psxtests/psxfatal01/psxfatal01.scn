@@ -1,1 +1,2 @@
 Fatal error (POSIX API Init thread create failure - NULL entry) hit
+Simulation time overflow (2^32) - halting

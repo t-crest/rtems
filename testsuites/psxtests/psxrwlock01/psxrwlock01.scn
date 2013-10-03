@@ -1,3 +1,5 @@
+
+
 *** POSIX RWLOCK TEST 01 ***
 pthread_rwlockattr_init( NULL ) -- EINVAL
 pthread_rwlockattr_setpshared( NULL, private ) -- EINVAL

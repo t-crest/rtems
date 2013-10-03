@@ -1,2 +1,6 @@
+
+
+
 *** TEST FATAL 6 ***
 Fatal error (Core initialize with invalid stack hook) hit
+Simulation time overflow (2^32) - halting

@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST 14 ***
 rtems_object_get_name returned () for init thread
 Setting current thread name to Justin

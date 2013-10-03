@@ -1,3 +1,5 @@
+
+
 *** TEST 41 ***
 Init - overwrite internal value to trip case
 Init - rtems_iterate_over_all_threads

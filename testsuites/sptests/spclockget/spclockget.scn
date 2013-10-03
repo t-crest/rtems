@@ -1,3 +1,5 @@
+
+
 *** TEST LEGACY RTEMS_CLOCK_GET ***
 Init - clock_set_time
 Init - rtems_clock_get - 09:00:00   12/31/1988

@@ -1,0 +1,9 @@
+
+
+*** TIME TEST 1 ***
+rtems_semaphore_create 10
+rtems_semaphore_delete 11
+rtems_semaphore_obtain: available 3
+rtems_semaphore_obtain: not available -- NO_WAIT 3
+rtems_semaphore_release: no waiting tasks 10
+*** END OF TEST 1 ***

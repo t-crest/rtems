@@ -1,10 +1,12 @@
+
+
 *** POSIX SEMAPHORE MANAGER TEST 1 ***
 Init: sem_init - UNSUCCESSFUL (EINVAL)
 Init: sem_init - SUCCESSFUL
 Init: sem_init - UNSUCCESSFUL (ENOSPC)
 Init: sem_init - UNSUCCESSFUL (ENOSYS -- pshared not supported)
-Init: sem_getvalue - SUCCESSFUL
-Init: sem_getvalue - UNSUCCESSFUL
+Init: sem_getvalue - SUCCESSFUL 
+Init: sem_getvalue - UNSUCCESSFUL 
 Init: sem_destroy - SUCCESSFUL
 Init: sem_destroy - UNSUCCESSFUL (EINVAL)
 Init: sem_wait - SUCCESSFUL
@@ -13,10 +15,10 @@ Init: sem_post - SUCCESSFUL
 Init: sem_wait - SUCCESSFUL (after a sem_post)
 Init: sem_trywait - SUCCESSFUL
 Init: sem_trywait - UNSUCCESSFUL (EAGAIN)
-Init: sem_trywait - UNSUCCESSFUL (EINVAL) -- skipping
+Init: sem_trywait - UNSUCCESSFUL (EINVAL)
 Init: sem_timedwait - SUCCESSFUL
 Init: sem_timedwait - UNSUCCESSFUL (ETIMEDOUT)
-Init: sem_timedwait - UNSUCCESSFUL (EINVAL)
+Init: sem_timedwait - UNSUCCESSFUL (EINVAL) -- skipping
 Init: sem_post - UNSUCCESSFUL (EINVAL)
 Init: sem_destroy - SUCCESSFUL
 Init: sem_open - UNSUCCESSFUL (ENAMETOOLONG)
@@ -37,4 +39,3 @@ Init: sem_unlink (NULL) - EINVAL
 Init: sem_unlink ("") - EINVAL
 Init: sem_unlink - UNSUCCESSFUL (ENOENT)
 *** END OF POSIX SEMAPHORE MANAGER TEST 1 ***
-

@@ -1,3 +1,5 @@
+
+
 *** TEST 12 ***
 INIT - Forward priority queue test
 PRI1 - rtems_semaphore_obtain - wait forever on SM2

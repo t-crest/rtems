@@ -1,3 +1,5 @@
+
+
 *** TEST 8 ***
 TA1 - rtems_task_mode - RTEMS_ASR                  - previous mode:  00000000
 TA1 - rtems_task_mode - RTEMS_NO_ASR               - previous mode:  00000000
@@ -18,5 +20,3 @@ TA1 - rtems_task_mode - set all modes        - previous mode:  00000703
 TA1 - rtems_task_mode - clear all modes      - previous mode:  00000703
 TA1 - rtems_task_mode - get current mode     - previous mode:  00000000
 *** END OF TEST 8 ***
-
-NOTE: The interrupt level lines will be different on CPUs with few levels.

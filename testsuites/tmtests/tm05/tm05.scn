@@ -1,0 +1,6 @@
+
+
+*** TIME TEST 5 ***
+rtems_task_suspend: calling task 36
+rtems_task_resume: task readied -- preempts caller 35
+*** END OF TEST 5 ***

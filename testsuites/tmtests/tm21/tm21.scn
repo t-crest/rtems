@@ -1,0 +1,12 @@
+
+
+*** TIME TEST 21 ***
+rtems_task_ident 21
+rtems_message_queue_ident 21
+rtems_semaphore_ident 24
+rtems_partition_ident 21
+rtems_region_ident 21
+rtems_port_ident 20
+rtems_timer_ident 21
+rtems_rate_monotonic_ident 21
+*** END OF TEST 21 ***

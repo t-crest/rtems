@@ -1,6 +1,5 @@
-Could not open '/dev/kqemu' - QEMU acceleration layer not activated: No such file or directory
-Initialized console on port COM1 9600-8-N-1
-
+register no eval-for-make filesystem
+register no rename filesystem
 
 
 *** FILE TEST 1 ***
@@ -8,9 +7,10 @@ Initialized console on port COM1 9600-8-N-1
 /
 ....dev/
 ........console (device 0, 0)
+........console_b (device 0, 1)
 ***************       End of Dump        ***************
 stat of /dev/console
-....st_dev     (0x0:0x0)
+....st_dev     (0xfffe:0x0)
 ....st_ino     3  may vary by small amount
 ....mode  = 00020755
 ....nlink = 1
@@ -19,7 +19,7 @@ stat of /dev/console
 ....atime = Fri Jan  1 00:00:00 1988
 ....mtime = Fri Jan  1 00:00:00 1988
 ....ctime = Fri Jan  1 00:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 
 mkdir /dev/tty
@@ -86,8 +86,8 @@ End of _rename_r tests
 (10)the first write!!!
 
 stat( /tmp/joel ) returned 
-....st_dev     (0x0:0x0)
-....st_ino     12  may vary by small amount
+....st_dev     (0xfffe:0x0)
+....st_ino     13  may vary by small amount
 ....mode  = 00100700
 ....nlink = 1
 ....uid = 0
@@ -95,7 +95,7 @@ stat( /tmp/joel ) returned
 ....atime = Sat Dec 31 09:00:00 1988
 ....mtime = Sat Dec 31 09:00:00 1988
 ....ctime = Sat Dec 31 09:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 unlink /tmp/joel
 unlink /tmp/joel
@@ -119,8 +119,8 @@ mknod /tmp/joel
 Skipping maximum file size test since max_size is 4329344 bytes
 That is likely to be bigger than the available RAM on many targets.
 stat( /tmp/joel ) returned 
-....st_dev     (0x0:0x0)
-....st_ino     13  may vary by small amount
+....st_dev     (0xfffe:0x0)
+....st_ino     14  may vary by small amount
 ....mode  = 00100700
 ....nlink = 1
 ....uid = 0
@@ -128,11 +128,11 @@ stat( /tmp/joel ) returned
 ....atime = Sat Dec 31 09:00:00 1988
 ....mtime = Sat Dec 31 09:00:00 1988
 ....ctime = Sat Dec 31 09:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 stat of /tmp/j
 stat(/tmp/j) returned -1 (errno=2)
-....st_dev     (0x0:0x0)
+....st_dev     (0xfffe:0x0)
 ....st_ino     3  may vary by small amount
 ....mode  = 00020755
 ....nlink = 1
@@ -141,7 +141,7 @@ stat(/tmp/j) returned -1 (errno=2)
 ....atime = Fri Jan  1 00:00:00 1988
 ....mtime = Fri Jan  1 00:00:00 1988
 ....ctime = Fri Jan  1 00:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 fopen of /tmp/j
 fprintf to /tmp/j
@@ -150,8 +150,8 @@ fprintf to /tmp/j
 (3) 26 characters written to the file
 (4) 26 characters written to the file
 (5) 26 characters written to the file
-....st_dev     (0x0:0x0)
-....st_ino     14  may vary by small amount
+....st_dev     (0xfffe:0x0)
+....st_ino     15  may vary by small amount
 ....mode  = 00100644
 ....nlink = 1
 ....uid = 0
@@ -159,15 +159,15 @@ fprintf to /tmp/j
 ....atime = Sat Dec 31 09:00:00 1988
 ....mtime = Sat Dec 31 09:00:00 1988
 ....ctime = Sat Dec 31 09:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 This is call 1 to fprintf
 This is call 2 to fprintf
 This is call 3 to fprintf
 This is call 4 to fprintf
 This is call 5 to fprintf
-....st_dev     (0x0:0x0)
-....st_ino     14  may vary by small amount
+....st_dev     (0xfffe:0x0)
+....st_ino     15  may vary by small amount
 ....mode  = 00100644
 ....nlink = 1
 ....uid = 0
@@ -175,14 +175,15 @@ This is call 5 to fprintf
 ....atime = Sat Dec 31 09:00:01 1988
 ....mtime = Sat Dec 31 09:00:00 1988
 ....ctime = Sat Dec 31 09:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 *************** Dump of Entire IMFS ***************
 /
 ....dev/
 ........console (device 0, 0)
+........console_b (device 0, 1)
 ........tty/
-............S3 (device 128, 255)
+............S3 (device 255, 128)
 ........test_console (device 0, 0)
 ....etc/
 ........passwd (file 0)
@@ -196,8 +197,8 @@ This is call 5 to fprintf
 ........hidden_on_mount/
 ***************       End of Dump        ***************
 truncate /tmp/j to length of 40
-....st_dev     (0x0:0x0)
-....st_ino     14  may vary by small amount
+....st_dev     (0xfffe:0x0)
+....st_ino     15  may vary by small amount
 ....mode  = 00100644
 ....nlink = 1
 ....uid = 0
@@ -205,14 +206,15 @@ truncate /tmp/j to length of 40
 ....atime = Sat Dec 31 09:00:02 1988
 ....mtime = Sat Dec 31 09:00:00 1988
 ....ctime = Sat Dec 31 09:00:00 1988
-....st_blksize 0
+....st_blksize 80
 ....st_blocks  0
 *************** Dump of Entire IMFS ***************
 /
 ....dev/
 ........console (device 0, 0)
+........console_b (device 0, 1)
 ........tty/
-............S3 (device 128, 255)
+............S3 (device 255, 128)
 ........test_console (device 0, 0)
 ....etc/
 ........passwd (file 0)
@@ -232,8 +234,9 @@ truncate /tmp to length of 0 should fail with EISDIR
 /
 ....dev/
 ........console (device 0, 0)
+........console_b (device 0, 1)
 ........tty/
-............S3 (device 128, 255)
+............S3 (device 255, 128)
 ........test_console (device 0, 0)
 ....etc/
 ........passwd (file 0)

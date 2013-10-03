@@ -1,6 +1,6 @@
 *** DOUBLE MATH TEST ***
 acos           : 1.570796
-acosh          : -nan
+acosh          : nan
 asin           : 1.570796
 asinh          : 0.881374
 atan           : 0.665774

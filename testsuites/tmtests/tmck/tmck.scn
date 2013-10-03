@@ -1,0 +1,14 @@
+
+
+*** TIME CHECKER ***
+Units may not be in microseconds for this test!!!
+0 100000
+Total time = 0
+Average time = 0
+<pause>
+NULL timer stopped at 0
+LOOP (1000) timer stopped at 220
+LOOP (10000) timer stopped at 2200
+LOOP (50000) timer stopped at 11000
+LOOP (100000) timer stopped at 22000
+*** END OF TIME CHECKER ***

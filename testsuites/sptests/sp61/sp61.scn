@@ -1,3 +1,5 @@
+
+
 *** TEST 61 ***
 Init - Set current System State to Shutdown
 Init - rtems_shutdown_executive when already shutdown

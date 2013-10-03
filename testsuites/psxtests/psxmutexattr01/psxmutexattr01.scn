@@ -1,3 +1,5 @@
+
+
 *** POSIX MUTEX ATTRIBUTE TEST 1 ***
 Init - pthread_mutexattr_gettype - attr NULL - EINVAL
 Init - pthread_mutexattr_gettype - type NULL - EINVAL

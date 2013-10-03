@@ -1,6 +1,11 @@
+
+
 *** READDIR TEST ***
+
 chdir to the root directory
 chdir() status : 0
+
+
 Creating a series of directories under /
 Creating directory: a      0 0    Success
 Creating directory: b      0 0    Success
@@ -59,51 +64,51 @@ Create ap
 Create aq
 Create ar
 Open /many and print the directory
-name               inode   offset   reclen  type
-a                          17        0    268   0x010c
-b                          18      268    268   0x010c
-c                          19      536    268   0x010c
-d                          20      804    268   0x010c
-e                          21     1072    268   0x010c
-f                          22     1340    268   0x010c
-g                          23     1608    268   0x010c
-h                          24     1876    268   0x010c
-i                          25     2144    268   0x010c
-j                          26     2412    268   0x010c
-k                          27     2680    268   0x010c
-l                          28     2948    268   0x010c
-m                          29     3216    268   0x010c
-n                          30     3484    268   0x010c
-o                          31     3752    268   0x010c
-p                          32     4020    268   0x010c
-q                          33     4288    268   0x010c
-r                          34     4556    268   0x010c
-s                          35     4824    268   0x010c
-t                          36     5092    268   0x010c
-u                          37     5360    268   0x010c
-v                          38     5628    268   0x010c
-w                          39     5896    268   0x010c
-x                          40     6164    268   0x010c
-y                          41     6432    268   0x010c
-z                          42     6700    268   0x010c
-aa                         43     6968    268   0x010c
-ab                         44     7236    268   0x010c
-ac                         45     7504    268   0x010c
-ad                         46     7772    268   0x010c
-ae                         47     8040    268   0x010c
-af                         48     8308    268   0x010c
-ag                         49     8576    268   0x010c
-ah                         50     8844    268   0x010c
-ai                         51     9112    268   0x010c
-aj                         52     9380    268   0x010c
-ak                         53     9648    268   0x010c
-al                         54     9916    268   0x010c
-am                         55    10184    268   0x010c
-an                         56    10452    268   0x010c
-ao                         57    10720    268   0x010c
-ap                         58    10988    268   0x010c
-aq                         59    11256    268   0x010c
-ar                         60    11524    268   0x010c
+name                     inode   offset   reclen  type
+a                          17        0    280   0x0118
+b                          18      280    280   0x0118
+c                          19      560    280   0x0118
+d                          20      840    280   0x0118
+e                          21     1120    280   0x0118
+f                          22     1400    280   0x0118
+g                          23     1680    280   0x0118
+h                          24     1960    280   0x0118
+i                          25     2240    280   0x0118
+j                          26     2520    280   0x0118
+k                          27     2800    280   0x0118
+l                          28     3080    280   0x0118
+m                          29     3360    280   0x0118
+n                          30     3640    280   0x0118
+o                          31     3920    280   0x0118
+p                          32     4200    280   0x0118
+q                          33     4480    280   0x0118
+r                          34     4760    280   0x0118
+s                          35     5040    280   0x0118
+t                          36     5320    280   0x0118
+u                          37     5600    280   0x0118
+v                          38     5880    280   0x0118
+w                          39     6160    280   0x0118
+x                          40     6440    280   0x0118
+y                          41     6720    280   0x0118
+z                          42     7000    280   0x0118
+aa                         43     7280    280   0x0118
+ab                         44     7560    280   0x0118
+ac                         45     7840    280   0x0118
+ad                         46     8120    280   0x0118
+ae                         47     8400    280   0x0118
+af                         48     8680    280   0x0118
+ag                         49     8960    280   0x0118
+ah                         50     9240    280   0x0118
+ai                         51     9520    280   0x0118
+aj                         52     9800    280   0x0118
+ak                         53    10080    280   0x0118
+al                         54    10360    280   0x0118
+am                         55    10640    280   0x0118
+an                         56    10920    280   0x0118
+ao                         57    11200    280   0x0118
+ap                         58    11480    280   0x0118
+aq                         59    11760    280   0x0118
+ar                         60    12040    280   0x0118
 open /b/myfile
 scandir a file status: -1
 Open /b/new_file
@@ -114,7 +119,7 @@ fcntl F_GETFL returns current flags
 fcntl F_GETFL returned 0x200
 fcntl F_SETFL to add O_APPEND and O_NONBLOCK
 fcntl F_GETFL return current flags to see changes
-fcntl F_GETFL returned 0x1208
+fcntl F_GETFL returned 0x4208
 fcntl F_GETLK should return -1
 fcntl F_SETLK should return -1
 fcntl F_SETLKW should return -1
@@ -125,111 +130,119 @@ Status -1
 opendir and readdir /b/myfile
 opendir and readdir
 chdir to /b/myfile
+
 Performing stat of directory /
-status for stat : 0, size of directory: 2144
+status for stat : 0, size of directory: 4300
+
+
 Open and print directory /
-name               inode   offset   reclen  type
-dev                         2        0    268   0x010c
-a                           5      268    268   0x010c
-b                           6      536    268   0x010c
-c                           7      804    268   0x010c
-d                           8     1072    268   0x010c
-e                           9     1340    268   0x010c
-f                          10     1608    268   0x010c
-many                       16     1876    268   0x010c
+name                     inode   offset   reclen  type
+dev                         2        0    280   0x0118
+a                           5      280    280   0x0118
+b                           6      560    280   0x0118
+c                           7      840    280   0x0118
+d                           8     1120    280   0x0118
+e                           9     1400    280   0x0118
+f                          10     1680    280   0x0118
+many                       16     1960    280   0x0118
+
 mkdir /d/my_dir
 Open /d/my_dir
 remove /d/my_dir.
 close /d/my_dir.
+
 Opening directory /c
-name               inode   offset   reclen  type
-y                          11        0    268   0x010c
-z                          12      268    268   0x010c
-x                          13      536    268   0x010c
+name                     inode   offset   reclen  type
+y                          11        0    280   0x0118
+z                          12      280    280   0x0118
+x                          13      560    280   0x0118
+
 Opening directory /c/y
-name               inode   offset   reclen  type
-a3333                      14        0    268   0x010c
-j123                       15      268    268   0x010c
+name                     inode   offset   reclen  type
+a3333                      14        0    280   0x0118
+j123                       15      280    280   0x0118
+
 LSEEK to the start of the open directory
-name               inode   offset   reclen  type
-dev                         2        0    268   0x010c
-a                           5      268    268   0x010c
-b                           6      536    268   0x010c
-c                           7      804    268   0x010c
-d                           8     1072    268   0x010c
-e                           9     1340    268   0x010c
-f                          10     1608    268   0x010c
-many                       16     1876    268   0x010c
+name                     inode   offset   reclen  type
+dev                         2        0    280   0x0118
+a                           5      280    280   0x0118
+b                           6      560    280   0x0118
+c                           7      840    280   0x0118
+d                           8     1120    280   0x0118
+e                           9     1400    280   0x0118
+f                          10     1680    280   0x0118
+many                       16     1960    280   0x0118
+
 Rewinding directory
-name               inode   offset   reclen  type
-dev                         2        0    268   0x010c
-a                           5      268    268   0x010c
-b                           6      536    268   0x010c
-c                           7      804    268   0x010c
-d                           8     1072    268   0x010c
-e                           9     1340    268   0x010c
-f                          10     1608    268   0x010c
-many                       16     1876    268   0x010c
+name                     inode   offset   reclen  type
+dev                         2        0    280   0x0118
+a                           5      280    280   0x0118
+b                           6      560    280   0x0118
+c                           7      840    280   0x0118
+d                           8     1120    280   0x0118
+e                           9     1400    280   0x0118
+f                          10     1680    280   0x0118
+many                       16     1960    280   0x0118
+
 Seek directory
-telldir() should report only sizeof(struct dirent) increments
-in position. Sizeof(struct dirent): 268
-seeked to  0 -- currently at  0
-seeked to 67 -- currently at  0
-seeked to 134 -- currently at  0
+telldir() should report only sizeof(struct dirent) increments 
+in position. Sizeof(struct dirent): 280
+seeked to  0 -- currently at  1
+seeked to 70 -- currently at  2
+seeked to 140 -- currently at  3
 Send seekdir a NULL pointer
+
 Closing directory
+
 SCANDIR TEST
+
 selection rule 1
 scanning for any entry under directory /c
+
 SCANDIR SELECT1 accepts  nodename: y
-SCANDIR SELECT1 accepts  nodename: z
-SCANDIR SELECT1 accepts  nodename: x
-scandir status: 3
-Selected Node Name: y
-Selected Node Name: z
-Selected Node Name: x
+
+scandir status: -1
+
 selection rule 2
 scanning for any entry under directory /c whose name = y
+
 SCANDIR SELECT accepted nodename: y
-SCANDIR SELECT rejected nodename: z
-SCANDIR SELECT rejected nodename: x
-scandir status: 1
-Selected Node Name: y
+
+scandir status: -1
+
 SCANDIR with sorting
+
 selection rule 1
 scanning for any entry under directory /c
 sort in ascending order
+
 SCANDIR SELECT1 accepts  nodename: y
-SCANDIR SELECT1 accepts  nodename: z
-SCANDIR SELECT1 accepts  nodename: x
-scandir status: 3
-Selected and Sorted Node Name: x
-Selected and Sorted Node Name: y
-Selected and Sorted Node Name: z
+
+scandir status: -1
+
 SCANDIR with sorting
+
 selection rule 1
 scanning for any entry under directory /c
 sort in descending order
+
 SCANDIR SELECT1 accepts  nodename: y
-SCANDIR SELECT1 accepts  nodename: z
-SCANDIR SELECT1 accepts  nodename: x
-scandir status: 3
-Selected and Sorted Node Name: z
-Selected and Sorted Node Name: y
-Selected and Sorted Node Name: x
+scandir status: -1
 Validate readdir across mount point
-name               inode   offset   reclen  type
-should_be_hidden           65        0    268   0x010c
-Attempting to mount IMFS file system at /imfs
+name                     inode   offset   reclen  type
+should_be_hidden           65        0    280   0x0118
+Attempting to mount IMFS file system at /imfs 
 create /imfs/testdir and /imfs/testdir/testsubdir
-name               inode   offset   reclen  type
-testdir                     2        0    268   0x010c
-name               inode   offset   reclen  type
-testdir                     2        0    268   0x010c
-name               inode   offset   reclen  type
-testdir                     2        0    268   0x010c
-name               inode   offset   reclen  type
-testsubdir                  3        0    268   0x010c
-name               inode   offset   reclen  type
-testdir                     2        0    268   0x010c
+name                     inode   offset   reclen  type
+testdir                     2        0    280   0x0118
+name                     inode   offset   reclen  type
+testdir                     2        0    280   0x0118
+name                     inode   offset   reclen  type
+testdir                     2        0    280   0x0118
+name                     inode   offset   reclen  type
+testsubdir                  3        0    280   0x0118
+name                     inode   offset   reclen  type
+testdir                     2        0    280   0x0118
+
+
 *** END OF READDIR TEST ***

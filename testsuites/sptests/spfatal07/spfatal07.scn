@@ -1,2 +1,6 @@
+
+
+
 *** TEST FATAL 7 ***
 Fatal error (Core Configuration Invalid ISR stack size) hit
+Simulation time overflow (2^32) - halting

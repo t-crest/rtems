@@ -1,17 +1,19 @@
+
+
 *** POSIX TEST 11 ***
 Init's ID is 0x0b010001
-Init: Setting scheduling parameters to FIFO with priority 127
-Init: Setting scheduling parameters to RR with priority 125
-Init: Setting scheduling parameters to OTHER with priority 121
-Init: create a thread of SCHED_FIFO with priority 120
+Init: Setting scheduling parameters to FIFO with priority 254
+Init: Setting scheduling parameters to RR with priority 252
+Init: Setting scheduling parameters to OTHER with priority 248
+Init: create a thread of SCHED_FIFO with priority 247
 Init: join with the other thread
 Task_1: killing time
 Task_1: exitting
-Init: create a thread of SCHED_RR with priority 120
+Init: create a thread of SCHED_RR with priority 247
 Init: join with the other thread
 Task_1: killing time
 Task_1: exitting
-Init: create a thread of SCHED_OTHER with priority 120
+Init: create a thread of SCHED_OTHER with priority 247
 Init: join with the other thread
 Task_1: killing time
 Task_1: exitting

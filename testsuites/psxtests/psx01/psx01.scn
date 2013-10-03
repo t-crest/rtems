@@ -4,9 +4,9 @@
 Init: uname - EFAULT (invalid uts pointer argument)
 Init: uts.sysname: RTEMS
 Init: uts.nodename: Node 1
-Init: uts.release: 4.9.99.0
+Init: uts.release: 4.10.2
 Init: uts.version: 
-Init: uts.machine: ARM/ARMv4T
+Init: uts.machine: SPARC/w/soft-float
 
 Init: ID is 0x0b010001
 Init: sched_get_priority_min (SCHED_FIFO) -- 1

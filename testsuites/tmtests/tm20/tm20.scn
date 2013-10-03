@@ -1,0 +1,23 @@
+
+
+*** TIME TEST 20 ***
+rtems_partition_create 15
+rtems_region_create 39
+rtems_partition_get_buffer: available 6
+rtems_partition_get_buffer: not available 3
+rtems_partition_return_buffer 7
+rtems_partition_delete 5
+rtems_region_get_segment: available 20
+rtems_region_get_segment: not available -- NO_WAIT 16
+rtems_region_return_segment: no waiting tasks 24
+rtems_region_get_segment: not available -- caller blocks 54
+rtems_region_return_segment: task readied -- preempts caller 76
+rtems_region_return_segment: task readied -- returns to caller 47
+rtems_region_delete 17
+rtems_io_initialize 0
+rtems_io_open 0
+rtems_io_close 0
+rtems_io_read 0
+rtems_io_write 0
+rtems_io_control 0
+*** END OF TEST 20 ***

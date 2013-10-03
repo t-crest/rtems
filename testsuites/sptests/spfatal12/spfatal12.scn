@@ -1,2 +1,6 @@
+
+
+
 *** TEST FATAL 12 ***
 Fatal error (_Heap_Initialize fails during RTEMS initialization) hit
+Simulation time overflow (2^32) - halting

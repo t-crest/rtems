@@ -1,1 +1,27 @@
-This is a dummy file
+
+*** RTEMS SIZE PROGRAM ***
+
+ ************** EXECUTIVE WORK SPACE FORMULA **************
+ Tasks                - maximum_tasks * 488
+ Timers               - maximum_timers * 68
+ Semaphores           - maximum_semaphores * 128
+ Message Queues       - maximum_message_queues * 144
+ Messages             -
+ Regions              - maximum_regions * 200
+ Partitions           - maximum_partitions * 56
+ Ports                - maximum_ports * 36
+ Periods              - maximum_periods * 36
+ Extensions           - maximum_extensions * 76
+ Device Drivers       - number_of_device_drivers * 0
+ System Requirements  - 7656
+ Floating Point Tasks - FPMASK Tasks * 136
+ User's Tasks' Stacks -
+ Interrupt Stack      -
+ 
+ Global object tables - maximum_nodes * 48
+ Global objects       - maximum_global_objects * 0
+ Proxies              - maximum_proxies * 120
+
+RTEMS uninitialized data consumes 144 bytes
+RTEMS intialized data consumes 130 bytes
+*** END OF RTEMS SIZE PROGRAM ***

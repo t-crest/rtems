@@ -1,0 +1,11 @@
+
+
+*** TIME TEST 29 ***
+rtems_rate_monotonic_create 9
+rtems_rate_monotonic_period: initiate period -- returns to caller 19
+rtems_rate_monotonic_period: obtain status 3
+rtems_rate_monotonic_cancel 6
+rtems_rate_monotonic_delete: inactive 9
+rtems_rate_monotonic_delete: active 8
+rtems_rate_monotonic_period: conclude periods -- caller blocks 50
+*** END OF TEST 29 ***

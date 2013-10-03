@@ -1,3 +1,5 @@
+
+
 *** TEST 11 ***
 TA1 - rtems_event_send - send RTEMS_EVENT_16 to TA2
 TA1 - rtems_event_receive - waiting forever on RTEMS_EVENT_14 and RTEMS_EVENT_15
@@ -20,7 +22,7 @@ TA1 - rtems_clock_get_tod - 08:15:00   02/12/1988
 TA1 - rtems_event_send - send RTEMS_EVENT_18 to self after 5 seconds
 TA1 - rtems_event_receive - waiting forever on RTEMS_EVENT_18
 TA2 - RTEMS_EVENT_10 received - eventout => 00000400
-TA2 - rtems_clock_get_tod - 08:15:05   02/12/1988
+TA2 - rtems_clock_get_tod - 08:15:04   02/12/1988
 TA2 - rtems_event_receive - RTEMS_PENDING_EVENTS
 TA2 - eventout => 00080000
 TA2 - rtems_event_receive - RTEMS_EVENT_19 - RTEMS_NO_WAIT

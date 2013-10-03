@@ -1,0 +1,7 @@
+
+
+*** TIME TEST 22 ***
+rtems_message_queue_broadcast: task readied -- returns to caller 26
+rtems_message_queue_broadcast: no waiting tasks 9
+rtems_message_queue_broadcast: task readied -- preempts caller 47
+*** END OF TEST 22 ***

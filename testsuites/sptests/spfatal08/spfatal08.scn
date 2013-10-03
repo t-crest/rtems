@@ -1,2 +1,6 @@
+
+
+
 *** TEST FATAL 8 ***
 Fatal error (Core workspace too small) hit
+Simulation time overflow (2^32) - halting

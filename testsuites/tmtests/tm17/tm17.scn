@@ -1,0 +1,5 @@
+
+
+*** TIME TEST 17 ***
+rtems_task_set_priority: preempts caller 42
+*** END OF TEST 17 ***

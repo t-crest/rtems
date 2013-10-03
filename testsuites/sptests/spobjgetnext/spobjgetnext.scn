@@ -1,3 +1,5 @@
+
+
 *** TEST OBJECT GET NEXT ***
 Init - _Objects_Get_next - NULL object information
 Init - _Objects_Get_next - NULL location

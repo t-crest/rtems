@@ -1,0 +1,14 @@
+
+
+*** TIME TEST 4 ***
+rtems_task_restart: blocked task -- preempts caller 49
+rtems_task_restart: ready task -- preempts caller 43
+rtems_semaphore_release: task readied -- returns to caller 14
+rtems_task_create 100
+rtems_task_start 15
+rtems_task_restart: suspended task -- returns to caller 19
+rtems_task_delete: suspended task 84
+rtems_task_restart: ready task -- returns to caller 20
+rtems_task_restart: blocked task -- returns to caller 26
+rtems_task_delete: blocked task 87
+*** END OF TEST 4 ***

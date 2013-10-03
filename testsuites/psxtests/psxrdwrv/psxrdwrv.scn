@@ -13,6 +13,8 @@ writev bad iov[i].iov_len < 0 -- EINVAL
 readv bad iov[i].iov_len = 0 -- EINVAL
 writev iov_len total overflows -- EINVAL
 readv iov_len total overflows -- EINVAL
+writev iov_len works with no effect -- OK
+readv iov_len works with no effect -- OK
 File written using writev .. OK
 File read using readv .. OK
 *** END OF TEST PSXRDWRV ***

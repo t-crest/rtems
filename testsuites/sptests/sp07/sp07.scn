@@ -1,3 +1,5 @@
+
+
 *** TEST 7 ***
 rtems_extension_create - bad id pointer -- RTEMS_INVALID_ADDRESS
 rtems_extension_create - bad name -- RTEMS_INVALID_NAME

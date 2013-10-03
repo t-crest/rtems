@@ -1,11 +1,13 @@
+
+
 *** POSIX TEST SIGNAL 04 ***
-Init - Variation is: Real-Time Signals
+Init - Variation is: Real-Time Signals to Process
 Init - sleep - let threads settle - OK
 SignalNotBlocked - Unblock SIGRTMIN
 SignalNotBlocked - Unblock SIGRTMAX
-SIGRTMIN - Wait for SIGRTMAX unblocked
+SignalNotBlocked - Wait for SIGRTMIN unblocked
 SignalBlocked - Unblock SIGRTMIN
-SIGRTMIN - Wait for SIGRTMIN unblocked
+SignalBlocked - Wait for SIGRTMIN unblocked
 Init - sleep - SignalBlocked thread settle - OK
 Init - sending SIGRTMAX - deliver to one thread
 Init - sending SIGRTMAX - deliver to other thread
@@ -13,6 +15,6 @@ Init - sending SIGRTMAX - expect EAGAIN
 Init - sleep - let thread report if it unblocked - OK
 SignalNotBlocked - siginfo.si_signo=31
 SignalNotBlocked - siginfo.si_code=1
-SignalNotBlocked - siginfo.si_value=0x02027fe4
+SignalNotBlocked - siginfo.si_value=0x00000000
 SignalNotBlocked - exiting
 *** END OF POSIX TEST SIGNAL 04 ***

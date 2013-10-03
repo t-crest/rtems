@@ -1,0 +1,12 @@
+
+
+*** TEST OF TERMIOS INPUT CAPABILITIES ***
+
+You have the following choices:
+  1 - Reset the struct termios
+  2 - Look at the current termios setting
+  3 - Change the line characteristics
+  4 - Test canonical input
+  5 - Test raw input
+  9 - Exit
+Enter your choice (1 to 5 or 9, followed by a carriage return): Simulation time overflow (2^32) - halting

@@ -1,0 +1,6 @@
+
+
+*** TIME TEST 24 ***
+rtems_task_wake_after: yield -- returns to caller 5
+rtems_task_wake_after: yields -- preempts caller 31
+*** END OF TEST 24 ***

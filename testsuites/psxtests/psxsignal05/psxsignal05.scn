@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST SIGNAL 05 ***
 Init - _POSIX_signals_Clear_signals when signals pending but
 Init -    not queued on SA_SIGINFO configured signal.

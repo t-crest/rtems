@@ -1,0 +1,16 @@
+
+
+*** TIME TEST 23 ***
+rtems_timer_create 6
+rtems_timer_fire_after: inactive 13
+rtems_timer_fire_after: active 14
+rtems_timer_cancel: active 6
+rtems_timer_cancel: inactive 6
+rtems_timer_reset: inactive 11
+rtems_timer_reset: active 12
+rtems_timer_fire_when: inactive 20
+rtems_timer_fire_when: active 20
+rtems_timer_delete: active 10
+rtems_timer_delete: inactive 9
+rtems_task_wake_when 50
+*** END OF TEST 23 ***

@@ -1,3 +1,5 @@
+
+
 *** POSIX TEST SIGNAL 02 ***
 Init - Raise my priority
 Init - Create thread 0, priority=8
@@ -30,7 +32,5 @@ P12 - Unblock SIGUSR1
 P12 - Spins
 Init - Create thread 7, priority=12
 Init - sleep - let thread settle - OK
-P12 - Unblock SIGUSR1
-P12 - Spins
 Init - sending SIGUSR1
 *** END OF POSIX TEST SIGNAL 02 ***

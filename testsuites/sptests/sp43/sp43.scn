@@ -1,5 +1,7 @@
+
+
 *** TEST 43 ***
-RTEMS Version: rtems-4.9.99.0(SPARC/w/FPU/erc32)
+RTEMS Version: rtems-4.10.2(SPARC/w/soft-float/leon3)
 rtems_object_get_classic_name - INVALID_ADDRESS
 rtems_object_get_classic_name - INVALID_ID (bad index)
 rtems_object_get_classic_name - INVALID_ID (unallocated index)
@@ -13,20 +15,21 @@ rtems_object_get_name - bad length
 rtems_object_get_name - bad pointer
 rtems_object_get_name returned (UI1 ) for init task id
 rtems_object_get_name returned (UI1 ) for RTEMS_SELF
+rtems_object_set_name - INVALID_ADDRESS
 rtems_object_set_name - INVALID_ID (bad API)
 rtems_object_set_name - INVALID_ID (bad index)
 rtems_object_set_name - change name of init task to (New1)
 New1 - name returned by rtems_object_get_classic_name
 rtems_object_get_name returned (New1) for init task
 rtems_object_set_name - change name of init task to (Ne1)
-Ne1 - name returned by rtems_object_get_classic_name
-rtems_object_get_name returned (Ne1) for init task
+Ne1  - name returned by rtems_object_get_classic_name
+rtems_object_get_name returned (Ne1 ) for init task
 rtems_object_set_name - change name of init task to (N1)
-N1  - name returned by rtems_object_get_classic_name
-rtems_object_get_name returned (N1) for init task
+N1   - name returned by rtems_object_get_classic_name
+rtems_object_get_name returned (N1  ) for init task
 rtems_object_set_name - change name of init task to (N)
-N   - name returned by rtems_object_get_classic_name
-rtems_object_get_name returned (N) for init task
+N    - name returned by rtems_object_get_classic_name
+rtems_object_get_name returned (N   ) for init task
 rtems_object_set_name - change name of init task to ()
 *    - name returned by rtems_object_get_classic_name
 rtems_object_get_name returned () for init task

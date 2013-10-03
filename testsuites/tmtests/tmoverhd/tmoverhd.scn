@@ -1,0 +1,77 @@
+
+
+*** TIME TEST OVERHEAD ***
+rtems_shutdown_executive 0
+rtems_task_create 0
+rtems_task_ident 0
+rtems_task_start 0
+rtems_task_restart 0
+rtems_task_delete 0
+rtems_task_suspend 0
+rtems_task_resume 0
+rtems_task_set_priority 0
+rtems_task_mode 0
+rtems_task_get_note 0
+rtems_task_set_note 0
+rtems_task_wake_when 0
+rtems_task_wake_after 0
+rtems_interrupt_catch 0
+rtems_clock_get 0
+rtems_clock_set 0
+rtems_clock_tick 0
+<pause>
+rtems_timer_create 0
+rtems_timer_delete 0
+rtems_timer_ident 0
+rtems_timer_fire_after 0
+rtems_timer_fire_when 0
+rtems_timer_reset 0
+rtems_timer_cancel 0
+rtems_semaphore_create 0
+rtems_semaphore_delete 0
+rtems_semaphore_ident 0
+rtems_semaphore_obtain 0
+rtems_semaphore_release 0
+rtems_message_queue_create 0
+rtems_message_queue_ident 0
+rtems_message_queue_delete 0
+rtems_message_queue_send 0
+rtems_message_queue_urgent 0
+rtems_message_queue_broadcast 0
+rtems_message_queue_receive 0
+rtems_message_queue_flush 0
+<pause>
+rtems_event_send 0
+rtems_event_receive 0
+rtems_signal_catch 0
+rtems_signal_send 0
+rtems_partition_create 0
+rtems_partition_ident 0
+rtems_partition_delete 0
+rtems_partition_get_buffer 0
+rtems_partition_return_buffer 0
+rtems_region_create 0
+rtems_region_ident 0
+rtems_region_delete 0
+rtems_region_get_segment 0
+rtems_region_return_segment 0
+rtems_port_create 0
+rtems_port_ident 0
+rtems_port_delete 0
+rtems_port_external_to_internal 0
+rtems_port_internal_to_external 0
+<pause>
+rtems_io_initialize 0
+rtems_io_open 0
+rtems_io_close 0
+rtems_io_read 0
+rtems_io_write 0
+rtems_io_control 0
+rtems_fatal_error_occurred 0
+rtems_rate_monotonic_create 0
+rtems_rate_monotonic_ident 0
+rtems_rate_monotonic_delete 0
+rtems_rate_monotonic_cancel 0
+rtems_rate_monotonic_period 0
+rtems_multiprocessing_announce 0
+*** END OF TIME OVERHEAD ***

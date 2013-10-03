@@ -1,0 +1,5 @@
+
+
+*** TIME TEST 7 ***
+rtems_task_restart: suspended task -- preempts caller 44
+*** END OF TEST 7 ***

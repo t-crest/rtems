@@ -1,5 +1,7 @@
-*** TEST FATAL 11 ***
-asserting with non-NULL strings...
-assertion "forced" failed: file "../../../../../../../rtems/c/src/../../testsuites/sptests/spfatal11/testcase.h", line 21
-Fatal error (asserting with non-NULL strings...) hit
 
+
+
+*** TEST FATAL 11 ***
+assertion "forced" failed: file "/home/andre/rtems/rtems-4.10.2-patmos/c/src/../../testsuites/sptests/spfatal11/testcase.h", line 23
+Fatal error (asserting with non-NULL strings...) hit
+Simulation time overflow (2^32) - halting

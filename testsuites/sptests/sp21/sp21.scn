@@ -1,3 +1,5 @@
+
+
 *** TEST 21 ***
 -----  TESTING THE NULL DRIVER CHECKS  -----
 TA1 - rtems_io_initialize  - NULL DRIVER RTEMS_SUCCESSFUL

@@ -1,2 +1,5 @@
+
+
+
 *** TEST FATAL 9 ***
-Fatal error (Core invalid workspace address) hit
+Unexpected trap (43) at address 0x40008D34

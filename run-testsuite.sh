@@ -10,7 +10,8 @@
 
 cdlevel=0
 partest=
-simargs=("--interrupt=1" "--freq=5")
+sim=
+simargs=()
 sourcedir=$(pwd)/testsuites
 builddir=$(pwd)/../rtems-4.10.2-build-patmos/patmos-unknown-rtems/c/pasim/testsuites
 testdir=
@@ -27,20 +28,23 @@ noexectests=0
 noresulttests=0
 resumeflag=0
 resumetests=()
+genflag=0
 
 function usage() {
  cat <<EOT
- Usage: $0 [-h] [-c] [-r] [-p <pasim args>] [-t <tests>] [-s <source dir>] [-b <build dir>] [-o <report dir>] [-l <log file>]
+ Usage: $0 [-h] [-c] [-r] [-g] [-p <sim args>] [-t <tests>] [-s <source dir>] [-b <build dir>] [-o <report dir>] [-l <log file>] [-m <simulator>]
  
  -h				Display help contents
  -c				Clean files created during testsuite runs
  -r				Resume test execution
- -p <pasim args>		Pass additional arguments to pasim. Arguments should be passed between quotation marks
+ -g				Regenerate .scn files
+ -p <sim args>			Pass additional arguments to the simulator. Arguments should be passed between quotation marks
  -t <tests>			Tests to be executed (itrontests, libtests, mptests, psxtests, samples, sptests, tmitrontests, tmtests)
  -s <source dir>                Directory containing the testsuites sources
  -b <build dir>                 Build directory of the testsuites
  -o <report dir>                Report output directory
  -l <log file>			Override the default log file
+ -m <simulator>			Override the default simulator (pasim)
  
 EOT
 }
@@ -62,6 +66,13 @@ function writeFile() {
 	echo $2 >> $1
 }
 
+function addSimArg() {
+	containsElement $1 "${simargs[@]}"		
+	if [[ $? == 0 ]]; then 
+		simargs=( "${simargs[@]}" $1 )
+	fi
+}
+
 function checkDefaults() {
 	if [[ "$resultsdir" == "" ]]; then
 		resultsdir=$sourcedir/results
@@ -71,13 +82,28 @@ function checkDefaults() {
 	else
 		log=$resultsdir/$(basename $log)
 	fi
+	if [[ "$sim" == "" ]];then
+		sim="pasim"
+		addSimArg "--interrupt=1"
+		addSimArg "--freq=5"
+	fi
 }
 
 function testsOnResume() {
 	if [[ -f $1 ]]; then
 		while read line
 		do
-			resumetests=( "${resumetests[@]}" $(echo "${line%%:*}"))		
+			resumetests=( "${resumetests[@]}" $(echo "${line%%:*}"))
+			local testresult=$(echo "${line##*:}")
+			if [[ $testresult =~ "Failed" ]]; then				
+				let failtests+=1
+			elif [[ $testresult =~ "Passed" ]]; then
+				let successtests+=1
+			elif [[ $testresult =~ "check" ]]; then
+				let noresulttests+=1
+			elif [[ $testresult =~ "file not found" ]]; then
+				let noexectests+=1
+			fi
 		done < $1
 	fi
 }
@@ -85,40 +111,60 @@ function testsOnResume() {
 function runTest() {		
 	local bin=$(find $builddir -iname "$1.exe")	
 	if [[ $bin ]]; then
-		pasim "${simargs[@]}" $bin -O $resultsdir/$1-tmp.txt > $resultsdir/$1-stats.txt 2>&1
-		local retcode=$?
-		if [[ $retcode != 0 ]]; then
-			writeFile $log "$3: Test executed: Failed with return code $retcode!"
-			echo "$(tput setaf 1)$3: Test executed: Failed with return code $retcode!$(tput setaf 7)"
-			let "failtests += 1 "
-		elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
-			# TODO for some reasons, the pasim output has two empty lines at the beginning and windows newlines,
-			#      should be fixed (?), for now we just ignore this
-			diff --ignore-blank-lines <(sed "s/\r//" $resultsdir/$1-tmp.txt) $1.scn > $resultsdir/$1-log.txt
-			if [[ -s $resultsdir/$1-log.txt ]]; then
-				writeFile $log "$3: Test executed: Failed!"
-				cp -f $resultsdir/$1-tmp.txt $resultsdir/$1-out.txt
-				echo "$(tput setaf 1)$3: Test executed: Failed!$(tput setaf 7)"
-				let "failtests += 1 "
+		local retcode
+		case $sim in 
+		pasim)		
+			$sim "${simargs[@]}" $bin -O $resultsdir/$1-tmp.txt > $resultsdir/$1-stats.txt 2>&1
+			retcode=$?
+		;;
+		tsim-leon3)
+			echo -e "load $bin\ngo\nquit\n" >> tsim-script.txt
+			$sim "${simargs[@]}" -c tsim-script.txt > $resultsdir/$1-tmp.txt
+			retcode=$?
+			sed -i '1,24d;$d' $resultsdir/$1-tmp.txt			
+			rm -rf tsim-script.txt
+		;;
+		esac
+		sed -i "s/\r//" $resultsdir/$1-tmp.txt
+		if [[ $genflag == 1 ]]; then
+			cp -f $resultsdir/$1-tmp.txt $1.scn
+			writeFile $log "$3: generating file $1.scn"
+			echo "$3: generating file $1.scn"
+			rm -rf $resultsdir/$1-tmp.txt $resultsdir/$1-stats.txt
+		else			
+			if [[ $retcode != 0 ]]; then
+				writeFile $log "$3: Test executed: Failed with return code $retcode!"
+				echo "$(tput setaf 1)$3: Test executed: Failed with return code $retcode!$(tput setaf 7)"
+				let failtests+=1
+			elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
+				# TODO for some reasons, the pasim output has two empty lines at the beginning and windows newlines,
+				#      should be fixed (?), for now we just ignore this
+				diff --ignore-blank-lines $resultsdir/$1-tmp.txt $1.scn > $resultsdir/$1-log.txt
+				if [[ -s $resultsdir/$1-log.txt ]]; then
+					writeFile $log "$3: Test executed: Failed!"
+					cp -f $resultsdir/$1-tmp.txt $resultsdir/$1-out.txt
+					echo "$(tput setaf 1)$3: Test executed: Failed!$(tput setaf 7)"
+					let failtests+=1
+				else
+					writeFile $log "$3: Test executed: Passed!"
+					echo "$(tput setaf 2)$3: Test executed: Passed!$(tput setaf 7)"
+					rm -rf $resultsdir/$1-log.txt
+					let successtests+=1
+				fi
 			else
-				writeFile $log "$3: Test executed: Passed!"
-				echo "$(tput setaf 2)$3: Test executed: Passed!$(tput setaf 7)"
-				rm -rf $resultsdir/$1-log.txt
-				let "successtests += 1 "
+				writeFile $resultsdir/$2-log.txt "##### $3 #####"
+				cat $resultsdir/$1-tmp.txt >> $resultsdir/$2-log.txt
+				writeFile $resultsdir/$2-log.txt "##### $3 #####"
+				writeFile $log "$3: Test executed: check $2-log.txt"
+				echo "$3: Test executed: check $2-log.txt"	
+				let noresulttests+=1
 			fi
-		else
-			writeFile $resultsdir/$2-log.txt "##### $3 #####"
-			cat $resultsdir/$1-tmp.txt >> $resultsdir/$2-log.txt
-			writeFile $resultsdir/$2-log.txt "##### $3 #####"
-			writeFile $log "$3: Test executed: check $2-log.txt"
-			echo "$3: Test executed: check $2-log.txt"	
-			let "noresulttests += 1 "
+			rm -rf $resultsdir/$1-tmp.txt
 		fi
-		rm -rf $resultsdir/$1-tmp.txt
-	elif [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
+	elif [[ $(find -maxdepth 1 -iname "*.scn" ) && $genflag == 0 ]]; then
 			writeFile $log "$3: Test not executed: $1.exe file not found"
 			echo "$(tput setaf 3)$3: Test not executed: $1.exe file not found$(tput setaf 7)"
-			let "noexectests += 1 "
+			let noexectests+=1
 	fi
 }
 
@@ -136,7 +182,7 @@ function recurseDirs
 		fi
 		if [[ -d "$f" && $testflag == 1 ]]; then
 			cd "$f"
-			let "cdlevel += 1"
+			let cdlevel+=1
 			if [[ $cdlevel -gt 1 ]]; then
 				testdir="$testdir/$f"
 			fi			
@@ -149,22 +195,19 @@ function recurseDirs
 				testdir=$(echo "${testdir%/*}")
 			fi			
 			cd ..
-			let "cdlevel -= 1"
+			let cdlevel-=1
 		fi
 	done
 }
 
-while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:" opt; do	
+while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do	
 	case "$opt" in	
 	h|H) 
 		usage		
 		exit 1
 	;;
 	p|P) 		
-		containsElement "$OPTARG" "${simargs[@]}"		
-		if [[ $? == 0 ]]; then 
-			simargs=( "${simargs[@]}" "$OPTARG" )
-		fi				
+		addSimArg "$OPTARG"
 	;;
 	t|T)
 		containsElement "$OPTARG" "${tests[@]}"		
@@ -198,6 +241,13 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:" opt; do
 	o|O)
 		resultsdir="$OPTARG"
 	;;
+	m|M)
+		sim="$OPTARG"
+		simargs=()
+	;;
+	g|G)
+		genflag=1
+	;;
 	\?) 		
 		echo "Invalid option: -$OPTARG"
 		usage
@@ -216,30 +266,33 @@ if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."
 	exit 1
 fi
-
 cd $sourcedir
+
 if [[ $resumeflag == 0 ]]; then
 	rm -rf $log	
 fi
 if [[ ! -d $resultsdir ]]; then
 	mkdir $resultsdir
 fi
+
 recurseDirs $(ls -1)
 
-let " totaltests = successtests + failtests + noexectests + noresulttests"
-successper=0
-failper=0
-noexecper=0
-noresultper=0
-if [[ $totaltests != 0 ]]; then
-	let " successper = successtests / totaltests * 100"
-	let " failper = failtests / totaltests * 100"
-	let " noexecper = noexectests / totaltests * 100"
-	let " noresultper = noresulttests / totaltests * 100"
+if [[ $genflag == 0 ]]; then
+	let totaltests=$successtests+$failtests+$noexectests+$noresulttests
+	successper=0
+	failper=0
+	noexecper=0
+	noresultper=0
+	if [[ $totaltests != 0 ]]; then
+		let successper=$successtests*100/$totaltests
+		let failper=$failtests*100/$totaltests
+		let noexecper=$noexectests*100/$totaltests
+		let noresultper=$noresulttests*100/$totaltests
+	fi
+	writeFile $log ""
+	writeFile $log "---------- Results ----------"
+	writeFile $log "Successful tests: $successtests ($successper%)"
+	writeFile $log "Failed tests: $failtests ($failper%)"
+	writeFile $log "Not executed tests: $noexectests ($noexecper%)"
+	writeFile $log "No result tests: $noresulttests ($noresultper%)"
 fi
-writeFile $log ""
-writeFile $log "---------- Results ----------"
-writeFile $log "Successful tests: $successtests ($successper%)"
-writeFile $log "Failed tests: $failtests ($failper%)"
-writeFile $log "Not executed tests: $noexectests ($noexecper%)"
-writeFile $log "No result tests: $noresulttests ($noresultper%)"

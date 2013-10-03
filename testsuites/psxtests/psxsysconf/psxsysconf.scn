@@ -1,6 +1,7 @@
+
+
 *** POSIX TEST -- SYSCONF ***
 sysconf -- bad configuration parameter - negative
-sysconf -- bad configuration parameter - too large
 sysconf - _SC_CLK_TCK=100
 sysconf - _SC_OPEN_MAX=3
 sysconf - _SC_GETPW_R_SIZE_MAX=1024

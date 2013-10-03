@@ -1,0 +1,13 @@
+
+
+*** FILE I/O SAMPLE AND TEST ***
+ =========================
+ RTEMS FILE I/O Test Menu 
+ =========================
+   p -> part_table_initialize
+   f -> mount all disks in fs_table
+   l -> list  file
+   r -> read  file
+   w -> write file
+   s -> start shell
+   Enter your selection ==>Simulation time overflow (2^32) - halting

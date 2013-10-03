@@ -1,3 +1,5 @@
+
+
 *** TEST 15 ***
 INIT - rtems_partition_create - partition 1
 INIT - rtems_partition_create - partition 2

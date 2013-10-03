@@ -1,0 +1,5 @@
+
+
+*** TIME TEST 3 ***
+rtems_semaphore_release: task readied -- preempts caller 39
+*** END OF TEST 3 ***
