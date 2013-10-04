@@ -42,7 +42,7 @@ int benchmark_timer_read(void)
 
 	__PATMOS_RTC_RD_INTERVAL(total);
 
-	total = (__PATMOS_INF - total)/__PATMOS_FREQ_MHZ;
+	total = (__PATMOS_INF - total)/get_cpu_freq_mhz();
 
 	if ( benchmark_timer_find_average_overhead == true )
 		return total;          /* in one microsecond units */

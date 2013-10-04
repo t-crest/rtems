@@ -94,12 +94,6 @@ extern void set_cpu_cycles (u64 time_warp);
 extern u64 get_cpu_cycles(void);
 extern u64 get_cpu_time(void);
 
-extern char __cycles_per_sec; /* linker symbol giving the CPU frequency */
-
-#define __PATMOS_CPU_FREQ (int)(&__cycles_per_sec) /* CPU frequency in Hz */
-#define __PATMOS_FREQ_MHZ __PATMOS_CPU_FREQ/1000000U
-#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
-
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x00)
 
@@ -147,6 +141,35 @@ extern char __cycles_per_sec; /* linker symbol giving the CPU frequency */
 
 /*
  * End of RTC Management
+ */
+
+
+/*
+ * CPU Info Management
+ */
+
+extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
+
+extern uint32_t get_cpu_freq(void);
+
+extern uint32_t get_cpu_freq_mhz(void);
+
+#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
+
+/* Address to access the CPU id */
+#define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
+
+/* Address to access the CPU frequency */
+#define __PATMOS_CPU_FREQ_ADDR (&_cpuinfo_base + 0x04)
+
+/* Macro to read the CPU id */
+#define __PATMOS_CPU_RD_ID(res) res = *((_iodev_ptr_t)__PATMOS_CPU_ID_ADDR);
+
+/* Macro to read the CPU frequency */
+#define __PATMOS_CPU_RD_FREQ(res) res = *((_iodev_ptr_t)__PATMOS_CPU_FREQ_ADDR);
+
+/*
+ * End of CPU Info Management
  */
 
 #endif /* !ASM */
