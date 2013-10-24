@@ -48,7 +48,10 @@ uint32_t         Clock_isrs;              /* ISRs until next tick */
 
 rtems_device_major_number rtems_clock_major = ~0;
 rtems_device_minor_number rtems_clock_minor;
-//uint32_t         usecs_offset;              /* microseconds from RTEMS start to Install_clock routine */
+/* cycles from RTEMS start to Install_clock routine */
+uint64_t cycles_offset;
+/* CPU frequency in MHZ */
+uint32_t freq;
 
 /*
  *  The previous ISR on this clock tick interrupt vector.
@@ -58,7 +61,7 @@ rtems_isr_entry  Old_ticker;
 
 void Clock_exit( void );
 
-void set_cpu_cycles (u64 time_warp)
+void set_cpu_cycles (uint64_t time_warp)
 {
 
 	__PATMOS_RTC_WR_CYCLE_LOW((unsigned int)time_warp);
@@ -66,26 +69,26 @@ void set_cpu_cycles (u64 time_warp)
 
 }
 
-u64 get_cpu_cycles(void)
+uint64_t get_cpu_cycles(void)
 {
-	unsigned int u;
-	unsigned int l;
+	uint32_t u;
+	uint32_t l;
 
 	__PATMOS_RTC_RD_CYCLE_LOW(l);
 	__PATMOS_RTC_RD_CYCLE_UP(u);
 
-	return (((u64)u) << 32) | l;
+	return (((uint64_t)u) << 32) | l;
 }
 
-u64 get_cpu_time(void)
+uint64_t get_cpu_time(void)
 {
-	unsigned int u;
-	unsigned int l;
+	uint32_t u;
+	uint32_t l;
 
 	__PATMOS_RTC_RD_TIME_LOW(l);
 	__PATMOS_RTC_RD_TIME_UP(u);
 
-	return (((u64)u) << 32) | l;
+	return (((uint64_t)u) << 32) | l;
 }
 
 uint32_t get_cpu_freq(void)
@@ -97,22 +100,38 @@ uint32_t get_cpu_freq(void)
 
 uint32_t get_cpu_freq_mhz(void)
 {
-	return get_cpu_freq()/1000000U;
+	return get_cpu_freq()/1000000;
 }
 
-/*
 uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
-	uint32_t usecs;
+	volatile uint32_t cycles_until_last_tick;
+	volatile uint64_t cycles_since_last_tick;
+	volatile uint64_t nsecs;
+	volatile uint64_t* ptr_cycles_since_last_tick = &cycles_since_last_tick;
 
-	usecs = get_cpu_cycles()/get_cpu_freq_mhz() - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick() - usecs_offset;
+	cycles_until_last_tick = Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq;
+	cycles_since_last_tick = get_cpu_cycles() - cycles_offset;
+	asm volatile("sub %0 = %0, %1\n\t"
+				 "swm   [ %2 + 0 ] = %0 \n\t"	 		//save cycles_since_last_tick
+			: : "r" (cycles_since_last_tick), "r" (cycles_until_last_tick), "r" (ptr_cycles_since_last_tick));
+	nsecs = (cycles_since_last_tick * 1000) / freq;
 
-	return usecs * 1000;
+	/*printf("cpu_cycles = %d\n", get_cpu_cycles());
+	printf("clock driver ticks = %d\n", Clock_driver_ticks);
+	printf("microseconds per tick = %d\n", rtems_configuration_get_microseconds_per_tick());
+	printf("frequency MHZ = %d\n", freq);
+	printf("cycles offset = %d\n", cycles_offset);
+	printf("cycles until last tick = %d\n", cycles_until_last_tick);
+	printf("cycles until last tick = %d\n", *ptr);
+	printf("cycles since last tick = %d\n", cycles_since_last_tick);
+	printf("nsecs = %d\n\n\n", nsecs);*/
+
+	return (uint32_t) nsecs;
 }
 
 #define Clock_driver_nanoseconds_since_last_tick \
 		bsp_clock_nanoseconds_since_last_tick
-*/
 
 /*
  *  Clock_isr
@@ -347,7 +366,9 @@ void Install_clock(
 	/*
 	 * reset the cpu_cycles count to determine clock_nanoseconds_since_last_tick
 	 */
-	//usecs_offset = get_cpu_cycles()/get_cpu_freq_mhz();
+	cycles_offset = get_cpu_cycles();
+
+	freq = get_cpu_freq_mhz();
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

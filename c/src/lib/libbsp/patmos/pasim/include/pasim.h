@@ -30,7 +30,6 @@ extern "C" {
 #define _IODEV __attribute__((address_space(1)))
 
 typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
-typedef unsigned long long u64;
 
 /*
  * UART Management
@@ -90,9 +89,9 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 
 extern char _timer_base; /* linker symbol giving the address of the RTC */
 
-extern void set_cpu_cycles (u64 time_warp);
-extern u64 get_cpu_cycles(void);
-extern u64 get_cpu_time(void);
+extern void set_cpu_cycles (uint64_t time_warp) __attribute__((naked));
+extern uint64_t get_cpu_cycles(void) __attribute__((naked));
+extern uint64_t get_cpu_time(void) __attribute__((naked));
 
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x00)
@@ -152,7 +151,7 @@ extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info *
 
 extern uint32_t get_cpu_freq(void);
 
-extern uint32_t get_cpu_freq_mhz(void);
+extern uint32_t get_cpu_freq_mhz(void) __attribute__((naked));
 
 #define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
 
