@@ -105,28 +105,6 @@ uint32_t get_cpu_freq_mhz(void)
 
 uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
-	/*volatile uint32_t cycles_until_last_tick;
-	volatile uint64_t cycles_since_last_tick;
-	volatile uint64_t nsecs;
-	volatile uint64_t* ptr_cycles_since_last_tick = &cycles_since_last_tick;
-
-	cycles_until_last_tick = Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq;
-	cycles_since_last_tick = get_cpu_cycles() - cycles_offset;
-	asm volatile("sub %0 = %0, %1\n\t"
-				 "swm   [ %2 + 0 ] = %0 \n\t"	 		//save cycles_since_last_tick
-			: : "r" (cycles_since_last_tick), "r" (cycles_until_last_tick), "r" (ptr_cycles_since_last_tick));
-	nsecs = (cycles_since_last_tick * 1000) / freq;
-
-	printf("cpu_cycles = %d\n", get_cpu_cycles());
-	printf("clock driver ticks = %d\n", Clock_driver_ticks);
-	printf("microseconds per tick = %d\n", rtems_configuration_get_microseconds_per_tick());
-	printf("frequency MHZ = %d\n", freq);
-	printf("cycles offset = %d\n", cycles_offset);
-	printf("cycles until last tick = %d\n", cycles_until_last_tick);
-	printf("cycles until last tick = %d\n", *ptr);
-	printf("cycles since last tick = %d\n", cycles_since_last_tick);
-	printf("nsecs = %d\n\n\n", nsecs);*/
-
 	uint64_t nsecs;
 
 	nsecs = ((get_cpu_cycles() - ((uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq) - cycles_offset)
