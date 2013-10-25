@@ -94,16 +94,16 @@ extern uint64_t get_cpu_cycles(void) __attribute__((naked));
 extern uint64_t get_cpu_time(void) __attribute__((naked));
 
 /* Address to access the cycle counter low register of the RTC */
-#define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x00)
+#define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x04)
 
 /* Address to access the cycle counter up register of the RTC */
-#define __PATMOS_RTC_CYCLE_UP_ADDR (&_timer_base + 0x04)
+#define __PATMOS_RTC_CYCLE_UP_ADDR (&_timer_base + 0x00)
 
 /* Address to access the time in microseconds low register of the RTC */
-#define __PATMOS_RTC_TIME_LOW_ADDR (&_timer_base + 0x08)
+#define __PATMOS_RTC_TIME_LOW_ADDR (&_timer_base + 0x0C)
 
 /* Address to access the time in microseconds up register of the RTC */
-#define __PATMOS_RTC_TIME_UP_ADDR (&_timer_base + 0x0C)
+#define __PATMOS_RTC_TIME_UP_ADDR (&_timer_base + 0x08)
 
 /* Address to access the interrupt interval register of the RTC */
 #define __PATMOS_RTC_INTERVAL_ADDR (&_timer_base + 0x10)
