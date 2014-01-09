@@ -103,6 +103,10 @@ SYM(hard_reset):
   /*
    * Halt the CPU. If boot_card returns, also halt the CPU.
    */
+.type   __exit, @function
+.size   __exit, .Ltmp1-__exit
+.fstart __exit, .Ltmp1-__exit, 4
+ 
         PUBLIC(__exit)
 SYM(__exit):
   mov $r1 = $r3 /* store exit code */
@@ -111,5 +115,6 @@ SYM(__exit):
   nop
   nop
   nop     
+.Ltmp1:
 
 /* end of file */
