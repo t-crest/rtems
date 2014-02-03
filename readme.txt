@@ -14,9 +14,23 @@ http://www.rtems.org/onlinedocs/releases/rtemsdocs-4.10.2/share/rtems/html/
 
 As an alternative to this manual installation process, the 'build.sh' script in
 the T-CREST misc repository automatically goes through all the steps required
-to instal RTEMS 4.10.2 for Patmos. To do so, run the script as follows:
+to install RTEMS 4.10.2 for Patmos. To do so, run the script as follows:
 
 './build.sh rtems'
+
+Similarly, the 'build-rtems.sh' script contained in this repository also
+enables the automatic installation of both the patmos toolchain and rtems.
+To do so, clone this repo and then run the script as follows:
+
+'./build-rtems.sh -m -t -r'
+
+This will automatically create a 't-crest' folder with 3 subfolders:
+
+(a) 'patmos-misc' with the contents of the t-crest misc repo
+
+(b) 'build-rtems' with the installation of the patmos toolchain for rtems
+
+(c) 'rtems' with the 'rtems-src', 'rtems-build' and 'rtems-install' locations
 
 
 
@@ -28,14 +42,14 @@ Installing RTEMS 4.10.2 for Patmos
 Installing the Patmos compiler
 ==============================
 
-In order to compile the RTEMS 4.10.2 OS for Patmos, we need to install the
+In order to compile RTEMS 4.10.2 OS for Patmos, we need to install the
 Patmos compiler tool chain in a slightly different manner than the usual. 
 Assuming that we are using the Build Script to build the Tool Chain:
 
 (a) Download/Checkout the build script: 
-'git  clone  https://github.com/t-crest/patmos-misc.git  misc'
+'git  clone  https://github.com/t-crest/patmos-misc.git  <misc_dir>'
 
-(b) 'cd  misc'
+(b) 'cd  <misc_dir>'
 
 (c) 'cp  build.cfg.dist  build.cfg', then edit build.cfg to:
 	(c.1) set ROOT_DIR
@@ -53,20 +67,26 @@ will have to be renamed to patmos-unknown-rtems-clang:
 
 In this folder there is a script named 'build-rtems.sh' that installs the
 Patmos toolchain as required by RTEMS, including renaming the Patmos binary 
-files. The file 'target-change.sh' is responsible for renaming the Patmos 
-tools, thus needs to be placed in the same directory as the 'build-rtems.sh' 
-script. Alternatively, and assuming that the Patmos toolchain is already
-installed, the 'target-change.sh' script can be used alone to copy the Patmos
-tools, e.g. like this: './target-change.sh ROOT_DIR'.
+files. Thus, running './build-rtems.sh -m' will check out the misc repo and
+then run the build.sh script with the required configurations for rtems.
+The file 'target-change.sh' is responsible for renaming the Patmos tools,
+hence needs to be placed in the same directory as the 'build-rtems.sh' script.
+Alternatively, and assuming that the Patmos toolchain is already installed, the
+'target-change.sh' script can be used alone to copy the Patmos tools,
+e.g. like this: './target-change.sh ROOT_DIR'.
 
 Finally, the Patmos executables must be added to the path environment variable
 (e.g. 'export PATH=${PATH}:/ROOT_DIR/local/bin').
+Similarly, the pasim simulator must also be added to the path environment
+variable (e.g. 'export PATH=${PATH}:/ROOT_DIR/patmos/simulator/build/src').
+The 'build-rtems.sh' script also adds these paths to the path env variable, and
+in addition it adds these exports to the bashrc file.
 
 
 Installing RTEMS 4.10.2
 =======================
 
-Use the command 'git clone https://github.com/t-crest/rtems ~/rtems/rtems-4.10.2' to 
+Use the command 'git clone https://github.com/t-crest/rtems <rtems_src_dir>' to 
 download the build files of RTEMS 4.10.2. Prior to the installation process, it
 is necessary to run the bootstrap script. The bootstrap script found in the 
 top level directory of the RTEMS source tree is executed to produce the 
@@ -87,7 +107,7 @@ following manner:
  
  (b) ./bootstrap
 
-Once the RTEMS 4.10.2 is bootstraped, the configure script should run. The
+Once RTEMS 4.10.2 is bootstraped, the configure script should run. The
 configure process specializes the Makefile.in files at the time that RTEMS is 
 configured for a specific development host and target.
 
@@ -97,18 +117,19 @@ Configure for Patmos Pasim
 Prior to configuring RTEMS with the Pasim BSP, create and go to the
 configuration directory:
 
-'mkdir ~/rtems/rtems-4.10.2-build'
-'cd ~/rtems/rtems-4.10.2-build'
+'mkdir <rtems_build_dir>'
+'cd <rtems_build_dir>'
 
 To configure RTEMS using the Patmos Pasim BSP, use the following command:
 
-'~/rtems/rtems-4.10.2/configure --target=patmos-unknown-rtems --enable-posix 
---disable-networking --disable-cxx --enable-rtemsbsp=pasim --prefix=INSTALL-DIR'
+'<rtems_src_dir>/configure --target=patmos-unknown-rtems --enable-posix 
+--disable-networking --disable-cxx --enable-rtemsbsp=pasim --prefix=<rtems_install_dir>'
 
 It is assumed that the source files for the installation are placed at
-'~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
-the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
-executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
+<rtems_src_dir> directory, and the variable <rtems_install_dir> should be
+replaced by the installation directory (e.g. '~/t-crest/rtems/rtems-install').
+The script shoud be executed from the configuration directory
+(e.g. '~/t-crest/rtems/rtems-build').
 
 The options passed to the configure script will determine which tools RTEMS
 will include in the installation. In this case, the '--enable-posix' option
@@ -124,19 +145,20 @@ Finish installation
 
 After configuring RTEMS for the specific CPU and board target, use
 'make install' to install RTEMS 4.10.2. Next, set the path to the RTEMS
-specific installation. Assuming 'INSTALL-DIR=~/rtems/rtems-4.10.2-install':
+specific installation. Assuming '<rtems_install_dir>=~/t-crest/rtems/rtems-install':
 
-'export RTEMS_MAKEFILE_PATH=~/rtems/rtems-4.10.2-install/patmos-unknown-rtems/pasim'
+'export RTEMS_MAKEFILE_PATH=~/t-crest/rtems/rtems-install/patmos-unknown-rtems/pasim'
 
 Test installation
 -----------------
 
 To test installation, to check if the OS is working properly, 
 checkout the RTEMS Classic API examples at Github, using 
-'git clone https://github.com/RTEMS/examples-v2 ~/rtems-examples'. Then:
+'git clone https://github.com/RTEMS/examples-v2 <rtems_examples_dir>'. 
+Assuming '<rtems_examples_dir>=~/t-crest/rtems/rtems-examples':
 
 (a) go to the triple period example, using 
-	'cd ~/rtems-examples/classic_api/triple_period'
+	'cd ~/t-crest/rtems/rtems-examples/classic_api/triple_period'
 
 (b) use 'make' to create the executable
 
@@ -146,7 +168,7 @@ In case RTEMS was configured with tests enabled, the testsuite was compiled
 in the configuration directory. Then:
 
 (a) go to the testsuite folder in the configuration drectory, using
-	'cd ~/rtems/rtems-4.10.2-build/patmos-unknown-rtems/c/pasim/testsuites'
+	'cd <rtems_build_dir>/patmos-unknown-rtems/c/pasim/testsuites'
  
 (b) go through all the test folders and execute each test individually e.g.
 	'cd sptests/sp01'
@@ -154,7 +176,7 @@ in the configuration directory. Then:
 	 
 (c) compare the output of the test with the expected successful output
 	contained in the .scn files located in the RTEMS source tree (e.g.
-	'~/rtems/rtems-4.10.2/testsuites/sptests/sp01/sp01.scn') to check if the
+	'<rtems_src_dir>/testsuites/sptests/sp01/sp01.scn') to check if the
 	test passed
 	 
 Alternatively, the 'build.sh' script in the T-CREST misc repository includes
@@ -203,7 +225,7 @@ available for use.
 Installing RTEMS 4.10.2
 =======================
 
-Use the command 'git clone https://github.com/t-crest/rtems ~/rtems/rtems-4.10.2' to 
+Use the command 'git clone https://github.com/t-crest/rtems <rtems_src_dir>' to 
 download the build files of RTEMS 4.10.2. Prior to the installation process, it
 is necessary to run the bootstrap script. The bootstrap script found in the 
 top level directory of the RTEMS source tree is executed to produce the 
@@ -224,7 +246,7 @@ following manner:
  
  (b) ./bootstrap
 
-Once the RTEMS 4.10.2 is bootstraped, the configure script should run. The
+Once RTEMS 4.10.2 is bootstraped, the configure script should run. The
 configure process specializes the Makefile.in files at the time that RTEMS is 
 configured for a specific development host and target.
 
@@ -234,18 +256,18 @@ Configure for SPARC Leon3
 Prior to configuring RTEMS with the Leon3 BSP, create and go to the
 configuration directory:
 
-'mkdir ~/rtems/rtems-4.10.2-build'
-'cd ~/rtems/rtems-4.10.2-build'
+'mkdir <rtems_build_dir>'
+'cd <rtems_build_dir>'
 
 To configure RTEMS using the SPARC Leon3 BSP, use the following command:
 
-'~/rtems/rtems-4.10.2/configure --target=sparc-rtems4.10 --enable-posix
---disable-networking --disable-cxx --enable-rtemsbsp=leon3 --prefix=INSTALL-DIR'
+'<rtems_src_dir>/configure --target=sparc-rtems4.10 --enable-posix
+--disable-networking --disable-cxx --enable-rtemsbsp=leon3 --prefix=<rtems_install_dir>'
 
 It is assumed that the source files for the installation are placed at
-'~/rtems/rtems-4.10.2' directory, and the variable INSTALL-DIR should be replaced by
-the installation directory (e.g. '~/rtems/rtems-4.10.2-install'). The script shoud be
-executed from the configuration directory (e.g. '~/rtems/rtems-4.10.2-build').
+<rtems_src_dir> directory, and the variable <rtems_install_dir> should be replaced by
+the installation directory (e.g. '~/t-crest/rtems/rtems-install'). The script shoud be
+executed from the configuration directory (e.g. '~/t-crest/rtems/rtems-build').
 
 The options passed to the configure script will determine which tools RTEMS
 will include in the installation. In this case, the '--enable-posix' option
@@ -260,19 +282,21 @@ Finish installation
 
 After configuring RTEMS for the specific CPU and board target, use
 'make install' to install RTEMS 4.10.2. Next, set the path to the RTEMS
-specific installation. Assuming 'INSTALL-DIR=~/rtems/rtems-4.10.2-install':
+specific installation. 
+Assuming '<rtems_install_dir>=~/t-crest/rtems/rtems-install':
 
-'export RTEMS_MAKEFILE_PATH=~/rtems/rtems-4.10.2-install/sparc-rtems4.10/leon3'
+'export RTEMS_MAKEFILE_PATH=~/t-crest/rtems/rtems-install/sparc-rtems4.10/leon3'
 
 Test installation
 -----------------
 
 To test installation, to check if the OS is working properly, 
 checkout the RTEMS Classic API examples at Github, using 
-'git clone https://github.com/RTEMS/examples-v2 ~/rtems-examples'. Then:
+'git clone https://github.com/RTEMS/examples-v2 <rtems_examples_dir>'. 
+Assuming '<rtems_examples_dir>=~/t-crest/rtems/rtems-examples':
 
 (a) go to the triple period example, using 
-	'cd ~/rtems-examples/classic_api/triple_period'
+	'cd ~/t-crest/rtems/rtems-examples/classic_api/triple_period'
 
 (b) use 'make' to create the executable
 
@@ -282,7 +306,7 @@ In case RTEMS was configured with tests enabled, the testsuite was compiled
 in the configuration directory. Then:
 
 (a) go to the testsuite folder in the configuration drectory, using
-	'cd ~/rtems/rtems-4.10.2-build/sparc-rtems4.10/c/leon3/testsuites'
+	'cd <rtems_build_dir>/sparc-rtems4.10/c/leon3/testsuites'
  
 (b) go through all the test folders and execute each test individually e.g.
 	'cd sptests/sp01'
@@ -290,5 +314,5 @@ in the configuration directory. Then:
 	 
 (c) compare the output of the test with the expected successful output
 	contained in the .scn files located in the RTEMS source tree (e.g.
-	'~/rtems/rtems-4.10.2/testsuites/sptests/sp01/sp01.scn') to check if the
+	'<rtems_src_dir>/testsuites/sptests/sp01/sp01.scn') to check if the
 	test passed

@@ -64,6 +64,8 @@ list=(addr2line\
 	ld.gold\
 	llvm-ranlib\
 	yaml-bench)
+	
+pwd=$(pwd)
 
 if [[ $1 == "" || $1 == "-help" || $1 == "--help" ]]; then
 	echo "Usage : "$0" <ROOT DIR>"
@@ -71,12 +73,14 @@ elif [[ ! -d $1 ]]; then
 	echo "Error: $1 not found..."
 else
 	echo 'Changing names of executables...'	
-	bindir=local/bin
+	cd $1	
+	bindir=$(pwd)/local/bin
+	cd $pwd
 	
 	for cmd in "${list[@]}"
 	do
-		ofile=$(dirname $1)/$(basename $1)/$bindir/patmos-$cmd
-		lfile=$(dirname $1)/$(basename $1)/$bindir/patmos-unknown-rtems-$cmd
+		ofile=$bindir/patmos-$cmd
+		lfile=$bindir/patmos-unknown-rtems-$cmd
 		if [[ -f $ofile ]]; then
 			if [[ -f $lfile ]]; then
 				echo 'Warning: link already exists...'
