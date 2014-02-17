@@ -194,7 +194,7 @@ void _CPU_Context_switch(
 			"swm   [ %0 + %29 ] = $r29 \n\t"		//save r29
 			"swm   [ %0 + %30 ] = $r30 \n\t"		//save r30
 			"swm   [ %0 + %31 ] = $r31 \n\t"		//save r31
-			: : "r" (run), "i" (r1_OFFSET),"i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET),
+			: : "{$r3}" (run), "i" (r1_OFFSET),"i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET),
 			"i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET),
 			"i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET),
 			"i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET),
@@ -249,7 +249,7 @@ void _CPU_Context_switch(
 			"swm   [ %0 + %15 ] = $r1 \n\t"			//save s14
 			"mfs $r1 = $s15 \n\t"					//move s15 to r1
 			"swm   [ %0 + %16 ] = $r1 \n\t"			//save s15
-			: : "r" (run), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
+			: : "{$r3}" (run), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET),"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
 			"i" (s14_OFFSET), "i" (s15_OFFSET) 
@@ -334,7 +334,7 @@ void _CPU_Context_switch(
 			"mts $s14 = $r1 \n\t"							//move r1 to s14
 			"lwc   $r1 = [ %0 + %16 ] \n\t nop \n\t"		//load s15
 			"mts $s15 = $r1 \n\t"							//move r1 to s15
-			: : "r" (heir), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
+			: : "{$r4}" (heir), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
 			"i" (s14_OFFSET), "i" (s15_OFFSET)
@@ -430,7 +430,7 @@ void _CPU_Context_restore(
 			"mts $s14 = $r1 \n\t"							//move r1 to s14
 			"lwc   $r1 = [ %0 + %16 ] \n\t nop \n\t"		//load s15
 			"mts $s15 = $r1 \n\t"							//move r1 to s15
-			: : "r" (new_context), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
+			: : "{$r3}" (new_context), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
 			"i" (s14_OFFSET), "i" (s15_OFFSET)
