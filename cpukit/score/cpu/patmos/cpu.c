@@ -210,7 +210,8 @@ void _CPU_Context_switch(
 			"sub $r2 = $r5, $r6 \n\t"				// get stack size
 			"sspill $r2 \n\t"
 			"swm   [ %0 + %1 ] = $r2 \n\t"			//save stack size to memory
-			: : "r" (run), "i" (ssize_OFFSET));
+			: : "r" (run), "i" (ssize_OFFSET)
+			: "$r5", "$r6", "$r2");
 
 	/* 
 	 * save special-purpose registers 
@@ -251,7 +252,9 @@ void _CPU_Context_switch(
 			: : "r" (run), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET),"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
-			"i" (s14_OFFSET), "i" (s15_OFFSET));
+			"i" (s14_OFFSET), "i" (s15_OFFSET) 
+			// clobber r1 so that the compiler does not use it for %0
+			: "$r1" );
 
 	/* 
 	 * load general-purpose registers (skip r0 which is always 0) 
@@ -288,7 +291,7 @@ void _CPU_Context_switch(
 			"lwc   $r29 = [ %0 + %27 ] \n\t"		//load r29
 			"lwc   $r30 = [ %0 + %28 ] \n\t"		//load r30
 			"lwc   $r31 = [ %0 + %29 ] \n\t"		//load r31
-			: : "r" (heir), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
+			: : "{$r4}" (heir), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
 			"i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET),
 			"i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET),
 			"i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET),
@@ -334,13 +337,14 @@ void _CPU_Context_switch(
 			: : "r" (heir), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
-			"i" (s14_OFFSET), "i" (s15_OFFSET));
+			"i" (s14_OFFSET), "i" (s15_OFFSET)
+			: "$r1");
 
 	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
 			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load r1
 			"lwc   $r4  = [ %0 + %3 ] \n\t"					//load r4
-			: : "r" (heir), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r4_OFFSET));
+			: : "{$r4}" (heir), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r4_OFFSET));
 
 }		
 
@@ -383,7 +387,7 @@ void _CPU_Context_restore(
 			"lwc   $r29 = [ %0 + %27 ] \n\t"		//load r29
 			"lwc   $r30 = [ %0 + %28 ] \n\t"		//load r30
 			"lwc   $r31 = [ %0 + %29 ] \n\t"		//load r31
-			: : "r" (new_context), "i" (r2_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
+			: : "{$r3}" (new_context), "i" (r2_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
 			"i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET),
 			"i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET),
 			"i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET),
@@ -429,13 +433,14 @@ void _CPU_Context_restore(
 			: : "r" (new_context), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
-			"i" (s14_OFFSET), "i" (s15_OFFSET));
+			"i" (s14_OFFSET), "i" (s15_OFFSET)
+			: "$r1");
 
 	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
 			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load r1
 			"lwc   $r3  = [ %0 + %3 ] \n\t"					//load r3
-			: : "r" (new_context), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r3_OFFSET));
+			: : "{$r3}" (new_context), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r3_OFFSET));
 
 }
 
