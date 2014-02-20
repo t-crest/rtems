@@ -13,8 +13,8 @@ partest=
 sim=
 simargs=()
 sourcedir=$(pwd)/testsuites
-builddir=$(pwd)/../rtems-4.10.2-build-patmos/patmos-unknown-rtems/c/pasim/testsuites
-testdir=
+builddir=$(pwd)/../rtems-build
+
 
 # defaults are set after options are read
 resultsdir=
@@ -109,7 +109,7 @@ function testsOnResume() {
 }
 
 function runTest() {		
-	local bin=$(find $builddir -iname "$1.exe")	
+	local bin=$(find $testsuitedir -iname "$1.exe")	
 	if [[ $bin ]]; then
 		local retcode
 		case $sim in 
@@ -237,6 +237,7 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do
 	;;
 	b|B)
 		builddir="$OPTARG"
+		builddir=${builddir/%"/"/}		
 	;;
 	o|O)
 		resultsdir="$OPTARG"
@@ -261,6 +262,7 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do
 	esac	
 done
 
+testsuitedir=$builddir/patmos-unknown-rtems/c/pasim/testsuites
 checkDefaults
 if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."

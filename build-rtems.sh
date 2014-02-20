@@ -6,7 +6,7 @@
 #####################################################################################################################################
 
 pwd=$(pwd)
-tcrest_dir=$pwd/../t-crest
+tcrest_dir=~/t-crest
 misc_dir=$tcrest_dir/patmos-misc
 build_dir=$tcrest_dir/build-rtems
 rtems_dir=$tcrest_dir/rtems
