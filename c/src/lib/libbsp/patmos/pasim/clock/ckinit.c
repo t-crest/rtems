@@ -9,7 +9,7 @@
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -105,16 +105,28 @@ uint32_t get_cpu_freq_mhz(void)
 
 uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
-	uint64_t nsecs;
+	/*uint64_t volatile cycles_since_first_tick = (uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq;
+	uint64_t volatile cycles_since_program_start = get_cpu_cycles();
+	uint64_t volatile cycles_since_last_tick = cycles_since_program_start - cycles_since_first_tick - cycles_offset;
+	uint64_t volatile microseconds_since_last_tick = cycles_since_last_tick*1000;
+	uint64_t nsecs = microseconds_since_last_tick / ((uint64_t)freq);*/
 
-	nsecs = ((get_cpu_cycles() - ((uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq) - cycles_offset)
-			* 1000) / ((uint64_t)freq);
+	uint64_t nsecs = ((get_cpu_cycles() - ((uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq) - cycles_offset)
+				* 1000) / ((uint64_t)freq);
 
 	return (uint32_t) nsecs;
 }
 
-#define Clock_driver_nanoseconds_since_last_tick \
-		bsp_clock_nanoseconds_since_last_tick
+/*
+ * 	Problem: Interrupts overlap and, consequently, variable Clock_driver_ticks is not
+ * 			updated between consecutive isr. Thus, bsp_clock_nanoseconds_since_last_tick
+ * 			overestimates the elapsed nanoseconds since last tick
+ *
+ * 	Solution:	(1) Comment the #define below
+ * 				(2)	Increase CONFIGURE_MICROSECONDS_PER_TICK
+ */
+
+//#define Clock_driver_nanoseconds_since_last_tick bsp_clock_nanoseconds_since_last_tick
 
 /*
  *  Clock_isr
@@ -228,7 +240,7 @@ rtems_isr Clock_isr(
 	 */
 	Clock_driver_ticks += 1;
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * get_cpu_freq_mhz());
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
 
 	rtems_clock_tick();
 
@@ -344,14 +356,14 @@ void Install_clock(
 	);
 #endif
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * get_cpu_freq_mhz());
+	freq = get_cpu_freq_mhz();
+
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
 
 	/*
 	 * reset the cpu_cycles count to determine clock_nanoseconds_since_last_tick
 	 */
 	cycles_offset = get_cpu_cycles();
-
-	freq = get_cpu_freq_mhz();
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

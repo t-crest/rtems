@@ -22,14 +22,48 @@
 extern "C" {
 #endif
 
-#define PASIM_SHADOW_STACK_BASE 0x4000000
-#define PASIM_STACK_CACHE_BASE 0x3000000
+/*
+ * TODO: replace these by linker symbols
+ */
+
+#define _shadow_stack_base 0x4000000
+#define _stack_cache_base 0x3000000
 
 #ifndef ASM
 
 #define _IODEV __attribute__((address_space(1)))
 
 typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
+
+
+/*
+ * CPU Info Management
+ */
+
+extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
+
+extern uint32_t get_cpu_freq(void);
+
+extern uint32_t get_cpu_freq_mhz(void);
+
+#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
+
+/* Address to access the CPU id */
+#define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
+
+/* Address to access the CPU frequency */
+#define __PATMOS_CPU_FREQ_ADDR (&_cpuinfo_base + 0x04)
+
+/* Macro to read the CPU id */
+#define __PATMOS_CPU_RD_ID(res) res = *((_iodev_ptr_t)__PATMOS_CPU_ID_ADDR);
+
+/* Macro to read the CPU frequency */
+#define __PATMOS_CPU_RD_FREQ(res) res = *((_iodev_ptr_t)__PATMOS_CPU_FREQ_ADDR);
+
+/*
+ * End of CPU Info Management
+ */
+
 
 /*
  * UART Management
@@ -38,8 +72,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 extern char _iomap_base; /* linker symbol giving the base address of the IO map address range */
 
 extern char _uart_base; /* linker symbol giving the address of the UART */
-
-#endif
 
 /*
  *  The following defines the bits in the PASIM UART Status Registers.
@@ -60,7 +92,6 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
  */
 #define __PATMOS_UART_DATA_ADDR (&_uart_base + 0x04)
 
-#ifndef ASM
 
 /*
  *  Macros to handle read and write to the UART's status, control and data registers 
@@ -89,9 +120,11 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 
 extern char _timer_base; /* linker symbol giving the address of the RTC */
 
-extern void set_cpu_cycles (uint64_t time_warp) __attribute__((naked));
-extern uint64_t get_cpu_cycles(void) __attribute__((naked));
-extern uint64_t get_cpu_time(void) __attribute__((naked));
+extern void set_cpu_cycles (uint64_t time_warp);
+
+extern uint64_t get_cpu_cycles(void);
+
+extern uint64_t get_cpu_time(void);
 
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x04)
@@ -140,35 +173,6 @@ extern uint64_t get_cpu_time(void) __attribute__((naked));
 
 /*
  * End of RTC Management
- */
-
-
-/*
- * CPU Info Management
- */
-
-extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
-
-extern uint32_t get_cpu_freq(void);
-
-extern uint32_t get_cpu_freq_mhz(void) __attribute__((naked));
-
-#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
-
-/* Address to access the CPU id */
-#define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
-
-/* Address to access the CPU frequency */
-#define __PATMOS_CPU_FREQ_ADDR (&_cpuinfo_base + 0x04)
-
-/* Macro to read the CPU id */
-#define __PATMOS_CPU_RD_ID(res) res = *((_iodev_ptr_t)__PATMOS_CPU_ID_ADDR);
-
-/* Macro to read the CPU frequency */
-#define __PATMOS_CPU_RD_FREQ(res) res = *((_iodev_ptr_t)__PATMOS_CPU_FREQ_ADDR);
-
-/*
- * End of CPU Info Management
  */
 
 #endif /* !ASM */
