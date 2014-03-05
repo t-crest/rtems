@@ -100,7 +100,7 @@ if [[ $build_toolchain == "true" ]]; then
 	fi
 
 	$misc_dir/./build.sh $build_args
-	if [[ $new_target=="patmos-unknown-rtems" ]]; then
+	if [[ $new_target == "patmos-unknown-rtems" ]]; then
 		./target-change.sh $build_dir
 	fi
 	
