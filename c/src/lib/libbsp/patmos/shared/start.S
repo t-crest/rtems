@@ -32,8 +32,8 @@ SYM(hard_reset):
   /*
    * setup stack cache and stack frame    
    */
-  li	  $r29 = PASIM_SHADOW_STACK_BASE /* Initialize shadow stack pointer */
-  li	  $r9 = PASIM_STACK_CACHE_BASE
+  li	  $r29 = _shadow_stack_base /* Initialize shadow stack pointer */
+  li	  $r9 = _stack_cache_base
   mts	  $s5 = $r9 /* Initialize the stack cache's top pointer */
   mts	  $s6 = $r9 /* Initialize the stack cache's spill top pointer */
   
