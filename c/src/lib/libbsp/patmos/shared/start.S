@@ -32,7 +32,7 @@ SYM(hard_reset):
   /*
    * setup stack cache and stack frame    
    */
-  li	  $r29 = _shadow_stack_base /* Initialize shadow stack pointer */
+  li	  $r31 = _shadow_stack_base /* Initialize shadow stack pointer */
   li	  $r9 = _stack_cache_base
   mts	  $s5 = $r9 /* Initialize the stack cache's top pointer */
   mts	  $s6 = $r9 /* Initialize the stack cache's spill top pointer */
@@ -89,7 +89,6 @@ SYM(hard_reset):
    */
  
 //call_boot:
-  li	  $r30 = hard_reset /* set function return address */
   call	  SYM(boot_card) /* invoke boot_card function */
   li	  $r3 = 0 /* pass argument argc */
   li	  $r4 = 0 /* pass argument argv */
@@ -110,8 +109,7 @@ SYM(hard_reset):
         PUBLIC(__exit)
 SYM(__exit):
   mov $r1 = $r3 /* store exit code */
-  mov $r30 = $r0 /* clear sb and return == halt */
-  ret $r0, $r0
+  brcf $r0      /* halt */
   nop
   nop
   nop     
