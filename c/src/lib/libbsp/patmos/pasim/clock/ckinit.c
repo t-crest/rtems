@@ -183,8 +183,8 @@ rtems_isr Clock_isr(
 			"swm   [ $r31 + %30 ] = $r29 \n\t"		//save r29
 			"swm   [ $r31 + %31 ] = $r30 \n\t"		//save r30
 			"swm   [ $r31 + %32 ] = $r31 \n\t"		//save r31
-			"mfs $r5 = $s5 \n\t"
-			"mfs $r6 = $s6 \n\t"
+			"mfs $r5 = $ss \n\t"
+			"mfs $r6 = $st \n\t"
 			"sub $r2 = $r5, $r6 \n\t"				// get stack size
 			"sspill $r2 \n\t"
 			"swm   [ $r31 + %33 ] = $r2 \n\t"		//save stack size to memory
@@ -232,12 +232,12 @@ rtems_isr Clock_isr(
 			"i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET), "i" (s9_OFFSET), "i" (s10_OFFSET),
 			"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET), "i" (s14_OFFSET), "i" (s15_OFFSET));
 
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
+
 	/*
 	 *  Accurate count of ISRs
 	 */
 	Clock_driver_ticks += 1;
-
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
 
 	rtems_clock_tick();
 
@@ -247,83 +247,83 @@ rtems_isr Clock_isr(
 	 */
 	asm volatile("restore_context: \n\t"
 			"lwc   $r0  = [ $r31 + %0 ] \n\t"				//load r0
-			"lwc   $r3  = [ $r31 + %1 ] \n\t"				//load r3
-			"lwc   $r4  = [ $r31 + %2 ] \n\t"				//load r4
-			"lwc   $r5  = [ $r31 + %3 ] \n\t"				//load r5
-			"lwc   $r6  = [ $r31 + %4 ] \n\t"				//load r6
-			"lwc   $r7  = [ $r31 + %5 ] \n\t"				//load r7
-			"lwc   $r8  = [ $r31 + %6 ] \n\t"				//load r8
-			"lwc   $r9  = [ $r31 + %7 ] \n\t"				//load r9
-			"lwc   $r10 = [ $r31 + %8 ] \n\t"				//load r10
-			"lwc   $r11 = [ $r31 + %9 ] \n\t"				//load r11
-			"lwc   $r12 = [ $r31 + %10 ] \n\t"				//load r12
-			"lwc   $r13 = [ $r31 + %11 ] \n\t"				//load r13
-			"lwc   $r14 = [ $r31 + %12 ] \n\t"				//load r14
-			"lwc   $r15 = [ $r31 + %13 ] \n\t"				//load r15
-			"lwc   $r16 = [ $r31 + %14 ] \n\t"				//load r16
-			"lwc   $r17 = [ $r31 + %15 ] \n\t"				//load r17
-			"lwc   $r18 = [ $r31 + %16 ] \n\t"				//load r18
-			"lwc   $r19 = [ $r31 + %17 ] \n\t"				//load r19
-			"lwc   $r20 = [ $r31 + %18 ] \n\t"				//load r20
-			"lwc   $r21 = [ $r31 + %19 ] \n\t"				//load r21
-			"lwc   $r22 = [ $r31 + %20 ] \n\t"				//load r22
-			"lwc   $r23 = [ $r31 + %21 ] \n\t"				//load r23
-			"lwc   $r24 = [ $r31 + %22 ] \n\t"				//load r24
-			"lwc   $r25 = [ $r31 + %23 ] \n\t"				//load r25
-			"lwc   $r26 = [ $r31 + %24 ] \n\t"				//load r26
-			"lwc   $r27 = [ $r31 + %25 ] \n\t"				//load r27
-			"lwc   $r28 = [ $r31 + %26 ] \n\t"				//load r28
-			"lwc   $r29 = [ $r31 + %27 ] \n\t"				//load r30
-			"lwc   $r30 = [ $r31 + %28 ] \n\t"				//load r31
-			"lwc   $r1  = [ $r31 + %29 ] \n\t nop \n\t"		//load s0
+			"lwc   $r2  = [ $r31 + %1 ] \n\t"				//load r2
+			"lwc   $r3  = [ $r31 + %2 ] \n\t"				//load r3
+			"lwc   $r4  = [ $r31 + %3 ] \n\t"				//load r4
+			"lwc   $r5  = [ $r31 + %4 ] \n\t"				//load r5
+			"lwc   $r6  = [ $r31 + %5 ] \n\t"				//load r6
+			"lwc   $r7  = [ $r31 + %6 ] \n\t"				//load r7
+			"lwc   $r8  = [ $r31 + %7 ] \n\t"				//load r8
+			"lwc   $r9  = [ $r31 + %8 ] \n\t"				//load r9
+			"lwc   $r10 = [ $r31 + %9 ] \n\t"				//load r10
+			"lwc   $r11 = [ $r31 + %10 ] \n\t"				//load r11
+			"lwc   $r12 = [ $r31 + %11 ] \n\t"				//load r12
+			"lwc   $r13 = [ $r31 + %12 ] \n\t"				//load r13
+			"lwc   $r14 = [ $r31 + %13 ] \n\t"				//load r14
+			"lwc   $r15 = [ $r31 + %14 ] \n\t"				//load r15
+			"lwc   $r16 = [ $r31 + %15 ] \n\t"				//load r16
+			"lwc   $r17 = [ $r31 + %16 ] \n\t"				//load r17
+			"lwc   $r18 = [ $r31 + %17 ] \n\t"				//load r18
+			"lwc   $r19 = [ $r31 + %18 ] \n\t"				//load r19
+			"lwc   $r20 = [ $r31 + %19 ] \n\t"				//load r20
+			"lwc   $r21 = [ $r31 + %20 ] \n\t"				//load r21
+			"lwc   $r22 = [ $r31 + %21 ] \n\t"				//load r22
+			"lwc   $r23 = [ $r31 + %22 ] \n\t"				//load r23
+			"lwc   $r24 = [ $r31 + %23 ] \n\t"				//load r24
+			"lwc   $r25 = [ $r31 + %24 ] \n\t"				//load r25
+			"lwc   $r26 = [ $r31 + %25 ] \n\t"				//load r26
+			"lwc   $r27 = [ $r31 + %26 ] \n\t"				//load r27
+			"lwc   $r28 = [ $r31 + %27 ] \n\t"				//load r28
+			"lwc   $r29 = [ $r31 + %28 ] \n\t"				//load r30
+			"lwc   $r30 = [ $r31 + %29 ] \n\t"				//load r31
+			"lwc   $r1  = [ $r31 + %30 ] \n\t nop \n\t"		//load s0
 			"mts $s0 = $r1 \n\t"							//move r1 to s0
-			"lwc   $r1  = [ $r31 + %30 ] \n\t nop \n\t"		//load s1
+			"lwc   $r1  = [ $r31 + %31 ] \n\t nop \n\t"		//load s1
 			"mts $s1 = $r1 \n\t"							//move r1 to s1
-			"lwc   $r1  = [ $r31 + %31 ] \n\t nop \n\t"		//load s2
+			"lwc   $r1  = [ $r31 + %32 ] \n\t nop \n\t"		//load s2
 			"mts $s2 = $r1 \n\t"							//move r1 to s2
-			"lwc   $r1  = [ $r31 + %32 ] \n\t nop \n\t"		//load s3
+			"lwc   $r1  = [ $r31 + %33 ] \n\t nop \n\t"		//load s3
 			"mts $s3 = $r1 \n\t"							//move r1 to s3
-			"lwc   $r1  = [ $r31 + %33 ] \n\t nop \n\t"		//load s4
+			"lwc   $r1  = [ $r31 + %34 ] \n\t nop \n\t"		//load s4
 			"mts $s4 = $r1 \n\t"							//move r1 to s4
-			"lwc   $r1  = [ $r31 + %34 ] \n\t nop \n\t"		//load s5
+			"lwc   $r1  = [ $r31 + %35 ] \n\t nop \n\t"		//load s5
 			"mts $s5 = $r1 \n\t"							//move r1 to s5
-			"lwc   $r1  = [ $r31 + %35 ] \n\t nop \n\t"		//load s6
+			"lwc   $r1  = [ $r31 + %36 ] \n\t nop \n\t"		//load s6
 			"mts $s6 = $r1 \n\t"							//move r1 to s6
-			"lwc   $r1  = [ $r31 + %36 ] \n\t nop \n\t"		//load s7
+			"lwc   $r1  = [ $r31 + %37 ] \n\t nop \n\t"		//load s7
 			"mts $s7 = $r1 \n\t"							//move r1 to s7
-			"lwc   $r1  = [ $r31 + %37 ] \n\t nop \n\t"		//load s8
+			"lwc   $r1  = [ $r31 + %38 ] \n\t nop \n\t"		//load s8
 			"mts $s8 = $r1 \n\t"							//move r1 to s8
-			"lwc   $r1  = [ $r31 + %38 ] \n\t nop \n\t"		//load s11
-			"mts $s11 = $r1 \n\t"							//move r1 to s11
-			"lwc   $r1  = [ $r31 + %39 ] \n\t nop \n\t"		//load s12
-			"mts $s12 = $r1 \n\t"							//move r1 to s12
-			"lwc   $r1  = [ $r31 + %40 ] \n\t nop \n\t"		//load s13
-			"mts $s13 = $r1 \n\t"							//move r1 to s13
-			"lwc   $r1  = [ $r31 + %41 ] \n\t nop \n\t"		//load s14
-			"mts $s14 = $r1 \n\t"							//move r1 to s14
-			"lwc   $r1  = [ $r31 + %42 ] \n\t nop \n\t"		//load s15
-			"mts $s15 = $r1 \n\t"							//move r1 to s15
-			"lwm   $r1  = [ $r31 + %43 ] \n\t nop \n\t"		//load ssize
-			"sens $r1 \n\t"									//ensure the stack size in the stack cache
-			"lwc   $r1  = [ $r31 + %44 ] \n\t"				//load s9
-			"lwc   $r2  = [ $r31 + %45 ] \n\t"				//load s10
+			"lwc   $r1  = [ $r31 + %39 ] \n\t nop \n\t"		//load s9
 			"mts $s9 = $r1 \n\t"							//move r1 to s9
-			"mts $s10 = $r2 \n\t"							//move r2 to s10
-			"lwc   $r1  = [ $r31 + %46 ] \n\t"				//load r1
-			"xret \n\t"								//return to s9, s10
-			"lwc   $r31 = [ $r31 + %47 ] \n\t"				//load r29
-			"lwc   $r2  = [ $r31 + %48 ] \n\t"				//load r2
+			"lwc   $r1  = [ $r31 + %40 ] \n\t nop \n\t"		//load s10
+			"mts $s10 = $r1 \n\t"							//move r1 to s10
+			"lwc   $r1  = [ $r31 + %41 ] \n\t nop \n\t"		//load s11
+			"mts $s11 = $r1 \n\t"							//move r1 to s11
+			"lwc   $r1  = [ $r31 + %42 ] \n\t nop \n\t"		//load s12
+			"mts $s12 = $r1 \n\t"							//move r1 to s12
+			"lwc   $r1  = [ $r31 + %43 ] \n\t nop \n\t"		//load s13
+			"mts $s13 = $r1 \n\t"							//move r1 to s13
+			"lwc   $r1  = [ $r31 + %44 ] \n\t nop \n\t"		//load s14
+			"mts $s14 = $r1 \n\t"							//move r1 to s14
+			"lwc   $r1  = [ $r31 + %45 ] \n\t nop \n\t"		//load s15
+			"mts $s15 = $r1 \n\t"							//move r1 to s15
+			"lwm   $r1  = [ $r31 + %46 ] \n\t nop \n\t"		//load ssize
+			"sens $r1 \n\t"									//ensure the stack size in the stack cache
+			"xret \n\t"										//return to sxb, sxo
+			"lwc   $r31 = [ $r31 + %47 ] \n\t"				//load r31
+			"lwc   $r1  = [ $r31 + %48 ] \n\t"				//load r1
 			"add $r31 = $r31, %49 \n\t"						// reset shadow stack pointer
-			: : "i" (r0_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET),	"i" (r6_OFFSET),
-			"i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET),
-			"i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET),	"i" (r16_OFFSET),
-			"i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET),	"i" (r21_OFFSET),
-			"i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET),	"i" (r26_OFFSET),
-			"i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET),	"i" (r30_OFFSET), "i" (s0_OFFSET),
-			"i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),	"i" (s4_OFFSET), "i" (s5_OFFSET),
-			"i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),	"i" (s11_OFFSET), "i" (s12_OFFSET),
-			"i" (s13_OFFSET),	"i" (s14_OFFSET), "i" (s15_OFFSET),	"i" (ssize_OFFSET),	"i" (s9_OFFSET),
-			"i" (s10_OFFSET), "i" (r1_OFFSET), "i" (r31_OFFSET), "i" (r2_OFFSET), "i" (CONTEXT_OFFSET));
+			: : "i" (r0_OFFSET), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET),
+			"i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET),
+			"i" (r11_OFFSET), "i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET),
+			"i" (r16_OFFSET), "i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET),
+			"i" (r21_OFFSET), "i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET),
+			"i" (r26_OFFSET), "i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET),	"i" (r30_OFFSET),
+			"i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),	"i" (s4_OFFSET),
+			"i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET), "i" (s9_OFFSET),
+			"i" (s10_OFFSET), "i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),	"i" (s14_OFFSET),
+			"i" (s15_OFFSET), "i" (ssize_OFFSET), "i" (r31_OFFSET), "i" (r1_OFFSET), "i" (CONTEXT_OFFSET));
 
 }
 
@@ -355,12 +355,12 @@ void Install_clock(
 
 	freq = get_cpu_freq_mhz();
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
-
 	/*
 	 * reset the cpu_cycles count to determine clock_nanoseconds_since_last_tick
 	 */
 	cycles_offset = get_cpu_cycles();
+
+	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

@@ -141,14 +141,14 @@ void _CPU_Context_Initialize(
 	stack_high &= ~(CPU_STACK_ALIGNMENT - 1);
 
 	/* set the shadow stack pointer */
-	the_context->r29 = (uint32_t)shadow_stack_base;
+	the_context->r31 = (uint32_t)shadow_stack_base;
 
 	/* set the stack pointer and spill pointer */
 	the_context->s5 = stack_high;
 	the_context->s6 = stack_high;
 
 	/* set the return address */
-	the_context->r30 = (uint32_t)entry_point;
+	the_context->s7 = (uint32_t)entry_point;
 
 	/* set the stack size */
 	the_context->ssize = 0;
@@ -205,8 +205,8 @@ void _CPU_Context_switch(
 	/*
 	 * copy the current stack to memory and save the stack size to the Context_Control struct in memory
 	 */
-	asm volatile("mfs $r5 = $s5 \n\t"
-			"mfs $r6 = $s6 \n\t"
+	asm volatile("mfs $r5 = $ss \n\t"
+			"mfs $r6 = $st \n\t"
 			"sub $r2 = $r5, $r6 \n\t"				// get stack size
 			"sspill $r2 \n\t"
 			"swm   [ %0 + %1 ] = $r2 \n\t"			//save stack size to memory
