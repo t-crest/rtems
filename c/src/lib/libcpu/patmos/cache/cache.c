@@ -10,12 +10,13 @@
 
 #if defined(HAS_INSTRUCTION_CACHE)
 
+/* XXX these need to be addressed */
 void _CPU_cache_invalidate_entire_instruction ( void )
 {
-  asm volatile ("flush");
+  // No flush instruction at the moment
+  //asm volatile ("flush");
 }
 
-/* XXX these need to be addressed */
 void _CPU_cache_freeze_instruction ( void )
 {
 }
