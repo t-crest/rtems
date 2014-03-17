@@ -34,7 +34,7 @@ list=(addr2line\
 	clang++\
 	llvm-dis\
 	obj2yaml\
-	clang-3.3\
+	clang-3.4\
 	llvm-dwarfdump\
 	objcopy\
 	clang-check\
