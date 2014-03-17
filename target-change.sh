@@ -83,8 +83,9 @@ else
 		lfile=$bindir/patmos-unknown-rtems-$cmd
 		if [[ -f $ofile ]]; then
 			if [[ -f $lfile ]]; then
-				echo 'Warning: link already exists...'
+				echo 'Warning: '$(basename $ofile)' -> '$(basename $lfile)': link already exists...'
 			else
+				echo $(basename $ofile)' -> '$(basename $lfile)
 				ln -s $ofile $lfile
 			fi
 		else
