@@ -175,6 +175,29 @@ extern uint64_t get_cpu_time(void);
  * End of RTC Management
  */
 
+
+/*
+ * Exception Management
+ */
+
+extern char _excunit_base; /* linker symbol giving the base address of the exception handling unit */
+
+/* The status register of the exception unit */
+#define EXC_STATUS (*((_iodev_ptr_t)(&_excunit_base+0x00)))
+
+/* The interrupt mask register */
+#define EXC_MASK   (*((_iodev_ptr_t)(&_excunit_base+0x04)))
+
+/* The pending interrupts register */
+#define EXC_PEND   (*((_iodev_ptr_t)(&_excunit_base+0x08)))
+
+/* The exception source register */
+#define EXC_SOURCE (*((_iodev_ptr_t)(&_excunit_base+0x0c)))
+
+/*
+ * End of Exception Management
+ */
+
 #endif /* !ASM */
 
 #ifdef __cplusplus

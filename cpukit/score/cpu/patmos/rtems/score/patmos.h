@@ -9,7 +9,7 @@
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -24,9 +24,13 @@
 extern "C" {
 #endif
 
+#ifndef ASM
+#include <libcpu/exceptions.h>
+#endif
+
 /*
  *  This file contains the information required to build
- *  RTEMS for a particular member of the "patmos" family.  It does
+ *  RTEMS for a particular member of the Patmos family.  It does
  *  this by setting variables to indicate which implementation
  *  dependent features are present in a particular member
  *  of the family.

@@ -46,5 +46,8 @@ libbsp_a_SOURCES += clock/ckinit.c ../../../shared/clockdrv_shell.h
 # timer
 libbsp_a_SOURCES += timer/timer.c
 
+libbsp_a_LIBADD = ../../../libcpu/@RTEMS_CPU@/cache.rel \
+    ../../../libcpu/@RTEMS_CPU@/exceptions.rel
+
 include $(srcdir)/preinstall.am
 include $(top_srcdir)/../../../../automake/local.am

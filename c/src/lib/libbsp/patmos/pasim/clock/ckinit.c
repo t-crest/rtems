@@ -245,8 +245,7 @@ rtems_isr Clock_isr(
 	 * load general-purpose registers from the shadow stack
 	 * load special-purpose registers from the shadow stack cache
 	 */
-	asm volatile("restore_context: \n\t"
-			"lwc   $r0  = [ $r31 + %0 ] \n\t"				//load r0
+	asm volatile("lwc   $r0  = [ $r31 + %0 ] \n\t"			//load r0
 			"lwc   $r2  = [ $r31 + %1 ] \n\t"				//load r2
 			"lwc   $r3  = [ $r31 + %2 ] \n\t"				//load r3
 			"lwc   $r4  = [ $r31 + %3 ] \n\t"				//load r4
@@ -376,6 +375,8 @@ void Install_clock(
 void Clock_exit( void )
 {
 	/* XXX: turn off the timer interrupts */
+
+	patmos_disable_interrupts();
 
 	/* XXX: If necessary, restore the old vector */
 }

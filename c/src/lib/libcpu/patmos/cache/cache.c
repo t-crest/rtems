@@ -13,6 +13,11 @@
 /* XXX these need to be addressed */
 void _CPU_cache_invalidate_entire_instruction ( void )
 {
+<<<<<<< HEAD
+=======
+  // No flush instruction at the moment
+  //asm volatile ("flush");
+>>>>>>> 0524f11f213c4b1a72cf113f24422977a9bae877
 }
 
 void _CPU_cache_freeze_instruction ( void )

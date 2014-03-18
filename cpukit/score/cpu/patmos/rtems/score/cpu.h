@@ -9,7 +9,7 @@
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -564,7 +564,8 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  *  level is returned in _level.
  */
 
-#define _CPU_ISR_Disable( _level )  
+#define _CPU_ISR_Disable( _level ) \
+		patmos_disable_interrupts()
 
 /*
  *  Enable interrupts to the previous level (returned by _CPU_ISR_Disable).
@@ -572,7 +573,8 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  *  _level is not modified.
  */
 
-#define _CPU_ISR_Enable( _level )  
+#define _CPU_ISR_Enable( _level ) \
+		patmos_enable_interrupts()
 
 /*
  *  This temporarily restores the interrupt to _level before immediately
