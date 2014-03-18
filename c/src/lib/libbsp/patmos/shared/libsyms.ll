@@ -3,6 +3,7 @@ target datalayout = "E-S32-p:32:32:32-i8:8:8-i16:16:16-i32:32:32-i64:32:32-f64:3
 target triple = "patmos-unknown-rtems"
 
 %struct._reent = type opaque
+%struct.stat = type opaque
 
 declare i32 @rtems_termios_write(i8* nocapture %arg) nounwind
 declare i32 @rtems_io_register_name(i8* nocapture %device_name, i32 %major, i32 %minor) nounwind
@@ -23,8 +24,11 @@ declare i32 @getdents(i32 %dd_fd, i32 %dd_buf, i32 %dd_len) nounwind
 declare i32 @_rename_r(%struct._reent* nocapture %ptr, i32 %old, i32 %new) nounwind
 declare i32 @rtems_clock_set_nanoseconds_extension(i32 ()* nocapture %routine) nounwind
 declare i32 @rtems_clock_tick() nounwind
+declare i32 @_fstat_r(%struct._reent*, i32, %struct.stat*)
+declare i32 @_isatty_r(%struct._reent*, i32)
 
-@llvm.used = appending global [19 x i8*] [
+
+@llvm.used = appending global [21 x i8*] [
 i8* bitcast (i32 (i8*)* @rtems_termios_write to i8*),
 i8* bitcast (i32 (i8*, i32, i32)* @rtems_io_register_name to i8*),
 i8* bitcast (void ()* @libc_init to i8*),
@@ -43,7 +47,9 @@ i8* bitcast (i32 (i32, i8**, i8**)* @boot_card to i8*),
 i8* bitcast (i32 (i32, i32, i32)* @getdents to i8*),
 i8* bitcast (i32 (%struct._reent*, i32, i32)* @_rename_r to i8*),
 i8* bitcast (i32 (i32()*)* @rtems_clock_set_nanoseconds_extension to i8*),
-i8* bitcast (i32 ()* @rtems_clock_tick to i8*)
+i8* bitcast (i32 ()* @rtems_clock_tick to i8*),
+i8* bitcast (i32 (%struct._reent*, i32, %struct.stat*)* @_fstat_r to i8*),
+i8* bitcast (i32 (%struct._reent*, i32)* @_isatty_r to i8*)
 ], section "llvm.metadata"
 
 ; End of libsyms.ll
