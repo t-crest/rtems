@@ -22,6 +22,10 @@
 #include <rtems.h>
 #include <bsp.h>
 
+#include <machine/patmos.h>
+#include <machine/exceptions.h>
+#include <machine/rtc.h>
+
 void Clock_exit( void );
 rtems_isr Clock_isr( rtems_vector_number vector )__attribute__((naked));
 
@@ -52,6 +56,8 @@ rtems_device_minor_number rtems_clock_minor;
 uint64_t cycles_offset;
 /* CPU frequency in MHZ */
 uint32_t freq;
+/* timestamp of the last tick in usec */
+uint64_t usec_offset;
 
 /*
  *  The previous ISR on this clock tick interrupt vector.
@@ -61,41 +67,15 @@ rtems_isr_entry  Old_ticker;
 
 void Clock_exit( void );
 
-void set_cpu_cycles (uint64_t time_warp)
+void set_usec_timer (uint64_t time_warp)
 {
 
-	__PATMOS_RTC_WR_CYCLE_LOW((unsigned int)time_warp);
-	__PATMOS_RTC_WR_CYCLE_UP((unsigned int)(time_warp >> 32));
+//	__PATMOS_RTC_WR_CYCLE_LOW((unsigned int)time_warp);
+//	__PATMOS_RTC_WR_CYCLE_UP((unsigned int)(time_warp >> 32));
 
-}
+	usec_offset += time_warp;
 
-uint64_t get_cpu_cycles(void)
-{
-	uint32_t u;
-	uint32_t l;
-
-	__PATMOS_RTC_RD_CYCLE_LOW(l);
-	__PATMOS_RTC_RD_CYCLE_UP(u);
-
-	return (((uint64_t)u) << 32) | l;
-}
-
-uint64_t get_cpu_time(void)
-{
-	uint32_t u;
-	uint32_t l;
-
-	__PATMOS_RTC_RD_TIME_LOW(l);
-	__PATMOS_RTC_RD_TIME_UP(u);
-
-	return (((uint64_t)u) << 32) | l;
-}
-
-uint32_t get_cpu_freq(void)
-{
-	uint32_t freq;
-	__PATMOS_CPU_RD_FREQ(freq);
-	return freq;
+	arm_usec_timer(usec_offset);
 }
 
 uint32_t get_cpu_freq_mhz(void)
@@ -232,7 +212,7 @@ rtems_isr Clock_isr(
 			"i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET), "i" (s9_OFFSET), "i" (s10_OFFSET),
 			"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET), "i" (s14_OFFSET), "i" (s15_OFFSET));
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
+	set_usec_timer(rtems_configuration_get_microseconds_per_tick());
 
 	/*
 	 *  Accurate count of ISRs
@@ -344,7 +324,13 @@ void Install_clock(
 	Clock_driver_ticks = 0;
 	Clock_isrs = rtems_configuration_get_microseconds_per_tick() / 1000;
 
-	__PATMOS_RTC_WR_ISR((uint32_t)clock_isr);
+	exc_register(EXC_INTR_USEC, (uint32_t)clock_isr);
+	// clear pending flags
+	intr_clear_all_pending();
+	// unmask interrupt
+	intr_unmask(EXC_INTR_USEC);
+	// enable interrupts
+	intr_enable();
 
 #if defined(Clock_driver_nanoseconds_since_last_tick)
 	rtems_clock_set_nanoseconds_extension(
@@ -359,7 +345,11 @@ void Install_clock(
 	 */
 	cycles_offset = get_cpu_cycles();
 
-	__PATMOS_RTC_WR_INTERVAL(rtems_configuration_get_microseconds_per_tick() * freq);
+	usec_offset = get_cpu_usecs();	
+
+	set_usec_timer(rtems_configuration_get_microseconds_per_tick());
+
+
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

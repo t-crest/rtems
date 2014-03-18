@@ -42,8 +42,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 
 extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
 
-extern uint32_t get_cpu_freq(void);
-
 extern uint32_t get_cpu_freq_mhz(void);
 
 #define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
@@ -120,11 +118,7 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 
 extern char _timer_base; /* linker symbol giving the address of the RTC */
 
-extern void set_cpu_cycles (uint64_t time_warp);
-
-extern uint64_t get_cpu_cycles(void);
-
-extern uint64_t get_cpu_time(void);
+extern void set_usec_timer (uint64_t time_warp);
 
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x04)
@@ -138,11 +132,8 @@ extern uint64_t get_cpu_time(void);
 /* Address to access the time in microseconds up register of the RTC */
 #define __PATMOS_RTC_TIME_UP_ADDR (&_timer_base + 0x08)
 
-/* Address to access the interrupt interval register of the RTC */
-#define __PATMOS_RTC_INTERVAL_ADDR (&_timer_base + 0x10)
-
-/* Address to access the ISR address register of the RTC */
-#define __PATMOS_RTC_ISR_ADDR (&_timer_base + 0x14)
+/* Address to access the ISR address register of the RTC cycle timer */
+#define __PATMOS_RTC_ISR_ADDR (&_excunit_base + 0xc0)
 
 /* Macro to read the RTC's cycle counter low register of the RTC */
 #define __PATMOS_RTC_RD_CYCLE_LOW(res) res = *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_LOW_ADDR);
@@ -156,17 +147,11 @@ extern uint64_t get_cpu_time(void);
 /* Macro to read the RTC's time in microseconds up register of the RTC */
 #define __PATMOS_RTC_RD_TIME_UP(res) res = *((_iodev_ptr_t)__PATMOS_RTC_TIME_UP_ADDR);
 
-/* Macro to read the RTC's interrupt interval register */
-#define __PATMOS_RTC_RD_INTERVAL(interval) interval = *((_iodev_ptr_t)__PATMOS_RTC_INTERVAL_ADDR);
-
 /* Macro to write the RTC's cycle counter low register */
 #define __PATMOS_RTC_WR_CYCLE_LOW(val) *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_LOW_ADDR) = val;
 
 /* Macro to write the RTC's cycle counter up register */
 #define __PATMOS_RTC_WR_CYCLE_UP(val) *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_UP_ADDR) = val;
-
-/* Macro to write the RTC's interrupt interval register */
-#define __PATMOS_RTC_WR_INTERVAL(interval) *((_iodev_ptr_t)__PATMOS_RTC_INTERVAL_ADDR) = interval;
 
 /* Macro to write the RTC's ISR address register */
 #define __PATMOS_RTC_WR_ISR(address) *((_iodev_ptr_t)__PATMOS_RTC_ISR_ADDR) = address;

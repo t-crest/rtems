@@ -18,31 +18,33 @@
 
 #include <bsp.h>
 
+#include <machine/rtc.h>
+
 bool benchmark_timer_find_average_overhead;
 
 #define AVG_OVERHEAD      0  /* It typically takes 0 microseconds */
 /*     to start/stop the timer. */
 #define LEAST_VALID       1  /* Don't trust a value lower than this */
 
+uint64_t timer_offset;
+
 void benchmark_timer_initialize(void)
 {
 	/*
 	 *  Timer runs long and accurate enough not to require an interrupt.
 	 */
-	__PATMOS_RTC_WR_INTERVAL(__PATMOS_INF);
+	timer_offset = get_cpu_cycles();
 }
 
 int benchmark_timer_read(void)
 {
-	uint32_t total;
+	uint64_t total;
 
 	/*
 	 *  Read the timer and see how many clicks it has been since we started.
 	 */
 
-	__PATMOS_RTC_RD_INTERVAL(total);
-
-	total = (__PATMOS_INF - total)/get_cpu_freq_mhz();
+	total = (get_cpu_cycles() - timer_offset)/get_cpu_freq_mhz();
 
 	if ( benchmark_timer_find_average_overhead == true )
 		return total;          /* in one microsecond units */
