@@ -302,9 +302,10 @@ rtems_isr Clock_isr(
 			"mts $s15 = $r1 \n\t"							//move r1 to s15
 			"lwm   $r1  = [ $r31 + %46 ] \n\t nop \n\t"		//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
+			"lwc   $r1  = [ $r31 + %48 ] \n\t"				//load r1
 			"xret \n\t"										//return to sxb, sxo
 			"lwc   $r31 = [ $r31 + %47 ] \n\t"				//load r31
-			"lwc   $r1  = [ $r31 + %48 ] \n\t"				//load r1
+			"nop \n\t"										//load delay slot
 			"add $r31 = $r31, %49 \n\t"						// reset shadow stack pointer
 			: : "i" (r0_OFFSET), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET),
 			"i" (r6_OFFSET), "i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET),
