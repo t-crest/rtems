@@ -149,6 +149,7 @@ void _CPU_Context_Initialize(
 
 	/* set the return address */
 	the_context->s7 = (uint32_t)entry_point;
+	the_context->s8 = 0;
 
 	/* set the stack size */
 	the_context->ssize = 0;
