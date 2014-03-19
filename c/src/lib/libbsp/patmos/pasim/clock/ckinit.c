@@ -22,10 +22,6 @@
 #include <rtems.h>
 #include <bsp.h>
 
-#include <machine/patmos.h>
-#include <machine/exceptions.h>
-#include <machine/rtc.h>
-
 void Clock_exit( void );
 rtems_isr Clock_isr( rtems_vector_number vector )__attribute__((naked));
 
@@ -52,10 +48,9 @@ uint32_t         Clock_isrs;              /* ISRs until next tick */
 
 rtems_device_major_number rtems_clock_major = ~0;
 rtems_device_minor_number rtems_clock_minor;
-/* cycles from RTEMS start to Install_clock routine */
-uint64_t cycles_offset;
-/* CPU frequency in MHZ */
-uint32_t freq;
+
+/* usecs from RTEMS start to Install_clock routine */
+uint64_t usecs_bias;
 /* timestamp of the last tick in usec */
 uint64_t usec_offset;
 
@@ -66,6 +61,36 @@ uint64_t usec_offset;
 rtems_isr_entry  Old_ticker;
 
 void Clock_exit( void );
+
+/*
+ * Get the current RTC microsecond value
+ */
+uint64_t get_cpu_usecs(void) {
+  unsigned ulo, uhi;
+
+  _iodev_ptr_t hi_usec = (_iodev_ptr_t)(__PATMOS_RTC_TIME_UP_ADDR);
+  _iodev_ptr_t lo_usec = (_iodev_ptr_t)(__PATMOS_RTC_TIME_LOW_ADDR);
+
+  // Order is important here
+  ulo = *lo_usec;
+  uhi = *hi_usec;
+
+  return (((unsigned long long) uhi) << 32) | ulo;
+}
+
+/*
+ * Set the timeout for the clock timer. The RTC will trigger an interrupt once
+ * the cycle counter reaches the given value.
+ */
+static inline void arm_usec_timer(uint64_t timestamp) {
+
+  _iodev_ptr_t hi_usec = (_iodev_ptr_t)(__PATMOS_RTC_TIME_UP_ADDR);
+  _iodev_ptr_t lo_usec = (_iodev_ptr_t)(__PATMOS_RTC_TIME_LOW_ADDR);
+
+  // Order is important here
+  *lo_usec = (unsigned)timestamp;
+  *hi_usec = (unsigned)(timestamp>>32);
+}
 
 void set_usec_timer (uint64_t time_warp)
 {
@@ -78,21 +103,9 @@ void set_usec_timer (uint64_t time_warp)
 	arm_usec_timer(usec_offset);
 }
 
-uint32_t get_cpu_freq_mhz(void)
-{
-	return get_cpu_freq()/1000000;
-}
-
 uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
-	/*uint64_t volatile cycles_since_first_tick = (uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq;
-	uint64_t volatile cycles_since_program_start = get_cpu_cycles();
-	uint64_t volatile cycles_since_last_tick = cycles_since_program_start - cycles_since_first_tick - cycles_offset;
-	uint64_t volatile microseconds_since_last_tick = cycles_since_last_tick*1000;
-	uint64_t nsecs = microseconds_since_last_tick / ((uint64_t)freq);*/
-
-	uint64_t nsecs = ((get_cpu_cycles() - ((uint64_t)Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick()*freq) - cycles_offset)
-				* 1000) / ((uint64_t)freq);
+	uint64_t nsecs = (get_cpu_usecs() - usecs_bias - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick())*1000;
 
 	return (uint32_t) nsecs;
 }
@@ -324,13 +337,14 @@ void Install_clock(
 	Clock_driver_ticks = 0;
 	Clock_isrs = rtems_configuration_get_microseconds_per_tick() / 1000;
 
-	exc_register(EXC_INTR_USEC, (uint32_t)clock_isr);
+	// set the isr routine
+	set_exc_handler(EXC_INTR_USEC, (uint32_t)clock_isr);
 	// clear pending flags
 	intr_clear_all_pending();
 	// unmask interrupt
 	intr_unmask(EXC_INTR_USEC);
 	// enable interrupts
-	intr_enable();
+	patmos_enable_interrupts();
 
 #if defined(Clock_driver_nanoseconds_since_last_tick)
 	rtems_clock_set_nanoseconds_extension(
@@ -338,18 +352,14 @@ void Install_clock(
 	);
 #endif
 
-	freq = get_cpu_freq_mhz();
-
 	/*
-	 * reset the cpu_cycles count to determine clock_nanoseconds_since_last_tick
+	 * reset the cpu_usecs count to determine clock_nanoseconds_since_last_tick
 	 */
-	cycles_offset = get_cpu_cycles();
+	usecs_bias = get_cpu_usecs();
 
 	usec_offset = get_cpu_usecs();	
 
 	set_usec_timer(rtems_configuration_get_microseconds_per_tick());
-
-
 
 	/*
 	 *  Schedule the clock cleanup routine to execute if the application exits.

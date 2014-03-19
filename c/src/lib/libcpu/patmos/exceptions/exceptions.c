@@ -20,6 +20,8 @@
 #include <rtems.h>
 #include <bsp.h>
 
+#include "exceptions.h"
+
 /*
  * Enable interrupts
  */
@@ -32,4 +34,28 @@ void patmos_enable_interrupts(void){
  */
 void patmos_disable_interrupts(void){
   EXC_STATUS &= ~1;
+}
+
+/*
+ * Register a function as exception handler.
+ *   n - The exception to register the function for
+ *   fun - The exception handler
+ */
+void set_exc_handler(unsigned n, exc_handler_t fun){
+  EXC_VEC(n) = (unsigned)fun;
+}
+
+/*
+ * Clear the pending flag of all interrupts
+ */
+void intr_clear_all_pending(void){
+  EXC_PEND = 0;
+}
+
+/*
+ * Unmask a particular interrupts
+ * 	 n - The interrupt to be unmasked
+ */
+void intr_unmask(unsigned n){
+  EXC_MASK |= (1 << n);
 }

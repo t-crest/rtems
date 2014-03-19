@@ -18,8 +18,6 @@
 
 #include <bsp.h>
 
-#include <machine/rtc.h>
-
 bool benchmark_timer_find_average_overhead;
 
 #define AVG_OVERHEAD      0  /* It typically takes 0 microseconds */
@@ -33,7 +31,7 @@ void benchmark_timer_initialize(void)
 	/*
 	 *  Timer runs long and accurate enough not to require an interrupt.
 	 */
-	timer_offset = get_cpu_cycles();
+	timer_offset = get_cpu_usecs();
 }
 
 int benchmark_timer_read(void)
@@ -44,7 +42,7 @@ int benchmark_timer_read(void)
 	 *  Read the timer and see how many clicks it has been since we started.
 	 */
 
-	total = (get_cpu_cycles() - timer_offset)/get_cpu_freq_mhz();
+	total = get_cpu_usecs() - timer_offset;
 
 	if ( benchmark_timer_find_average_overhead == true )
 		return total;          /* in one microsecond units */
