@@ -22,6 +22,7 @@ build_rtems=false
 build_toolchain=false
 build_emulator=false
 build_rtems_examples=false
+build_llvm_release=true
 get_rtems=true
 
 function add2bashrc(){
@@ -93,7 +94,13 @@ if [[ $build_toolchain == "true" ]]; then
 	sed -e 's/ROOT_DIR=$(pwd)/ROOT_DIR='$(echo $build_dir | awk '{gsub("/", "\\/"); print}')'/g' $misc_dir/build.cfg.dist > $CFGFILE
 	sed -i 's/TARGET=\"'$old_target'\"/TARGET=\"'$new_target'\"/g' $CFGFILE
 	sed -i 's/BUILD_EMULATOR=true/BUILD_EMULATOR='$build_emulator'/g' $CFGFILE
-	sed -i 's/#GOLD_CXXFLAGS/GOLD_CXXFLAGS/g' $CFGFILE		
+	sed -i 's/#GOLD_CXXFLAGS/GOLD_CXXFLAGS/g' $CFGFILE
+
+	if [[ $build_llvm_release == "true" ]]; then
+		sed -i 's/LLVM_BUILD_TYPE=Debug/LLVM_BUILD_TYPE=Release/g' $CFGFILE		
+	else
+		sed -i 's/LLVM_BUILD_TYPE=Release/LLVM_BUILD_TYPE=Debug/g' $CFGFILE
+	fi
 	
 	if [ -f $CFGFILE ]; then
 	  source $CFGFILE
