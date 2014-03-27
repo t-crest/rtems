@@ -32,9 +32,9 @@ typedef void (*exc_handler_t)(void);
 #define EXC_INTR_CLOCK       16
 #define EXC_INTR_USEC        17
 
-void patmos_enable_interrupts(void);
+void patmos_enable_interrupts(uint32_t level);
 
-void patmos_disable_interrupts(void);
+uint32_t patmos_disable_interrupts(void);
 
 void set_exc_handler(unsigned n, exc_handler_t fun);
 

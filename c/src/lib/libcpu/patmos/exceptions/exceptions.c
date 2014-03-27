@@ -25,15 +25,17 @@
 /*
  * Enable interrupts
  */
-void patmos_enable_interrupts(void){
-  EXC_STATUS |= 1;
+void patmos_enable_interrupts(uint32_t level){
+  EXC_STATUS = level;
 }
 
 /*
  * Disable interrupts
  */
-void patmos_disable_interrupts(void){
+uint32_t patmos_disable_interrupts(void){
+  uint32_t level = EXC_STATUS;
   EXC_STATUS &= ~1;
+  return level;
 }
 
 /*
