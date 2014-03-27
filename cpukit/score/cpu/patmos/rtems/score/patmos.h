@@ -83,6 +83,24 @@ extern "C" {
     asm volatile ( "nop" ); \
   } while ( 0 )
 
+/*
+ *  Manipulate the interrupt level
+ */
+
+#define patmos_flash_interrupts( _level ) \
+  do { \
+    register uint32_t   _ignored = 0; \
+    \
+    patmos_enable_interrupts( (_level) ); \
+    _ignored = patmos_disable_interrupts(); \
+  } while ( 0 )
+
+#define patmos_get_interrupt_level( _level ) \
+  do { \
+    (_level) = \
+      ~EXC_STATUS & CPU_MODES_INTERRUPT_MASK; \
+  } while ( 0 )
+
 #ifdef __cplusplus
 }
 #endif

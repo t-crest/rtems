@@ -44,8 +44,6 @@ extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info *
 
 extern uint32_t get_cpu_freq_mhz(void);
 
-#define __PATMOS_INF 0xFFFFFFFF /* maximum cycles the clock can run without interrupts */
-
 /* Address to access the CPU id */
 #define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
 
