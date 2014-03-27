@@ -1,10 +1,10 @@
 /*
- *  PATMOS Dependent Source
+ *  Patmos Dependent Source
  *
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -44,12 +44,16 @@ void _CPU_Initialize(void)
  *  Input Parameters: NONE
  *
  *  Output Parameters:
- *    returns the current interrupt level (PIL field of the PSR)
+ *    returns the current interrupt level
  */
 
 uint32_t   _CPU_ISR_Get_level( void )
 {
-	return 0;
+	uint32_t   level;
+
+	patmos_get_interrupt_level( level );
+
+	return level;
 }
 
 /*PAGE
@@ -103,8 +107,7 @@ void _CPU_ISR_install_vector(
 {
 }
 
-/*PAGE
- *
+/*
  *  _CPU_Context_Initialize
  *
  *  This kernel routine initializes the basic non-FP context area associated
@@ -133,7 +136,7 @@ void _CPU_Context_Initialize(
 	uint32_t     stack_high;  /* highest "stack aligned" address */
 
 	/*
-	 *  On CPUs with stacks which grow down (i.e. PATMOS), we build the stack
+	 *  On CPUs with stacks which grow down (i.e. Patmos), we build the stack
 	 *  based on the stack_high address.
 	 */
 
@@ -153,6 +156,9 @@ void _CPU_Context_Initialize(
 
 	/* set the stack size */
 	the_context->ssize = 0;
+
+	/* set the interrupt level */
+	the_context->exc_status = new_level ^ CPU_MODES_INTERRUPT_MASK;
 }
 
 void _CPU_Context_switch(
@@ -218,86 +224,88 @@ void _CPU_Context_switch(
 	 * save special-purpose registers 
 	 * use r1 as intermediate register to save special-purpose registers (no instruction to do it directly)
 	 */
-	asm volatile("mfs $r1 = $s0 \n\t"				//move s0 to r1
-			"swm   [ %0 + %1 ] = $r1 \n\t"	 		//save s0
-			"mfs $r1 = $s1 \n\t"					//move s1 to r1
-			"swm   [ %0 + %2 ] = $r1 \n\t"			//save s1
-			"mfs $r1 = $s2 \n\t"					//move s2 to r1
-			"swm   [ %0 + %3 ] = $r1 \n\t"			//save s2
-			"mfs $r1 = $s3 \n\t"					//move s3 to r1
-			"swm   [ %0 + %4 ] = $r1 \n\t"			//save s3
-			"mfs $r1 = $s4 \n\t"					//move s4 to r1
-			"swm   [ %0 + %5 ] = $r1 \n\t"			//save s4
-			"mfs $r1 = $s5 \n\t"					//move s5 to r1
-			"swm   [ %0 + %6 ] = $r1 \n\t"			//save s5
-			"mfs $r1 = $s6 \n\t"					//move s6 to r1
-			"swm   [ %0 + %7 ] = $r1 \n\t"			//save s6
-			"mfs $r1 = $s7 \n\t"					//move s7 to r1
-			"swm   [ %0 + %8 ] = $r1 \n\t"			//save s7
-			"mfs $r1 = $s8 \n\t"					//move s8 to r1
-			"swm   [ %0 + %9 ] = $r1 \n\t"			//save s8
-			"mfs $r1 = $s9 \n\t"					//move s9 to r1
-			"swm   [ %0 + %10 ] = $r1 \n\t"			//save s9
-			"mfs $r1 = $s10 \n\t"					//move s10 to r1
-			"swm   [ %0 + %11 ] = $r1 \n\t"			//save s10
-			"mfs $r1 = $s11 \n\t"					//move s11 to r1
-			"swm   [ %0 + %12 ] = $r1 \n\t"			//save s11
-			"mfs $r1 = $s12 \n\t"					//move s12 to r1
-			"swm   [ %0 + %13 ] = $r1 \n\t"			//save s12
-			"mfs $r1 = $s13 \n\t"					//move s13 to r1
-			"swm   [ %0 + %14 ] = $r1 \n\t"			//save s13
-			"mfs $r1 = $s14 \n\t"					//move s14 to r1
-			"swm   [ %0 + %15 ] = $r1 \n\t"			//save s14
-			"mfs $r1 = $s15 \n\t"					//move s15 to r1
-			"swm   [ %0 + %16 ] = $r1 \n\t"			//save s15
+	asm volatile("mfs $r1 = $s0 \n\t"					//move s0 to r1
+			"swm   [ %0 + %1 ] = $r1 \n\t"	 			//save s0
+			"mfs $r1 = $s1 \n\t"						//move s1 to r1
+			"swm   [ %0 + %2 ] = $r1 \n\t"				//save s1
+			"mfs $r1 = $s2 \n\t"						//move s2 to r1
+			"swm   [ %0 + %3 ] = $r1 \n\t"				//save s2
+			"mfs $r1 = $s3 \n\t"						//move s3 to r1
+			"swm   [ %0 + %4 ] = $r1 \n\t"				//save s3
+			"mfs $r1 = $s4 \n\t"						//move s4 to r1
+			"swm   [ %0 + %5 ] = $r1 \n\t"				//save s4
+			"mfs $r1 = $s5 \n\t"						//move s5 to r1
+			"swm   [ %0 + %6 ] = $r1 \n\t"				//save s5
+			"mfs $r1 = $s6 \n\t"						//move s6 to r1
+			"swm   [ %0 + %7 ] = $r1 \n\t"				//save s6
+			"mfs $r1 = $s7 \n\t"						//move s7 to r1
+			"swm   [ %0 + %8 ] = $r1 \n\t"				//save s7
+			"mfs $r1 = $s8 \n\t"						//move s8 to r1
+			"swm   [ %0 + %9 ] = $r1 \n\t"				//save s8
+			"mfs $r1 = $s9 \n\t"						//move s9 to r1
+			"swm   [ %0 + %10 ] = $r1 \n\t"				//save s9
+			"mfs $r1 = $s10 \n\t"						//move s10 to r1
+			"swm   [ %0 + %11 ] = $r1 \n\t"				//save s10
+			"mfs $r1 = $s11 \n\t"						//move s11 to r1
+			"swm   [ %0 + %12 ] = $r1 \n\t"				//save s11
+			"mfs $r1 = $s12 \n\t"						//move s12 to r1
+			"swm   [ %0 + %13 ] = $r1 \n\t"				//save s12
+			"mfs $r1 = $s13 \n\t"						//move s13 to r1
+			"swm   [ %0 + %14 ] = $r1 \n\t"				//save s13
+			"mfs $r1 = $s14 \n\t"						//move s14 to r1
+			"swm   [ %0 + %15 ] = $r1 \n\t"				//save s14
+			"mfs $r1 = $s15 \n\t"						//move s15 to r1
+			"swm   [ %0 + %16 ] = $r1 \n\t"				//save s15
+			"li    $r2 = %17 \n\t"
+			"lwl   $r1  = [ $r2 + 0 ] \n\t nop \n\t"	//load exceptions status register to r1
+			"swm   [ %0 + %18 ] = $r1 \n\t"	 			//save exceptions status register
 			: : "{$r3}" (run), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET),"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
-			"i" (s14_OFFSET), "i" (s15_OFFSET) 
+			"i" (s14_OFFSET), "i" (s15_OFFSET), "i" (&_excunit_base), "i" (exc_OFFSET)
 			// clobber r1 so that the compiler does not use it for %0
-			: "$r1" );
+			: "$r1");
 
 	/* 
 	 * load general-purpose registers (skip r0 which is always 0) 
 	 * address of the current task is passed as function argument in register r4
 	 * r4 is the last register to be loaded so that the memory address of the current task is not lost
-	 * r1 will be used as auxiliary register, so it is not loaded yet
+	 * r1 and r2 will be used as auxiliary registers, so they are not loaded yet
 	 */	
-	asm volatile("lwc   $r2  = [ %0 + %1 ] \n\t"	//load r2
-			"lwc   $r3  = [ %0 + %2 ] \n\t"			//load r3
-			"lwc   $r5  = [ %0 + %3 ] \n\t"			//load r5
-			"lwc   $r6  = [ %0 + %4 ] \n\t"			//load r6
-			"lwc   $r7  = [ %0 + %5 ] \n\t"			//load r7
-			"lwc   $r8  = [ %0 + %6 ] \n\t"			//load r8
-			"lwc   $r9  = [ %0 + %7 ] \n\t"			//load r9
-			"lwc   $r10 = [ %0 + %8 ] \n\t"			//load r10
-			"lwc   $r11 = [ %0 + %9 ] \n\t"			//load r11
-			"lwc   $r12 = [ %0 + %10 ] \n\t"		//load r12
-			"lwc   $r13 = [ %0 + %11 ] \n\t"		//load r13
-			"lwc   $r14 = [ %0 + %12 ] \n\t"		//load r14
-			"lwc   $r15 = [ %0 + %13 ] \n\t"		//load r15
-			"lwc   $r16 = [ %0 + %14 ] \n\t"		//load r16
-			"lwc   $r17 = [ %0 + %15 ] \n\t"		//load r17
-			"lwc   $r18 = [ %0 + %16 ] \n\t"		//load r18
-			"lwc   $r19 = [ %0 + %17 ] \n\t"		//load r19
-			"lwc   $r20 = [ %0 + %18 ] \n\t"		//load r20
-			"lwc   $r21 = [ %0 + %19 ] \n\t"		//load r21
-			"lwc   $r22 = [ %0 + %20 ] \n\t"		//load r22
-			"lwc   $r23 = [ %0 + %21 ] \n\t"		//load r23
-			"lwc   $r24 = [ %0 + %22 ] \n\t"		//load r24
-			"lwc   $r25 = [ %0 + %23 ] \n\t"		//load r25
-			"lwc   $r26 = [ %0 + %24 ] \n\t"		//load r26
-			"lwc   $r27 = [ %0 + %25 ] \n\t"		//load r27
-			"lwc   $r28 = [ %0 + %26 ] \n\t"		//load r28
-			"lwc   $r29 = [ %0 + %27 ] \n\t"		//load r29
-			"lwc   $r30 = [ %0 + %28 ] \n\t"		//load r30
-			"lwc   $r31 = [ %0 + %29 ] \n\t"		//load r31
-			: : "{$r4}" (heir), "i" (r2_OFFSET), "i" (r3_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
-			"i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET),
-			"i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET),
-			"i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET),
-			"i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
-			"i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
+	asm volatile("lwc   $r3  = [ %0 + %1 ] \n\t"	//load r3
+			"lwc   $r5  = [ %0 + %2 ] \n\t"			//load r5
+			"lwc   $r6  = [ %0 + %3 ] \n\t"			//load r6
+			"lwc   $r7  = [ %0 + %4 ] \n\t"			//load r7
+			"lwc   $r8  = [ %0 + %5 ] \n\t"			//load r8
+			"lwc   $r9  = [ %0 + %6 ] \n\t"			//load r9
+			"lwc   $r10 = [ %0 + %7 ] \n\t"			//load r10
+			"lwc   $r11 = [ %0 + %8 ] \n\t"			//load r11
+			"lwc   $r12 = [ %0 + %9 ] \n\t"			//load r12
+			"lwc   $r13 = [ %0 + %10 ] \n\t"		//load r13
+			"lwc   $r14 = [ %0 + %11 ] \n\t"		//load r14
+			"lwc   $r15 = [ %0 + %12 ] \n\t"		//load r15
+			"lwc   $r16 = [ %0 + %13 ] \n\t"		//load r16
+			"lwc   $r17 = [ %0 + %14 ] \n\t"		//load r17
+			"lwc   $r18 = [ %0 + %15 ] \n\t"		//load r18
+			"lwc   $r19 = [ %0 + %16 ] \n\t"		//load r19
+			"lwc   $r20 = [ %0 + %17 ] \n\t"		//load r20
+			"lwc   $r21 = [ %0 + %18 ] \n\t"		//load r21
+			"lwc   $r22 = [ %0 + %19 ] \n\t"		//load r22
+			"lwc   $r23 = [ %0 + %20 ] \n\t"		//load r23
+			"lwc   $r24 = [ %0 + %21 ] \n\t"		//load r24
+			"lwc   $r25 = [ %0 + %22 ] \n\t"		//load r25
+			"lwc   $r26 = [ %0 + %23 ] \n\t"		//load r26
+			"lwc   $r27 = [ %0 + %24 ] \n\t"		//load r27
+			"lwc   $r28 = [ %0 + %25 ] \n\t"		//load r28
+			"lwc   $r29 = [ %0 + %26 ] \n\t"		//load r29
+			"lwc   $r30 = [ %0 + %27 ] \n\t"		//load r30
+			"lwc   $r31 = [ %0 + %28 ] \n\t"		//load r31
+			: : "{$r4}" (heir), "i" (r3_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET),
+			"i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET),
+			"i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET),
+			"i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET),
+			"i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET),
+			"i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 
 	/* 
 	 * load special-purpose registers
@@ -343,9 +351,14 @@ void _CPU_Context_switch(
 
 	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
-			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load r1
-			"lwc   $r4  = [ %0 + %3 ] \n\t"					//load r4
-			: : "{$r4}" (heir), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r4_OFFSET));
+			"lwm   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
+			"li    $r2 = %3 \n\t"
+			"swl   [ $r2 + 0 ] = $r1 \n\t"	 				//restore exceptions status register
+			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
+			"lwc   $r2  = [ %0 + %5 ] \n\t"					//load r2
+			"lwc   $r4  = [ %0 + %6 ] \n\t"					//load r4
+			: : "{$r4}" (heir), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (&_excunit_base), "i" (r1_OFFSET),
+			"i" (r2_OFFSET), "i" (r4_OFFSET));
 
 }		
 
@@ -357,43 +370,42 @@ void _CPU_Context_restore(
 	 * load general-purpose registers (skip r0 which is always 0) 
 	 * address of the current task is passed as function argument in register r3
 	 * r3 is the last register to be loaded so that the memory address of the current task is not lost 
-	 * r1 will be used as auxiliary register, so it is not loaded yet
+	 * r1 and r2 will be used as auxiliary registers, so they are not loaded yet
 	 */	
-	asm volatile("lwc   $r2  = [ %0 + %1 ] \n\t"	//load r2
-			"lwc   $r4  = [ %0 + %2 ] \n\t"			//load r4
-			"lwc   $r5  = [ %0 + %3 ] \n\t"			//load r5
-			"lwc   $r6  = [ %0 + %4 ] \n\t"			//load r6
-			"lwc   $r7  = [ %0 + %5 ] \n\t"			//load r7
-			"lwc   $r8  = [ %0 + %6 ] \n\t"			//load r8
-			"lwc   $r9  = [ %0 + %7 ] \n\t"			//load r9
-			"lwc   $r10 = [ %0 + %8 ] \n\t"			//load r10
-			"lwc   $r11 = [ %0 + %9 ] \n\t"			//load r11
-			"lwc   $r12 = [ %0 + %10 ] \n\t"		//load r12
-			"lwc   $r13 = [ %0 + %11 ] \n\t"		//load r13
-			"lwc   $r14 = [ %0 + %12 ] \n\t"		//load r14
-			"lwc   $r15 = [ %0 + %13 ] \n\t"		//load r15
-			"lwc   $r16 = [ %0 + %14 ] \n\t"		//load r16
-			"lwc   $r17 = [ %0 + %15 ] \n\t"		//load r17
-			"lwc   $r18 = [ %0 + %16 ] \n\t"		//load r18
-			"lwc   $r19 = [ %0 + %17 ] \n\t"		//load r19
-			"lwc   $r20 = [ %0 + %18 ] \n\t"		//load r20
-			"lwc   $r21 = [ %0 + %19 ] \n\t"		//load r21
-			"lwc   $r22 = [ %0 + %20 ] \n\t"		//load r22
-			"lwc   $r23 = [ %0 + %21 ] \n\t"		//load r23
-			"lwc   $r24 = [ %0 + %22 ] \n\t"		//load r24
-			"lwc   $r25 = [ %0 + %23 ] \n\t"		//load r25
-			"lwc   $r26 = [ %0 + %24 ] \n\t"		//load r26
-			"lwc   $r27 = [ %0 + %25 ] \n\t"		//load r27
-			"lwc   $r28 = [ %0 + %26 ] \n\t"		//load r28
-			"lwc   $r29 = [ %0 + %27 ] \n\t"		//load r29
-			"lwc   $r30 = [ %0 + %28 ] \n\t"		//load r30
-			"lwc   $r31 = [ %0 + %29 ] \n\t"		//load r31
-			: : "{$r3}" (new_context), "i" (r2_OFFSET), "i" (r4_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET),
-			"i" (r7_OFFSET), "i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET),
-			"i" (r12_OFFSET), "i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET),
-			"i" (r17_OFFSET), "i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET),
-			"i" (r22_OFFSET), "i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET),
-			"i" (r27_OFFSET), "i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
+	asm volatile("lwc   $r4  = [ %0 + %1 ] \n\t"	//load r4
+			"lwc   $r5  = [ %0 + %2 ] \n\t"			//load r5
+			"lwc   $r6  = [ %0 + %3 ] \n\t"			//load r6
+			"lwc   $r7  = [ %0 + %4 ] \n\t"			//load r7
+			"lwc   $r8  = [ %0 + %5 ] \n\t"			//load r8
+			"lwc   $r9  = [ %0 + %6 ] \n\t"			//load r9
+			"lwc   $r10 = [ %0 + %7 ] \n\t"			//load r10
+			"lwc   $r11 = [ %0 + %8 ] \n\t"			//load r11
+			"lwc   $r12 = [ %0 + %9 ] \n\t"			//load r12
+			"lwc   $r13 = [ %0 + %10 ] \n\t"		//load r13
+			"lwc   $r14 = [ %0 + %11 ] \n\t"		//load r14
+			"lwc   $r15 = [ %0 + %12 ] \n\t"		//load r15
+			"lwc   $r16 = [ %0 + %13 ] \n\t"		//load r16
+			"lwc   $r17 = [ %0 + %14 ] \n\t"		//load r17
+			"lwc   $r18 = [ %0 + %15 ] \n\t"		//load r18
+			"lwc   $r19 = [ %0 + %16 ] \n\t"		//load r19
+			"lwc   $r20 = [ %0 + %17 ] \n\t"		//load r20
+			"lwc   $r21 = [ %0 + %18 ] \n\t"		//load r21
+			"lwc   $r22 = [ %0 + %19 ] \n\t"		//load r22
+			"lwc   $r23 = [ %0 + %20 ] \n\t"		//load r23
+			"lwc   $r24 = [ %0 + %21 ] \n\t"		//load r24
+			"lwc   $r25 = [ %0 + %22 ] \n\t"		//load r25
+			"lwc   $r26 = [ %0 + %23 ] \n\t"		//load r26
+			"lwc   $r27 = [ %0 + %24 ] \n\t"		//load r27
+			"lwc   $r28 = [ %0 + %25 ] \n\t"		//load r28
+			"lwc   $r29 = [ %0 + %26 ] \n\t"		//load r29
+			"lwc   $r30 = [ %0 + %27 ] \n\t"		//load r30
+			"lwc   $r31 = [ %0 + %28 ] \n\t"		//load r31
+			: : "{$r3}" (new_context), "i" (r4_OFFSET), "i" (r5_OFFSET), "i" (r6_OFFSET), "i" (r7_OFFSET),
+			"i" (r8_OFFSET), "i" (r9_OFFSET), "i" (r10_OFFSET), "i" (r11_OFFSET), "i" (r12_OFFSET),
+			"i" (r13_OFFSET), "i" (r14_OFFSET), "i" (r15_OFFSET), "i" (r16_OFFSET), "i" (r17_OFFSET),
+			"i" (r18_OFFSET), "i" (r19_OFFSET), "i" (r20_OFFSET), "i" (r21_OFFSET), "i" (r22_OFFSET),
+			"i" (r23_OFFSET), "i" (r24_OFFSET), "i" (r25_OFFSET), "i" (r26_OFFSET), "i" (r27_OFFSET),
+			"i" (r28_OFFSET), "i" (r29_OFFSET), "i" (r30_OFFSET), "i" (r31_OFFSET));
 
 	/*
 	 * load special-purpose registers
@@ -439,13 +451,17 @@ void _CPU_Context_restore(
 
 	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
-			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load r1
-			"lwc   $r3  = [ %0 + %3 ] \n\t"					//load r3
-			: : "{$r3}" (new_context), "i" (ssize_OFFSET), "i" (r1_OFFSET), "i" (r3_OFFSET));
+			"lwm   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
+			"li    $r2 = %3 \n\t"
+			"swl   [ $r2 + 0 ] = $r1 \n\t"	 				//restore exceptions status register
+			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
+			"lwc   $r2  = [ %0 + %5 ] \n\t"					//load r2
+			"lwc   $r3  = [ %0 + %6 ] \n\t"					//load r3
+			: : "{$r3}" (new_context), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (&_excunit_base), "i" (r1_OFFSET),
+			"i" (r2_OFFSET), "i" (r3_OFFSET));
 
 }
 
 void abort_trap()
 {
 }
-

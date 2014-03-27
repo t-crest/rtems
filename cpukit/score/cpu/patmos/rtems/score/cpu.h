@@ -270,6 +270,7 @@ typedef struct {
 	  uint32_t s15;
 
 	  uint32_t ssize;
+	  uint32_t exc_status;
 
    } Context_Control;
 
@@ -334,14 +335,14 @@ typedef struct {
 #define s15_OFFSET   46
 
 #define ssize_OFFSET 47
-
-#define r0_OFFSET    48
+#define exc_OFFSET   48
+#define r0_OFFSET    49
 
 /*
  *  context control size (in number of bytes)
  */
 
-#define CONTEXT_CONTROL_SIZE 192
+#define CONTEXT_CONTROL_SIZE 196
 
 #define CONTEXT_OFFSET 200
 
@@ -565,7 +566,7 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  */
 
 #define _CPU_ISR_Disable( _level ) \
-		patmos_disable_interrupts()
+  (_level) = patmos_disable_interrupts()
 
 /*
  *  Enable interrupts to the previous level (returned by _CPU_ISR_Disable).
@@ -574,7 +575,7 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  */
 
 #define _CPU_ISR_Enable( _level ) \
-		patmos_enable_interrupts()
+  patmos_enable_interrupts( _level )
 
 /*
  *  This temporarily restores the interrupt to _level before immediately
@@ -583,7 +584,8 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  *  modified.
  */
 
-#define _CPU_ISR_Flash( _level )
+#define _CPU_ISR_Flash( _level ) \
+  patmos_flash_interrupts( _level )
 
 /*
  *  Map interrupt level in task mode onto the hardware that the CPU
@@ -596,7 +598,8 @@ SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
  *  via the rtems_task_mode directive.
  */
 
-#define _CPU_ISR_Set_level( _newlevel )   
+#define _CPU_ISR_Set_level( _newlevel ) \
+   patmos_enable_interrupts( _newlevel ^ CPU_MODES_INTERRUPT_MASK)
 
 /*
  *  Return the current interrupt disable level for this task in
