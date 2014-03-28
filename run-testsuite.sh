@@ -113,8 +113,8 @@ function runTest() {
 	if [[ $bin ]]; then
 		local retcode
 		case $sim in 
-		pasim)		
-			$sim "${simargs[@]}" $bin -O $resultsdir/$1-tmp.txt > $resultsdir/$1-stats.txt 2>&1
+		pasim|patex)		
+			$sim "${simargs[@]}" -O $resultsdir/$1-tmp.txt $bin > $resultsdir/$1-stats.txt 2>&1
 			retcode=$?
 		;;
 		tsim-leon3)
