@@ -1,5 +1,5 @@
 ##
-## $Id: Makefile.am,v 1.00 2013/06/14 15:17:12 Andre Rocha $
+## $Id: Makefile.am,v 1.00 2014/03/27 15:17:12 Andre Rocha $
 ##
 
 ACLOCAL_AMFLAGS = -I ../../../../aclocal
@@ -19,7 +19,7 @@ DISTCLEANFILES = include/bspopts.h
 
 noinst_PROGRAMS =
 
-include_HEADERS += include/pasim.h
+include_HEADERS += include/tcrest.h
 include_HEADERS += ../../shared/include/coverhd.h
 
 noinst_LIBRARIES = libbspstart.a

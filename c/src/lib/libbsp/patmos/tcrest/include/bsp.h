@@ -4,8 +4,8 @@
  *
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
- *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  Copyright (C) GMVIS Skysoft S.A., 2014
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-/* Patmos CPU variant: PASIM */
-#define PASIM 1
+/* Patmos CPU variant: TCREST */
+#define TCREST 2
 
 /* Constants */
 
@@ -29,12 +29,12 @@ extern "C" {
  *  Information placed in the linkcmds file.
  */
 
-#define RAM_START 0x001C0000
-#define RAM_SIZE 4M
+#define RAM_START 0x00020000
+#define RAM_SIZE 1536K
 #define RAM_END RAM_START + RAM_SIZE
 
 #define PROM_START 0x00000000
-#define PROM_SIZE 256M
+#define PROM_SIZE 0K
 #define PROM_END PROM_START + PROM_SIZE
 
 #ifndef ASM
@@ -66,7 +66,7 @@ void bsp_spurious_initialize( void );
 }
 #endif
 
-#include <pasim.h>
+#include <tcrest.h>
 
 #endif
 

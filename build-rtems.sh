@@ -14,6 +14,7 @@ rtems_src_dir=$rtems_dir/rtems-src
 rtems_build_dir=$rtems_dir/rtems-build
 rtems_install_dir=$rtems_dir/rtems-install
 rtems_examples_dir=$rtems_dir/rtems-examples
+rtems_bsp=tcrest
 
 old_target=patmos-unknown-unknown-elf
 new_target=patmos-unknown-rtems
@@ -24,6 +25,7 @@ build_emulator=false
 build_rtems_examples=false
 build_llvm_release=true
 get_rtems=true
+run_bootstrap=false
 
 function add2bashrc(){
 	echo $1 >> ~/.bashrc
@@ -57,6 +59,7 @@ for i in ${@:1}
 	;;
 	"-r" | "-R")
 		build_rtems=true
+		run_bootstrap=true
 	;;
 	"-rs" | "-RS")
 		build_rtems=true
@@ -135,7 +138,10 @@ if [[ $build_rtems == "true" ]]; then
 			echo "error: "$(basename $rtems_src_dir)" not empty directory"
 			exit 1
 		fi
-		git clone https://github.com/t-crest/rtems.git $rtems_src_dir
+		git clone https://github.com/t-crest/rtems.git $rtems_src_dir		
+	fi
+
+	if [[ $run_bootstrap == "true" ]]; then
 		cd $rtems_src_dir
 		./bootstrap -p
 		./bootstrap
@@ -150,12 +156,12 @@ if [[ $build_rtems == "true" ]]; then
 	rtems_install_dir=$(pwd)	
 	
 	cd $rtems_build_dir
-	$rtems_src_dir/configure --target=patmos-unknown-rtems --enable-posix --disable-networking --disable-cxx --enable-tests --enable-rtemsbsp=pasim --prefix=$rtems_install_dir
+	$rtems_src_dir/configure --target=patmos-unknown-rtems --enable-posix --disable-networking --disable-cxx --enable-tests --enable-rtemsbsp=$rtems_bsp --prefix=$rtems_install_dir
 	make install
-	grep -Fxq "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/pasim" ~/.bashrc
+	grep -Fxq "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp ~/.bashrc
 	if [[ $? == 1  ]]; then
-		add2bashrc "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/pasim"
-		export RTEMS_MAKEFILE_PATH"="$rtems_install_dir"/patmos-unknown-rtems/pasim"
+		add2bashrc "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp
+		export RTEMS_MAKEFILE_PATH"="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp
 	fi
 	#rm -rf $pwd
 fi

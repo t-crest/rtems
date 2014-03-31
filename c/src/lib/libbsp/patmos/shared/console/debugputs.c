@@ -1,5 +1,5 @@
 /*
- *  This file contains the TTY driver for the serial ports on the PASIM.
+ *  This file contains the TTY driver for the serial ports on Patmos.
  *
  *  This driver uses the termios pseudo driver.
  *

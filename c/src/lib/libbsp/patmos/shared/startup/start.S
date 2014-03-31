@@ -6,7 +6,7 @@
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
  *  Copyright (C) GMVIS Skysoft S.A., 2013
- *  @author André Rocha
+ *  @author Andre Rocha
  *
  *  The license and distribution terms for this file may be
  *  found in the file LICENSE in this distribution or at
@@ -15,7 +15,10 @@
  */
 
 #include <rtems/asm.h>
-#include <pasim.h>
+#include <bsp.h>
+
+.comm _loader_baseaddr,4,4
+.comm _loader_off,4,4
 
 .type   hard_reset, @function
 .size   hard_reset, .Ltmp0-hard_reset
@@ -27,8 +30,16 @@
 	PUBLIC(hard_reset)
 SYM(hard_reset):
 
-  and      $r0 = $r0, 0x0 /* Reset r0 to 0 */
-	
+  /*
+   * save loader return information
+   */
+  li      $r1 = _loader_baseaddr
+  mfs     $r29 = $srb
+  swm     [$r1] = $r29
+  li      $r1 = _loader_off
+  mfs     $r29 = $sro
+  swm     [$r1] = $r29
+
   /*
    * setup stack cache and stack frame    
    */
@@ -36,59 +47,11 @@ SYM(hard_reset):
   li	  $r9 = _stack_cache_base
   mts	  $s5 = $r9 /* Initialize the stack cache's top pointer */
   mts	  $s6 = $r9 /* Initialize the stack cache's spill top pointer */
-  
- /*
-  *  Copy the initialized data from ROM to RAM
-  *
-  *  FROM:   _etext
-  *  TO:     _data_start
-  *  LENGTH: (__bss_start - _data_start) bytes
-  */
-  
-//  li	  $r9 = _etext /* r9 = start of initialized data in ROM */
-//  li	  $r10 = _data_start /* r10 = start of initialized data in RAM */
-//  li	  $r11 = _bss_start /* r11 = end of initialized data in RAM */
-  
-//  cmplt   $p2 = $r10, $r11         /* Is the pointer past the end of dest? */
-//  (!$p2) br      clear_bss
-//  nop
-//  nop
-//  nop
 
-//copy_data:
-//  lwc     $r12 = [ $r9 + 0 ]
-//  swc     [ $r10 + 0 ] = $r12     /* copy this word */
-//  add     $r9 = $r9, 4            /* bump the source pointer */
-//  add     $r10 = $r10, 4          /* bump the destination pointer */
-//  cmplt   $p2 = $r10, $r11         /* Is the pointer past the end of dest? */
-//  ($p2) br      copy_data
-//  nop
-//  nop
-//  nop
-
-//clear_bss:	/* clear the bss */
-//  li	  $r9 = _edata /* r9 = start of bss */
-//  li	  $r10 = _end /* r10 = end of bss */
-  
-//  cmple   $p2 = $r9, $r10
-//  (!$p2) br      call_boot
-//  nop
-//  nop
-//  nop
-  
-//zero_bss:
-//  swc     [ $r9 + 0 ] = $r0      /* zero the bss */
-//  add     $r9 = $r9, 4           /* bump the bss pointer */
-// cmple   $p2 = $r9, $r10
-//  ($p2) br      zero_bss
-//  nop
-//  nop
-  
   /*
    * invoke main function                    
    */
- 
-//call_boot:
+
   call	  SYM(boot_card) /* invoke boot_card function */
   li	  $r3 = 0 /* pass argument argc */
   li	  $r4 = 0 /* pass argument argv */
@@ -108,8 +71,16 @@ SYM(hard_reset):
  
         PUBLIC(__exit)
 SYM(__exit):
-  mov $r1 = $r3 /* store exit code */
-  brcf $r0      /* halt */
+  li      $r1 = _loader_baseaddr
+  lwm     $r29 = [$r1]
+  nop
+  mts     $srb = $r29
+  li      $r1 = _loader_off
+  lwm     $r29 = [$r1]
+  nop
+  mts     $sro = $r29
+  mov     $r1 = $r3 /* store exit code */
+  ret     /* return to loader and/or halt */
   nop
   nop
   nop     

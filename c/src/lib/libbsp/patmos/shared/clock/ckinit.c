@@ -1,7 +1,7 @@
 /*
  *  Clock Tick Device Driver
  *
- *  This routine initializes PASIM timer 1 which used for the clock tick.
+ *  This routine initializes Patmos timer 1 which used for the clock tick.
  *
  *  The tick frequency is directly programmed to the configured number of
  *  microseconds per tick.

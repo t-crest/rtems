@@ -9,9 +9,8 @@ SUBDIRS = @RTEMS_BSP_FAMILY@
 
 EXTRA_DIST =
 
-EXTRA_DIST += shared/bspclean.c
-EXTRA_DIST += shared/bspstart.c
-EXTRA_DIST += shared/start.S
+EXTRA_DIST += shared/startup/bspstart.c
+EXTRA_DIST += shared/startup/start.S
 
 include $(top_srcdir)/../../../automake/subdirs.am
 include $(top_srcdir)/../../../automake/local.am
