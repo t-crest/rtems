@@ -12,6 +12,7 @@ cdlevel=0
 partest=
 sim=
 simargs=()
+bsp=
 sourcedir=$(pwd)/testsuites
 builddir=$(pwd)/../rtems-build
 
@@ -32,7 +33,7 @@ genflag=0
 
 function usage() {
  cat <<EOT
- Usage: $0 [-h] [-c] [-r] [-g] [-p <sim args>] [-t <tests>] [-s <source dir>] [-b <build dir>] [-o <report dir>] [-l <log file>] [-m <simulator>]
+ Usage: $0 [-h] [-c] [-r] [-g] [-p <sim args>] [-t <tests>] [-s <source dir>] [-b <build dir>] [-o <report dir>] [-l <log file>] [-m <simulator>] [-x <bsp>]
  
  -h				Display help contents
  -c				Clean files created during testsuite runs
@@ -45,6 +46,7 @@ function usage() {
  -o <report dir>                Report output directory
  -l <log file>			Override the default log file
  -m <simulator>			Override the default simulator (pasim)
+ -x <bsp>			Override the default BSP (pasim)
  
 EOT
 }
@@ -86,6 +88,9 @@ function checkDefaults() {
 		sim="pasim"
 		addSimArg "--interrupt=1"
 		addSimArg "--freq=5"
+	fi
+	if [[ "$bsp" == "" ]];then
+		bsp="pasim"
 	fi
 }
 
@@ -200,7 +205,7 @@ function recurseDirs
 	done
 }
 
-while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do	
+while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:x:X:gG" opt; do	
 	case "$opt" in	
 	h|H) 
 		usage		
@@ -246,6 +251,9 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do
 		sim="$OPTARG"
 		simargs=()
 	;;
+	x|X)
+		bsp="$OPTARG"
+	;;
 	g|G)
 		genflag=1
 	;;
@@ -262,7 +270,7 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:gG" opt; do
 	esac	
 done
 
-testsuitedir=$builddir/patmos-unknown-rtems/c/pasim/testsuites
+testsuitedir=$builddir/patmos-unknown-rtems/c/$bsp/testsuites
 checkDefaults
 if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."
