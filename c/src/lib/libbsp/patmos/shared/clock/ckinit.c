@@ -297,10 +297,9 @@ rtems_isr Clock_isr(
 			"mts $s3 = $r1 \n\t"							//move r1 to s3
 			"lwc   $r1  = [ $r31 + %33 ] \n\t nop \n\t"		//load s4
 			"mts $s4 = $r1 \n\t"							//move r1 to s4
-			"lwc   $r1  = [ $r31 + %34 ] \n\t nop \n\t"		//load s5
-			"mts $s5 = $r1 \n\t"							//move r1 to s5
 			"lwc   $r1  = [ $r31 + %35 ] \n\t nop \n\t"		//load s6
-			"mts $s6 = $r1 \n\t"							//move r1 to s6
+			"mts $s5 = $r1 \n\t"							//set the spill pointer to top, we fill back with sens
+			"mts $s6 = $r1 \n\t"							//move r1 to st
 			"lwc   $r1  = [ $r31 + %36 ] \n\t nop \n\t"		//load s7
 			"mts $s7 = $r1 \n\t"							//move r1 to s7
 			"lwc   $r1  = [ $r31 + %37 ] \n\t nop \n\t"		//load s8
