@@ -79,7 +79,7 @@ extern "C" {
  *  If TRUE, then it must be installed during initialization.
  *  If FALSE, then no installation is performed.
  *
- *  The PATMOS does not have a dedicated HW interrupt stack.
+ *  Patmos does not have a dedicated HW interrupt stack.
  */
 
 #define CPU_HAS_HARDWARE_INTERRUPT_STACK  FALSE
@@ -171,7 +171,7 @@ extern "C" {
  *  If TRUE, then the grows upward.
  *  If FALSE, then the grows toward smaller addresses.
  *
- *  The stack grows to lower addresses on the PATMOS.
+ *  The stack grows to lower addresses on Patmos.
  */
 
 #define CPU_STACK_GROWS_UP               FALSE
@@ -359,58 +359,6 @@ typedef struct {
 
 #define MAX_STACK_CACHE_SIZE 0x3FFFF
 
-/*
- *  The floating point context area.
- */
-
-#ifndef ASM
-
-typedef struct {
-    double      f0_f1;
-    double      f2_f3;
-    double      f4_f5;
-    double      f6_f7;
-    double      f8_f9;
-    double      f10_f11;
-    double      f12_f13;
-    double      f14_f15;
-    double      f16_f17;
-    double      f18_f19;
-    double      f20_f21;
-    double      f22_f23;
-    double      f24_f25;
-    double      f26_f27;
-    double      f28_f29;
-    double      f30_f31;
-    uint32_t    fsr;
-} Context_Control_fp;
-
-#endif /* ASM */
-
-/*
- *  Offsets of fields with Context_Control_fp for assembly routines.
- */
-
-#define FO_F1_OFFSET     0x00
-#define F2_F3_OFFSET     0x08
-#define F4_F5_OFFSET     0x10
-#define F6_F7_OFFSET     0x18
-#define F8_F9_OFFSET     0x20
-#define F1O_F11_OFFSET   0x28
-#define F12_F13_OFFSET   0x30
-#define F14_F15_OFFSET   0x38
-#define F16_F17_OFFSET   0x40
-#define F18_F19_OFFSET   0x48
-#define F2O_F21_OFFSET   0x50
-#define F22_F23_OFFSET   0x58
-#define F24_F25_OFFSET   0x60
-#define F26_F27_OFFSET   0x68
-#define F28_F29_OFFSET   0x70
-#define F3O_F31_OFFSET   0x78
-#define FSR_OFFSET       0x80
-
-#define CONTEXT_CONTROL_FP_SIZE 0x84
-
 #ifndef ASM
 
 /*
@@ -424,23 +372,7 @@ typedef struct {
 
 #endif /* ASM */
 
-/*
- *  Offsets of fields with CPU_Interrupt_frame for assembly routines.
- */
-
-#define ISF_STACK_FRAME_OFFSET 0x00
-
-#define CONTEXT_CONTROL_INTERRUPT_FRAME_SIZE CONTEXT_CONTROL_SIZE
-
 #ifndef ASM
-/*
- *  This variable is contains the initialize context for the FP unit.
- *  It is filled in by _CPU_Initialize and copied into the task's FP
- *  context area during _CPU_Context_Initialize.
- */
-
-SCORE_EXTERN Context_Control_fp  _CPU_Null_fp_context CPU_STRUCTURE_ALIGNMENT;
-
 /*
  *  This stack is allocated by the Interrupt Manager and the switch
  *  is performed in _ISR_Handler.  These variables contain pointers
@@ -456,19 +388,10 @@ SCORE_EXTERN void *_CPU_Interrupt_stack_low; /* This variable points to the lowe
 SCORE_EXTERN void *_CPU_Interrupt_stack_high; /* This variable points to the highest physical address of the interrupt stack */
 
 /*
- *  This flag is context switched with each thread.  It indicates
- *  that THIS thread has an _ISR_Dispatch stack frame on its stack.
- *  By using this flag, we can avoid nesting more interrupt dispatching
- *  attempts on a previously interrupted thread's stack.
- */
-
-SCORE_EXTERN volatile uint32_t _CPU_ISR_Dispatch_disable;
-
-/*
  *  The size of the floating point context area.
  */
 
-#define CPU_CONTEXT_FP_SIZE sizeof( Context_Control_fp )
+#define CPU_CONTEXT_FP_SIZE 0
 
 #endif /* ASM */
 
@@ -622,7 +545,7 @@ uint32_t   _CPU_ISR_Get_level( void );
  *     - preparing the stack and frame pointers for both the stack and the shadow stack
  *     - setting the proper interrupt level in the context 
  *
- *  NOTE:  Implemented as a subroutine for the PATMOS port.
+ *  NOTE:  Implemented as a subroutine for Patmos port.
  */
 
 void _CPU_Context_Initialize(
@@ -641,41 +564,6 @@ uint32_t *shadow_stack_base
 
 #define _CPU_Context_Restart_self( _the_context ) \
    _CPU_Context_restore( (_the_context) );
-
-/*
- *  The purpose of this macro is to allow the initial pointer into
- *  a floating point context area (used to save the floating point
- *  context) to be at an arbitrary place in the floating point
- *  context area.
- *
- *  This is necessary because some FP units are designed to have
- *  their context saved as a stack which grows into lower addresses.
- *  Other FP units can be saved by simply moving registers into offsets
- *  from the base of the context area.  Finally some FP units provide
- *  a "dump context" instruction which could fill in from high to low
- *  or low to high based on the whim of the CPU designers.
- */
-
-#define _CPU_Context_Fp_start( _base, _offset ) \
-   ( (void *) _Addresses_Add_offset( (_base), (_offset) ) )
-
-/*
- *  This routine initializes the FP context area passed to it to.
- *  There are a few standard ways in which to initialize the
- *  floating point context.  The code included for this macro assumes
- *  that this is a CPU in which a "initial" FP context was saved into
- *  _CPU_Null_fp_context and it simply copies it to the destination
- *  context passed to it.
- *
- *  Other floating point context save/restore models include:
- *    -# not doing anything, and
- *    -# putting a "null FP status word" in the correct place in the FP context.
- */
-
-#define _CPU_Context_Initialize_fp( _destination ) \
-  do { \
-   *(*(_destination)) = _CPU_Null_fp_context; \
-  } while (0)
 
 /* end of Context handler macros */
 
@@ -700,7 +588,7 @@ uint32_t *shadow_stack_base
 /* Bitfield handler macros */
 
 /*
- *  The PATMOS port uses the generic C algorithm for bitfield scan if the
+ *  The Patmos port uses the generic C algorithm for bitfield scan if the
  *  CPU model does not have a scan instruction.
  */
 
@@ -716,7 +604,7 @@ uint32_t *shadow_stack_base
 /* Priority handler handler macros */
 
 /*
- *  The PATMOS port uses the generic C algorithm for bitfield scan if the
+ *  The Patmos port uses the generic C algorithm for bitfield scan if the
  *  CPU model does not have a scan instruction.
  */
 
@@ -796,34 +684,14 @@ void _CPU_Context_restore(
 ) __attribute__((naked));
 
 /*
- *  _CPU_Context_save_fp
- *
- *  This routine saves the floating point context passed to it.
- */
-
-void _CPU_Context_save_fp(
-  Context_Control_fp **fp_context_ptr
-);
-
-/*
- *  _CPU_Context_restore_fp
- *
- *  This routine restores the floating point context passed to it.
- */
-
-void _CPU_Context_restore_fp(
-  Context_Control_fp **fp_context_ptr
-);
-
-/*
  *  CPU_swap_u32
  *
  *  The following routine swaps the endian format of an unsigned int.
  *  It must be static because it is referenced indirectly.
  *
  *  This version will work on any processor, but if you come across a better
- *  way for the PATMOS PLEASE use it.  The most common way to swap a 32-bit
- *  entity as shown below is not any more efficient on the PATMOS.
+ *  way for the Patmos PLEASE use it.  The most common way to swap a 32-bit
+ *  entity as shown below is not any more efficient on Patmos.
  *
  *     swap least significant two bytes with 16-bit rotate
  *     swap upper and lower 16-bits
