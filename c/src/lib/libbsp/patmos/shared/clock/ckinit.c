@@ -23,7 +23,7 @@
 #include <bsp.h>
 
 void Clock_exit( void );
-rtems_isr Clock_isr( rtems_vector_number vector )__attribute__((naked));
+rtems_isr Clock_isr( rtems_vector_number vector )__attribute__((naked,noinline));
 
 /*
  *  Clock_driver_ticks is a monotonically increasing counter of the
@@ -50,9 +50,8 @@ rtems_device_major_number rtems_clock_major = ~0;
 rtems_device_minor_number rtems_clock_minor;
 
 /* usecs from RTEMS start to Install_clock routine */
-uint64_t usecs_bias;
-/* timestamp of the last tick in usec */
-uint64_t usec_offset;
+uint64_t usecs_offset;
+
 
 /*
  *  The previous ISR on this clock tick interrupt vector.
@@ -82,6 +81,7 @@ uint64_t get_cpu_usecs(void) {
  * Set the timeout for the clock timer. The RTC will trigger an interrupt once
  * the cycle counter reaches the given value.
  */
+
 static inline void arm_usec_timer(uint64_t timestamp) {
 
   _iodev_ptr_t hi_usec = (_iodev_ptr_t)(__PATMOS_RTC_TIME_UP_ADDR);
@@ -92,20 +92,13 @@ static inline void arm_usec_timer(uint64_t timestamp) {
   *hi_usec = (unsigned)(timestamp>>32);
 }
 
-void set_usec_timer (uint64_t time_warp)
-{
-
-//	__PATMOS_RTC_WR_CYCLE_LOW((unsigned int)time_warp);
-//	__PATMOS_RTC_WR_CYCLE_UP((unsigned int)(time_warp >> 32));
-
-	usec_offset += time_warp;
-
-	arm_usec_timer(usec_offset);
+static inline void set_usec_timer(uint64_t time_warp) {
+  arm_usec_timer(get_cpu_usecs() + time_warp);
 }
 
 uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 {
-	uint64_t nsecs = (get_cpu_usecs() - usecs_bias - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick())*1000;
+	uint64_t nsecs = (get_cpu_usecs() - usecs_offset - Clock_driver_ticks*rtems_configuration_get_microseconds_per_tick())*1000;
 
 	return (uint32_t) nsecs;
 }
@@ -128,8 +121,6 @@ uint32_t bsp_clock_nanoseconds_since_last_tick(void)
 
 void __attribute__ ((noinline)) Clock_isr_no_inline(void){
 
-	//uint32_t level = patmos_disable_interrupts();
-
 	set_usec_timer(rtems_configuration_get_microseconds_per_tick());
 
 	/*
@@ -138,8 +129,6 @@ void __attribute__ ((noinline)) Clock_isr_no_inline(void){
 	Clock_driver_ticks += 1;
 
 	rtems_clock_tick();
-
-	//patmos_enable_interrupts(level);
 }
 
 
@@ -379,9 +368,8 @@ void Install_clock(
 	/*
 	 * reset the cpu_usecs count to determine clock_nanoseconds_since_last_tick
 	 */
-	usecs_bias = get_cpu_usecs();
 
-	usec_offset = get_cpu_usecs();	
+	usecs_offset = get_cpu_usecs();
 
 	set_usec_timer(rtems_configuration_get_microseconds_per_tick());
 
