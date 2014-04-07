@@ -42,8 +42,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 
 extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
 
-extern uint32_t get_cpu_freq_mhz(void);
-
 /* Address to access the CPU id */
 #define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
 
@@ -117,8 +115,6 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 extern char _timer_base; /* linker symbol giving the address of the RTC */
 
 extern uint64_t get_cpu_usecs (void);
-
-extern void set_usec_timer (uint64_t time_warp);
 
 /* Address to access the cycle counter low register of the RTC */
 #define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x04)

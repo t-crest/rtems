@@ -278,7 +278,6 @@ typedef struct {
 
 /*
  *  Offsets of fields with Context_Control for assembly routines.
- *	Offset of 52 in Context_Control is due to the other variables in Thread_Control structure.
  */
 
 #define r1_OFFSET    0
@@ -336,15 +335,12 @@ typedef struct {
 
 #define ssize_OFFSET 47
 #define exc_OFFSET   48
-#define r0_OFFSET    49
 
 /*
  *  context control size (in number of bytes)
  */
 
 #define CONTEXT_CONTROL_SIZE 196
-
-#define CONTEXT_OFFSET 200
 
 /**
 *
@@ -371,6 +367,65 @@ typedef struct {
 } CPU_Interrupt_frame;
 
 #endif /* ASM */
+
+/*
+ *  Offsets of fields with CPU_Interrupt_frame for assembly routines.
+ */
+
+#define ISR_r1_OFFSET	0
+#define ISR_r2_OFFSET   1
+#define ISR_r3_OFFSET   2
+#define ISR_r4_OFFSET   3
+#define ISR_r5_OFFSET   4
+#define ISR_r6_OFFSET   5
+#define ISR_r7_OFFSET   6
+#define ISR_r8_OFFSET   7
+
+#define ISR_r9_OFFSET   8
+#define ISR_r10_OFFSET   9
+#define ISR_r11_OFFSET   10
+#define ISR_r12_OFFSET   11
+#define ISR_r13_OFFSET   12
+#define ISR_r14_OFFSET   13
+#define ISR_r15_OFFSET   14
+#define ISR_r16_OFFSET   15
+
+#define ISR_r17_OFFSET   16
+#define ISR_r18_OFFSET   17
+#define ISR_r19_OFFSET   18
+#define ISR_r20_OFFSET   19
+#define ISR_r21_OFFSET   20
+#define ISR_r22_OFFSET   21
+#define ISR_r23_OFFSET   22
+#define ISR_r24_OFFSET   23
+
+#define ISR_r25_OFFSET   24
+#define ISR_r26_OFFSET   25
+#define ISR_r27_OFFSET   26
+#define ISR_r28_OFFSET   27
+#define ISR_r29_OFFSET   28
+#define ISR_r30_OFFSET   29
+#define ISR_s0_OFFSET    30
+#define ISR_s1_OFFSET    31
+
+#define ISR_s2_OFFSET    32
+#define ISR_s3_OFFSET    33
+#define ISR_s4_OFFSET    34
+#define ISR_s6_OFFSET    35
+#define ISR_s7_OFFSET    36
+#define ISR_s8_OFFSET    37
+#define ISR_s9_OFFSET    38
+#define ISR_s10_OFFSET   39
+
+#define ISR_s11_OFFSET   40
+#define ISR_s12_OFFSET   41
+#define ISR_s13_OFFSET   42
+#define ISR_s14_OFFSET   43
+#define ISR_s15_OFFSET   44
+#define ISR_ssize_OFFSET 45
+#define ISR_exc_OFFSET   46
+
+#define ISR_CONTEXT_CONTROL_SIZE 188
 
 #ifndef ASM
 /*
@@ -670,7 +725,7 @@ void *_CPU_Thread_Idle_body( uintptr_t ignored );
 void _CPU_Context_switch(
   Context_Control  *run,
   Context_Control  *heir
-) __attribute__((naked));
+) __attribute__((naked,noinline));
 
 /*
  *  _CPU_Context_restore
@@ -681,7 +736,7 @@ void _CPU_Context_switch(
 
 void _CPU_Context_restore(
   Context_Control *new_context
-) __attribute__((naked));
+) __attribute__((naked,noinline));
 
 /*
  *  CPU_swap_u32

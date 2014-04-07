@@ -167,7 +167,7 @@ void _CPU_Context_switch(
 )
 {
 	/* 
-	 * save general-purpose registers (skip r0 which is always 0) 
+	 * save general-purpose registers
 	 * address of the previous task is passed as function argument in register r3
 	 */	
 	asm volatile("swm   [ %0 + %1 ]  = $r1 \n\t"	//save r1
@@ -267,7 +267,7 @@ void _CPU_Context_switch(
 			: "$r1");
 
 	/* 
-	 * load general-purpose registers (skip r0 which is always 0) 
+	 * load general-purpose registers
 	 * address of the current task is passed as function argument in register r4
 	 * r4 is the last register to be loaded so that the memory address of the current task is not lost
 	 * r1 and r2 will be used as auxiliary registers, so they are not loaded yet
@@ -349,9 +349,9 @@ void _CPU_Context_switch(
 			"i" (s14_OFFSET), "i" (s15_OFFSET)
 			: "$r1");
 
-	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
+	asm volatile("lwc   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
-			"lwm   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
+			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
 			"li    $r2 = %3 \n\t"
 			"swl   [ $r2 + 0 ] = $r1 \n\t"	 				//restore exceptions status register
 			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
@@ -367,7 +367,7 @@ void _CPU_Context_restore(
 )
 {
 	/* 
-	 * load general-purpose registers (skip r0 which is always 0) 
+	 * load general-purpose registers
 	 * address of the current task is passed as function argument in register r3
 	 * r3 is the last register to be loaded so that the memory address of the current task is not lost 
 	 * r1 and r2 will be used as auxiliary registers, so they are not loaded yet
@@ -449,9 +449,9 @@ void _CPU_Context_restore(
 			"i" (s14_OFFSET), "i" (s15_OFFSET)
 			: "$r1");
 
-	asm volatile("lwm   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
+	asm volatile("lwc   $r1  = [ %0 + %1 ] \n\t nop \n\t"	//load ssize
 			"sens $r1 \n\t"									//ensure the stack size in the stack cache
-			"lwm   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
+			"lwc   $r1  = [ %0 + %2 ] \n\t"					//load exceptions status register
 			"li    $r2 = %3 \n\t"
 			"swl   [ $r2 + 0 ] = $r1 \n\t"	 				//restore exceptions status register
 			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
