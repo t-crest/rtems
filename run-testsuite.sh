@@ -276,6 +276,10 @@ if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."
 	exit 1
 fi
+if [[ ! -d $testsuitedir ]]; then
+	echo "Invalid testsuite dir. Check if the specified BSP is correct."
+	exit 1
+fi
 cd $sourcedir
 
 if [[ $resumeflag == 0 ]]; then
