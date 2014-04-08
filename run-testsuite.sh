@@ -270,8 +270,8 @@ while getopts ":hHp:P:t:T:l:L:cCrRb:B:s:S:o:O:m:M:x:X:gG" opt; do
 	esac	
 done
 
-testsuitedir=$builddir/patmos-unknown-rtems/c/$bsp/testsuites
 checkDefaults
+testsuitedir=$builddir/patmos-unknown-rtems/c/$bsp/testsuites
 if [[ ! -d $sourcedir ]]; then
 	echo "Invalid source dir. Go to RTEMS source dir or specify the testsuites source dir with -s."
 	exit 1
