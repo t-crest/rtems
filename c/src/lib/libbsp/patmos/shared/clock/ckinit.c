@@ -378,6 +378,10 @@ void Install_clock(
 
 void Clock_exit( void )
 {
+	/* mask interrupt */
+
+	intr_mask(EXC_INTR_USEC);
+
 	/* turn off the timer interrupts */
 
 	patmos_disable_interrupts();

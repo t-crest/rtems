@@ -42,6 +42,8 @@ void intr_clear_all_pending(void);
 
 void intr_unmask(unsigned n);
 
+void intr_mask(unsigned n);
+
 #endif
 
 /* end of include file */

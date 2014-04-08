@@ -55,9 +55,17 @@ void intr_clear_all_pending(void){
 }
 
 /*
- * Unmask a particular interrupts
+ * Unmask a particular interrupt
  * 	 n - The interrupt to be unmasked
  */
 void intr_unmask(unsigned n){
   EXC_MASK |= (1 << n);
+}
+
+/*
+ * Mask a particular interrupt
+ * 	 n - The interrupt to be masked
+ */
+void intr_mask(unsigned n){
+  EXC_MASK &= ~(1 << n);
 }
