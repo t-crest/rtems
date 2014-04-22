@@ -30,10 +30,7 @@ __DYNAMIC  =  0;
  * The memory map looks like this:
  * +--------------------+ <- low memory
  * | .text  	ROM		|
- * |        _text_start |
- * |        ctor list   | the ctor and dtor lists are for
- * |        dtor list   | C++ support
- * |        _etext      |
+ * |        _text_start |    |
  * +--------------------+
  * | .data      RAM     | initialized data goes here
  * |        _sdata      |
@@ -78,33 +75,6 @@ SECTIONS
         *(.text)
 	. = ALIGN (0x10);
 
-	/*
-	 * Special FreeBSD sysctl sections.
-	 */
-	. = ALIGN (16);
-	__start_set_sysctl_set = .;
-	*(set_sysctl_*);
-	__stop_set_sysctl_set = ABSOLUTE(.);
-	*(set_domain_*);
-	*(set_pseudo_*);
-
-	*(.eh_fram)
-	. = ALIGN (0x10);
-
-	/*
-	 * C++ constructors
-	 */
-	__CTOR_LIST__ = .;
-	LONG((__CTOR_END__ - __CTOR_LIST__) / 4 - 2)
-	*(.ctors)
-	LONG(0)
-	__CTOR_END__ = .;
-	__DTOR_LIST__ = .;
-	LONG((__DTOR_END__ - __DTOR_LIST__) / 4 - 2)
-	*(.dtors)
-	LONG(0)
-	__DTOR_END__ = .;
-	_etext = ALIGN( 0x10 ) ;
         }
         .data :
 	{
