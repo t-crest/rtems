@@ -108,6 +108,12 @@ function addSimArg() {
 	fi
 }
 
+function checkUserValues() {
+	if [[ $valuesflag == 0 ]]; then
+		exit 1
+	fi
+}
+
 # function arguments:
 #	1 - makefile target
 function useMakefile() {
@@ -166,9 +172,9 @@ function runTest() {
 		;;
 		tsim-leon3)
 			echo -e "load $bin\ngo\nquit\n" >> tsim-script.txt
-			$sim "${simargs[@]}" -c tsim-script.txt > $tmplog
+			$sim "${simargs[@]}" -c tsim-script.txt > $exelog
 			retcode=$?
-			sed -i '1,24d;$d' $tmplog			
+			sed -e '1,24d;$d' $exelog > $tmplog			
 			rm -rf tsim-script.txt		
 		;;
 		ML605)
@@ -176,8 +182,7 @@ function runTest() {
 			if [[ $patserdow == "" ]]; then
 				"Error: patserdow java script not found"
 				exit 1
-			fi
-			#cp $bin "$(dirname bin)/$(basename bin).elf"			
+			fi			
 			timeout --foreground $timeout"s" $patserdow -v $comport $bin > $exelog 2>&1
 			retcode=$?
 			sed -i "/\[..........\]/d" $exelog			
@@ -205,10 +210,8 @@ function runTest() {
 				fi
 			
 			else
-				if [[ $sim != "pasim" ]]; then
-					rm -rf $exelog
-				else
-					mv $exelog $resultsdir/$1-stats.txt
+				if [[ $sim == "pasim" ]]; then					
+					mv -f $exelog $resultsdir/$1-stats.txt
 				fi
 				
 				if [[ $(find -maxdepth 1 -iname "*.scn" ) ]]; then
@@ -217,7 +220,11 @@ function runTest() {
 					diff --ignore-space-change $tmplog $1.scn > $testlog
 					if [[ -s $testlog ]]; then
 						writeFile $log "$3: Test executed: Failed!"
-						cp -f $tmplog $resultsdir/$1-out.txt
+						if [[ $sim == "ML605" || $sim == "tsim-leon3" ]]; then
+							mv -f $exelog $resultsdir/$1-out.txt
+						else
+							mv -f $tmplog $resultsdir/$1-out.txt
+						fi
 						echo "$(tput setaf 1)$3: Test executed: Failed!$(tput setaf 7)"
 						let failtests+=1
 					else
@@ -235,6 +242,7 @@ function runTest() {
 					echo "$3: Test executed: check $2-log.txt"	
 					let noresulttests+=1
 				fi
+				rm -rf $exelog
 			fi
 			rm -rf $tmplog
 		fi
@@ -371,6 +379,18 @@ done
 
 # check user-specified and default values
 
+if [[ ! -d $sourcedir ]]; then
+	echo "Error: $sourcedir not found. Go to RTEMS source dir or specify the testsuites source dir with -s."
+	valuesflag=0
+fi
+
+if [[ ! -d $builddir ]]; then
+	echo "Error: $sourcedir not found. Go to RTEMS source dir or specify the testsuites source dir with -s."
+	valuesflag=0
+fi
+
+checkUserValues
+
 if [[ "$resultsdir" == "" ]]; then
 	resultsdir=$sourcedir/results
 fi
@@ -403,7 +423,20 @@ if [[ "$bsp" == "" ]]; then
 	bsp="tcrest"
 fi
 
-testsuitedir=$builddir/patmos-unknown-rtems/c/$bsp/testsuites
+# get absolute path of results dir
+curdir=$(pwd)
+cd $builddir
+builddir=$(pwd)
+cd $curdir
+
+case $bsp in
+	leon*|erc32)
+	testsuitedir=$builddir/sparc-rtems4.10/c/$bsp/testsuites
+	;;
+	*)
+	testsuitedir=$builddir/patmos-unknown-rtems/c/$bsp/testsuites
+	;;
+esac
 
 makefile=$patmosdir/Makefile
 
@@ -426,12 +459,8 @@ else
 fi
 
 # check if files and directories exist
-if [[ ! -d $sourcedir ]]; then
-	echo "Error: $sourcedir not found. Go to RTEMS source dir or specify the testsuites source dir with -s."
-	valuesflag=0
-fi
 if [[ ! -d $testsuitedir ]]; then
-	echo "Error: $testsuite not found. Check if the specified BSP is correct."
+	echo "Error: $testsuitedir not found. Check if the specified BSP is correct."
 	valuesflag=0
 fi
 
@@ -460,10 +489,8 @@ if [[ $sim == "ML605" && (! $timeout =~ ^[\-0-9]+$ ||  $timeout -lt 0) ]]; then
 	echo "Error: $timeout not valid for timeout. Specify zero or a positive integer with option -z."
 	valuesflag=0
 fi
-	
-if [[ $valuesflag == 0 ]]; then
-	exit 1
-fi
+
+checkUserValues
 
 # make javatools for downloading elf files to fpga
 if [[ $javatoolsflag == 1 ]]; then
