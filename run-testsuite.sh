@@ -385,7 +385,7 @@ if [[ ! -d $sourcedir ]]; then
 fi
 
 if [[ ! -d $builddir ]]; then
-	echo "Error: $sourcedir not found. Go to RTEMS source dir or specify the testsuites source dir with -s."
+	echo "Error: $builddir not found. Specify RTEMS build dir with -b."
 	valuesflag=0
 fi
 
