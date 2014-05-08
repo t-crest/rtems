@@ -54,7 +54,7 @@ timeout=360
 
 # string helpers
 checklog=" [check log for more information]"
-logseparator=">--------------------------------------------------------------------------<\n"
+logseparator=">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
 
 function usage() {
  cat <<EOT
@@ -116,11 +116,8 @@ function checkUserValues() {
 
 # function arguments:
 #	1 - makefile target
-function useMakefile() {
-	curdir=$(pwd)
-	cd $(dirname $makefile)
-	make COM_PORT=$comport $1 >> $log 2>&1
-	cd $curdir
+function useMakefile() {	
+	make -C $patmosdir COM_PORT=$comport $1 >> $log 2>&1	
 }
 
 # function arguments:
@@ -180,7 +177,7 @@ function runTest() {
 		ML605)
 			local patserdow=$(find $patmosdir -iname "patserdow" -type f -executable | head -1)
 			if [[ $patserdow == "" ]]; then
-				"Error: patserdow java script not found"
+				echo "Error: patserdow java script not found"
 				exit 1
 			fi			
 			timeout --foreground $timeout"s" $patserdow -v $comport $bin > $exelog 2>&1
