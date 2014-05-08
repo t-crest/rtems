@@ -49,11 +49,12 @@ bitfile=
 biturl=
 resultsdir=
 log=
+toolslog=
 # timeout 360s = 6 mins
 timeout=360
 
 # string helpers
-checklog=" [check log for more information]"
+checklog=" [check tools log for more information]"
 logseparator=">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
 
 function usage() {
@@ -117,21 +118,19 @@ function checkUserValues() {
 # function arguments:
 #	1 - makefile target
 function useMakefile() {	
-	make -C $patmosdir COM_PORT=$comport $1 >> $log 2>&1	
+	make -C $patmosdir COM_PORT=$comport $1 >> $toolslog 2>&1	
 }
 
-# function arguments:
-#	1 - comment on configuration
 function configureXilinxFPGA() {
 	local tmp_script=tmp-impact.sh
 	rm -rf $tmp_script
 	touch $tmp_script
 	echo -e "source $ise_ds_path/settings32.sh\nexport LD_PRELOAD=/opt/libusb/libusb-driver.so\nimpact -batch <<EOF\ncleancablelock\nsetMode -bs\nsetCable -port auto\nIdentify -inferir\nidentifyMPM\nassignfile -p 2 -file $bitfile\nprogram -p 2\nexit\nEOF" >> $tmp_script
 	chmod 777 $tmp_script	
-	echo "Configuring ML605...$1$checklog"
-	writeFile $log $logseparator
-	./$tmp_script >> $log 2>&1
-	writeFile $log $logseparator
+	echo "Configuring ML605...$checklog"
+	writeFile $toolslog $logseparator
+	./$tmp_script >> $toolslog 2>&1
+	writeFile $toolslog $logseparator
 	rm -rf tmp-impact.sh
 	rm -rf _impactbatch.log
 }
@@ -179,7 +178,8 @@ function runTest() {
 			if [[ $patserdow == "" ]]; then
 				echo "Error: patserdow java script not found"
 				exit 1
-			fi			
+			fi
+			configureXilinxFPGA
 			timeout --foreground $timeout"s" $patserdow -v $comport $bin > $exelog 2>&1
 			retcode=$?
 			sed -i "/\[..........\]/d" $exelog			
@@ -188,7 +188,9 @@ function runTest() {
 			tail -n +3 $tmplog | head -n -2 > $tmp && mv $tmp $tmplog
 		;;
 		esac
-		sed -i "s/\r//" $tmplog
+		if [[ -f $tmplog ]]; then
+			sed -i "s/\r//" $tmplog
+		fi
 		if [[ $genflag == 1 ]]; then
 			cp -f $tmplog $1.scn
 			writeFile $log "$3: generating file $1.scn"
@@ -202,8 +204,7 @@ function runTest() {
 				
 				#timeout, kill processes hanging port and reconfigure FPGA
 				if [[ $sim == "ML605" && $retcode == 124 ]]; then
-					lsof | grep $comport | awk 'NR!=1 {print $3}' | xargs kill
-					configureXilinxFPGA " [reconfiguration due to timeout]"
+					lsof | grep $comport | awk 'NR!=1 {print $3}' | xargs kill					
 				fi
 			
 			else
@@ -416,6 +417,9 @@ else
 	log=$resultsdir/$(basename $log)
 fi
 
+toolslog=$resultsdir/tools-log.txt
+rm -rf $toolslog
+
 if [[ "$bsp" == "" ]]; then
 	bsp="tcrest"
 fi
@@ -499,33 +503,33 @@ if [[ $javatoolsflag == 1 ]]; then
 	fi
 		
 	echo "Making javatools..."
-	writeFile $log $logseparator
+	writeFile $toolslog $logseparator
 	useMakefile "javatools scripttools"	
 	if [[ $? != 0 ]]; then		
 		echo "Error: making javatools$checklog"
 		toolsflag=0
 	fi
-	writeFile $log $logseparator
+	writeFile $toolslog $logseparator
 fi
 
 # download specified bitfile
 if [[ $bitflag == 1 ]]; then	
 	echo "Downloading bitfile..."
 	rm -rf $bitfile
-	writeFile $log $logseparator
-	wget $biturl -O $bitfile >> $log 2>&1
+	writeFile $toolslog $logseparator
+	wget $biturl -O $bitfile >> $toolslog 2>&1
 	if [[ $? != 0 ]]; then		
 		echo "Error: downloading bitfile$checklog"
 		toolsflag=0
 	fi
-	writeFile $log $logseparator
+	writeFile $toolslog $logseparator
 fi
 
 if [[ $toolsflag == 0 ]]; then
 	exit 1
 fi
 
-if [[ $xilinxfpgaflag == 1 || $sim == "ML605" ]]; then
+if [[ $xilinxfpgaflag == 1 ]]; then
 	configureXilinxFPGA		
 fi
 
