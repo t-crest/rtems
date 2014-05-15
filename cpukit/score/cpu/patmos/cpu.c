@@ -461,7 +461,3 @@ void _CPU_Context_restore(
 			"i" (r2_OFFSET), "i" (r3_OFFSET));
 
 }
-
-void abort_trap()
-{
-}
