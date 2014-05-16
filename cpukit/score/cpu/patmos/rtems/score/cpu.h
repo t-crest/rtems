@@ -632,11 +632,8 @@ uint32_t *shadow_stack_base
 
 #define _CPU_Fatal_halt( _error ) \
   do { \
-    uint32_t   level; \
-    \
-    asm volatile ( "mov  $r9 = %0 \n\t" : "=r" (level) : "0" (level) ); \
-    while (1); /* loop forever */ \
-  } while (0)
+    asm volatile ( "call __exit \n\t" : : ); \
+  } while (1)
 
 /* end of Fatal Error manager macros */
 
