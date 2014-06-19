@@ -35,6 +35,22 @@ extern "C" {
 
 typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 
+/*
+ * Attribute for pointers into the scratchpad memory. Use as
+ *
+ * _SPM int *p = (_SPM int *) 0x1234;
+ *
+ */
+#define _SPM __attribute__((address_space(1)))
+
+/*
+ * Attribute for pointers into main memory using cache bypass. Use as
+ *
+ * _UNCACHED int *p = (_UNCACHED int *) &mydata;
+ */
+#define _UNCACHED __attribute__((address_space(3)))
+
+typedef volatile int (*entrypoint_t)(void);
 
 /*
  * CPU Info Management
@@ -177,6 +193,25 @@ extern char _excunit_base; /* linker symbol giving the base address of the excep
 
 /*
  * End of Exception Management
+ */
+
+/*
+ * NOC Management
+ *
+ * TODO: replace these by linker symbols
+ */
+
+/* The base address for DMA entries */
+#define NOC_DMA_BASE    ((volatile int _IODEV *)0xE0000000)
+/* The base address for DMA routing information */
+#define NOC_DMA_P_BASE  ((volatile int _IODEV *)0xE1000000)
+/* The base address for the slot table */
+#define NOC_ST_BASE     ((volatile int _IODEV *)0xE2000000)
+/* The base address of the communication SPM */
+#define NOC_SPM_BASE    ((volatile int _SPM   *)0xE8000000)
+
+/*
+ * End of NOC Management
  */
 
 #endif /* !ASM */

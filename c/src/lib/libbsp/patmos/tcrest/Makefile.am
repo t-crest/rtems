@@ -21,6 +21,7 @@ noinst_PROGRAMS =
 
 include_HEADERS += include/tcrest.h
 include_HEADERS += ../../shared/include/coverhd.h
+include_HEADERS += ../shared/noc/noc.h
 
 noinst_LIBRARIES = libbspstart.a
 libbspstart_a_SOURCES = ../../patmos/shared/startup/start.S
@@ -43,6 +44,8 @@ libbsp_a_SOURCES += ../shared/console/console.c
 libbsp_a_SOURCES += ../shared/console/debugputs.c
 # clock
 libbsp_a_SOURCES += ../shared/clock/ckinit.c ../../../shared/clockdrv_shell.h
+# noc
+libbsp_a_SOURCES += ../shared/noc/noc.c
 # timer
 libbsp_a_SOURCES += ../shared/timer/timer.c
 
