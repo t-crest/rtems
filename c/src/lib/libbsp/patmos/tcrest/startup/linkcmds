@@ -1,93 +1,45 @@
-/*  linkcmds
- *
- *  $Id$
- */
-
-/* Default values, can be overridden */
-
-_PROM_SIZE = 0K;
-_PROM_START = 0x00000000;
-
-_RAM_SIZE = 768K;
-_RAM_START = 0x400;
+# A simple linker script to put code and data into the external memory
 
 /* these are the maximum values */
-
 RamBase = 0x400;
-RamSize = 768K;
-
-MEMORY
-{
-  rom     : ORIGIN = 0x00000000, LENGTH = 0K
-  ram     : ORIGIN = 0x400, LENGTH = 768K
-}
+RamSize = 1M;
 
 OUTPUT_ARCH(patmos)
-ENTRY(hard_reset)
-__DYNAMIC  =  0;
 
-/*
- * The memory map looks like this:
- * +--------------------+ <- low memory
- * | .data      RAM     | initialized data goes here
- * |        _data_start |
- * |        _edata      |
- * +--------------------+
- * | .bss       RAM     |
- * |        __bss_start | start of bss, cleared by crt0
- * |        _end        | start of heap, used by sbrk()
- * +--------------------+
- * | .text  	RAM		|
- * |        _text_start |
- * +--------------------+ <- high memory
- */
-
-_RAM_END = _RAM_START + _RAM_SIZE;
-
-_PROM_END = _PROM_START + _PROM_SIZE;
-
-/*
- *  Alternate names without leading _.
- */
-
-PROM_START = _PROM_START;
-PROM_SIZE = _PROM_SIZE;
-PROM_END = _PROM_END;
-
-RAM_START = _RAM_START;
-RAM_SIZE = _RAM_SIZE;
-RAM_END = _RAM_END;
-
-/*
- * stick everything in ram (of course)
- */
 SECTIONS
 {
- .data 0x400 :
-	{
+  . = SEGMENT_START(".rodata", 0x400);
+
+  .init_array : { *(SORT(.init_array.*) .init_array) }
+  
+  .fini_array : { *(SORT(.fini_array.*) .fini_array) }
+  
+  .data : {
 	data_start = . ;
 	_data_start = . ;
-        *(.data)
-	_edata = ALIGN( 0x10 ) ;
-    }
-        
- .bss :
-    {
+	*(.data) 
+	_edata = ALIGN( 0x10 ) ;	
+  }
+  
+  .bss : {
 	bss_start = . ;
 	_bss_start = . ;
 	*(.bss)
 	*(COMMON)
 	WorkAreaBase = . ;
-	end = . ;
-	_end = . ;
-	__end = . ;	
-	}
-	
-   .text 0x00020000 :
-	{
+	bss_end = . ;
+	_bss_end = . ;
+	__bss_end = . ;	
+  }
+
+  . = SEGMENT_START(".text", 0x80000);
+  .text : {
 	text_start = . ;
 	_text_start = . ;
         *(.text)
 	. = ALIGN (0x10);
-     }               
+  }
+
+  . = ALIGN(8);
+  _end = .; PROVIDE (end = .);
 }

@@ -30,7 +30,7 @@ extern "C" {
  */
 
 #define RAM_START 0x400
-#define RAM_SIZE 768K
+#define RAM_SIZE 1M
 #define RAM_END RAM_START + RAM_SIZE
 
 #define PROM_START 0x00000000
