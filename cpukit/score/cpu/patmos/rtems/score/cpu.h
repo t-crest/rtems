@@ -632,7 +632,10 @@ uint32_t *shadow_stack_base
 
 #define _CPU_Fatal_halt( _error ) \
   do { \
-    asm volatile ( "call __exit \n\t" : : ); \
+	  asm volatile ("mts $srb = $r0\n\t" 			\
+	              	"mts $sro = $r0\n\t"  			\
+	               	"ret\n\t"						\
+	      			"nop\n\t nop\n\t nop\n\t" : :);	\
   } while (1)
 
 /* end of Fatal Error manager macros */
