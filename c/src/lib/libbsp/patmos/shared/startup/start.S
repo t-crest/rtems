@@ -43,6 +43,9 @@ SYM(hard_reset):
   shadd2  $r2 = $r1, _loader_off
   swm     [$r2] = $r29
 
+
+#ifndef PATMOS_MULTICORE
+
   /*
    * Exit immediately with exit code -1 if not on core 0.
    * Stack setup and RTEMS setup code need to be adapted when moving to multicore.
@@ -51,6 +54,8 @@ SYM(hard_reset):
 (!$p1) br .Lexit
   li      $r1 = -1
   nop
+
+ #endif /* PATMOS_MULTICORE */
 
   /*
    * setup stack cache and stack frame    
