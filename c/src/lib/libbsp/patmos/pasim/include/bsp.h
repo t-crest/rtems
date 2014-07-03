@@ -1,6 +1,6 @@
 /*  bsp.h
  *
- *  This include file contains all PATMOS simulator definitions.
+ *  This include file contains all Patmos simulator definitions.
  *
  *  Project: T-CREST - Time-Predictable Multi-Core Architecture for Embedded Systems
  *
