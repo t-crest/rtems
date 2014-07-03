@@ -1,0 +1,45 @@
+# A simple linker script to put code and data into the external memory
+
+/* these are the maximum values */
+RamBase = 0x400;
+RamSize = 1M;
+
+OUTPUT_ARCH(patmos)
+
+SECTIONS
+{
+  . = SEGMENT_START(".rodata", 0x400);
+
+  .init_array : { *(SORT(.init_array.*) .init_array) }
+  
+  .fini_array : { *(SORT(.fini_array.*) .fini_array) }
+  
+  .data : {
+	data_start = . ;
+	_data_start = . ;
+	*(.data) 
+	_edata = ALIGN( 0x10 ) ;	
+  }
+  
+  .bss : {
+	bss_start = . ;
+	_bss_start = . ;
+	*(.bss)
+	*(COMMON)
+	WorkAreaBase = . ;
+	bss_end = . ;
+	_bss_end = . ;
+	__bss_end = . ;	
+  }
+
+  . = SEGMENT_START(".text", 0x80000);
+  .text : {
+	text_start = . ;
+	_text_start = . ;
+        *(.text)
+	. = ALIGN (0x10);
+  }
+
+  . = ALIGN(8);
+  _end = .; PROVIDE (end = .);
+}

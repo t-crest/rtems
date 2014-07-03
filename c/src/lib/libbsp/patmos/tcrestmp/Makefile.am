@@ -1,0 +1,56 @@
+##
+## $Id: Makefile.am,v 1.00 2014/03/27 15:17:12 Andre Rocha $
+##
+
+ACLOCAL_AMFLAGS = -I ../../../../aclocal
+
+include $(top_srcdir)/../../../../automake/compile.am
+
+include_bspdir = $(includedir)/bsp
+
+dist_project_lib_DATA = bsp_specs
+
+include_HEADERS = include/bsp.h
+include_HEADERS += ../../shared/include/tm27.h
+
+nodist_include_HEADERS = include/bspopts.h
+nodist_include_bsp_HEADERS = ../../shared/include/bootcard.h
+DISTCLEANFILES = include/bspopts.h
+
+noinst_PROGRAMS =
+
+include_HEADERS += include/tcrestmp.h
+include_HEADERS += ../../shared/include/coverhd.h
+include_HEADERS += ../shared/noc/noc.h
+
+noinst_LIBRARIES = libbspstart.a
+libbspstart_a_SOURCES = ../../patmos/shared/startup/start.S
+project_lib_DATA = start.$(OBJEXT)
+
+dist_project_lib_DATA += startup/linkcmds
+dist_project_lib_DATA += ../shared/libsyms.ll
+
+noinst_LIBRARIES += libbsp.a
+libbsp_a_SOURCES =
+
+# startup
+libbsp_a_SOURCES += ../../shared/bspclean.c ../../shared/bsplibc.c \
+    ../../shared/bsppost.c ../../shared/bootcard.c ../shared/startup/bspstart.c \
+    ../../shared/bsppretaskinghook.c ../../shared/bsppredriverhook.c \
+    ../shared/bspgetworkarea.c ../../shared/sbrk.c
+# console
+libbsp_a_SOURCES += ../shared/console/console.c
+# debugio
+libbsp_a_SOURCES += ../shared/console/debugputs.c
+# clock
+libbsp_a_SOURCES += ../shared/clock/ckinit.c ../../../shared/clockdrv_shell.h
+# noc
+libbsp_a_SOURCES += ../shared/noc/noc.c
+# timer
+libbsp_a_SOURCES += ../shared/timer/timer.c
+
+libbsp_a_LIBADD = ../../../libcpu/@RTEMS_CPU@/cache.rel \
+    ../../../libcpu/@RTEMS_CPU@/exceptions.rel
+
+include $(srcdir)/preinstall.am
+include $(top_srcdir)/../../../../automake/local.am

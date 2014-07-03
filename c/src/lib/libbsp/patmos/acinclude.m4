@@ -6,6 +6,8 @@ AC_DEFUN([RTEMS_CHECK_BSPDIR],
     AC_CONFIG_SUBDIRS([pasim]);;
   tcrest )
     AC_CONFIG_SUBDIRS([tcrest]);;
+  tcrestmp )
+    AC_CONFIG_SUBDIRS([tcrestmp]);;
   *)
     AC_MSG_ERROR([Invalid BSP]);;
   esac
