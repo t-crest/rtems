@@ -158,11 +158,10 @@ if [[ $build_rtems == "true" ]]; then
 	cd $rtems_build_dir
 	$rtems_src_dir/configure --target=patmos-unknown-rtems --disable-posix --disable-networking --disable-cxx --enable-tests --enable-rtemsbsp=$rtems_bsp --prefix=$rtems_install_dir
 	make install
-	grep -Fxq "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp ~/.bashrc
-	if [[ $? == 1  ]]; then
-		add2bashrc "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp
-		export RTEMS_MAKEFILE_PATH"="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp
-	fi
+	grep -Fxv "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp ~/.bashrc > tmp.txt
+	mv tmp.txt ~/.bashrc	
+	add2bashrc "export RTEMS_MAKEFILE_PATH="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp
+	export RTEMS_MAKEFILE_PATH"="$rtems_install_dir"/patmos-unknown-rtems/"$rtems_bsp	
 	#rm -rf $pwd
 fi
 
