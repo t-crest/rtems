@@ -48,22 +48,40 @@ SYM(hard_reset):
 
   /*
    * Exit immediately with exit code -1 if not on core 0.
-   * Stack setup and RTEMS setup code need to be adapted when moving to multicore.
    */
   cmpeq   $p1 = $r1, 0
 (!$p1) br .Lexit
   li      $r1 = -1
   nop
 
- #endif /* PATMOS_MULTICORE */
-
   /*
-   * setup stack cache and stack frame    
+   * setup stack cache and stack frame
    */
   li	  $r31 = _shadow_stack_base /* Initialize shadow stack pointer */
-  li	  $r9 = _stack_cache_base
-  mts	  $s5 = $r9 /* Initialize the stack cache's top pointer */
-  mts	  $s6 = $r9 /* Initialize the stack cache's spill top pointer */
+  li	  $r1 = _stack_cache_base
+  mts	  $s5 = $r1 /* Initialize the stack cache's top pointer */
+  mts	  $s6 = $r1 /* Initialize the stack cache's spill top pointer */
+
+#else
+
+  /*
+   * Stack setup and RTEMS setup code need to be adapted when moving to multicore.
+   */
+
+  li      $r2 = _stack_cache_base
+  li      $r3 = _shadow_stack_base
+  sub	  $r4 = $r3, $r2 /* stack_size = _shadow_stack_base - _stack_cache_base */
+  mul	  $r4, $r1 /* stack_size*cpu_id */
+  nop
+  mfs	  $r1 = $s2
+  sl	  $r1 = $r1, 1 /* 2*stack_size*cpu_id */
+  sub	  $r3 = $r3, $r1
+  sub	  $r1 = $r2, $r1
+  mov	  $r31 = $r3 /* Initialize shadow stack pointer */
+  mts	  $s5 = $r1 /* Initialize the stack cache's top pointer */
+  mts	  $s6 = $r1 /* Initialize the stack cache's spill top pointer */
+
+ #endif /* PATMOS_MULTICORE */
 
   /*
    * invoke main function                    
