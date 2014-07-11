@@ -90,7 +90,7 @@ void noc_configure(void);
 /// \brief Configure network-on-chip and synchronize all cores.
 ///
 /// #noc_init is a static constructor and not intended to be called directly.
-void noc_init(void) __attribute__((constructor,used));
+void noc_init(void) __attribute__((used));
 
 ////////////////////////////////////////////////////////////////////////////
 // Functions for transmitting data
