@@ -68,16 +68,19 @@ SYM(hard_reset):
    * Stack setup and RTEMS setup code need to be adapted when moving to multicore.
    */
 
-  li      $r2 = _stack_cache_base
-  li      $r3 = _shadow_stack_base
-  sub	  $r4 = $r3, $r2 /* stack_size = _shadow_stack_base - _stack_cache_base */
-  mul	  $r4, $r1 /* stack_size*cpu_id */
+  li      $r2 = _shadow_stack_base
+  li      $r3 = _stack_cache_base
+  sub	  $r4 = $r3, $r2 /* stack_size = _stack_cache_base - _shadow_stack_base  */
+  cmplt	  $p1 = $r4, 0
+  neg	  $r6 = $r4
+  sl	  $r5 = $r4, 1 /* 2*stack_size */
+($p1) sl  $r5 = $r6, 1 /* make sure to have a positive size  */
+  mul	  $r1, $r5 /* 2*stack_size*cpu_id */
   nop
   mfs	  $r1 = $s2
-  sl	  $r1 = $r1, 1 /* 2*stack_size*cpu_id */
-  sub	  $r3 = $r3, $r1
-  sub	  $r1 = $r2, $r1
-  mov	  $r31 = $r3 /* Initialize shadow stack pointer */
+  sub	  $r2 = $r2, $r1 /* _shadow_stack_base - 2*stack_size*id */
+  sub	  $r1 = $r3, $r1 /* _stack_cache_base - 2*stack_size*id */
+  mov	  $r31 = $r2 /* Initialize shadow stack pointer */
   mts	  $s5 = $r1 /* Initialize the stack cache's top pointer */
   mts	  $s6 = $r1 /* Initialize the stack cache's spill top pointer */
 
