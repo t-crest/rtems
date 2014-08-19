@@ -140,6 +140,7 @@ void noc_send(int rcv_id, volatile void _SPM *dst,
 #define STATUS_BOOT     1
 #define STATUS_INIT     2
 #define STATUS_INITDONE 3
+#define STATUS_RETURN   4
 
 struct master_info_t {
   volatile entrypoint_t entrypoint;
@@ -147,6 +148,7 @@ struct master_info_t {
 };
 
 struct slave_info_t {
+  volatile int return_val;
   volatile int status;
 };
 
