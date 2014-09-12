@@ -26,8 +26,8 @@ extern "C" {
  * TODO: replace these by linker symbols
  */
 
-#define _shadow_stack_base 0x00100000
-#define _stack_cache_base 0x000f0000
+#define _shadow_stack_base 0x00200000
+#define _stack_cache_base 0x001f8000
 
 #ifndef ASM
 
