@@ -22,7 +22,7 @@ typedef void (*exc_handler_t)(void);
 /*
  * The exception vector array
  */
-#define EXC_VEC(I) (((_IODEV exc_handler_t volatile * const)(&_excunit_base+0x80))[I])
+#define EXC_VEC(I) (((_IODEV exc_handler_t volatile * const)(__PATMOS_EXCUNIT_BASE+0x80))[I])
 
 /*
  * Various named exception vector entry numbers

@@ -34,7 +34,7 @@ SYM(hard_reset):
   /*
    * save loader return information
    */
-  li      $r1 = _cpuinfo_base
+  li      $r1 = __PATMOS_CPUINFO_BASE
   lwl     $r1 = [$r1]
   mfs     $r29 = $srb
   shadd2  $r2 = $r1, _loader_baseaddr
@@ -114,7 +114,7 @@ SYM(hard_reset):
  
         PUBLIC(__exit)
 SYM(__exit):
-  li      $r1 = _cpuinfo_base
+  li      $r1 = __PATMOS_CPUINFO_BASE
   lwl     $r1 = [$r1]
   nop
   shadd2  $r2 = $r1, _loader_baseaddr

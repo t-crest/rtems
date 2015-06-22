@@ -262,7 +262,7 @@ void _CPU_Context_switch(
 			: : "{$r3}" (run), "i" (s0_OFFSET), "i" (s1_OFFSET), "i" (s2_OFFSET), "i" (s3_OFFSET),
 			"i" (s4_OFFSET), "i" (s5_OFFSET), "i" (s6_OFFSET), "i" (s7_OFFSET), "i" (s8_OFFSET),
 			"i" (s9_OFFSET), "i" (s10_OFFSET),"i" (s11_OFFSET), "i" (s12_OFFSET), "i" (s13_OFFSET),
-			"i" (s14_OFFSET), "i" (s15_OFFSET), "i" (&_excunit_base), "i" (exc_OFFSET)
+			"i" (s14_OFFSET), "i" (s15_OFFSET), "i" (__PATMOS_EXCUNIT_BASE), "i" (exc_OFFSET)
 			// clobber r1 so that the compiler does not use it for %0
 			: "$r1");
 
@@ -357,7 +357,7 @@ void _CPU_Context_switch(
 			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
 			"lwc   $r2  = [ %0 + %5 ] \n\t"					//load r2
 			"lwc   $r4  = [ %0 + %6 ] \n\t"					//load r4
-			: : "{$r4}" (heir), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (&_excunit_base), "i" (r1_OFFSET),
+			: : "{$r4}" (heir), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (__PATMOS_EXCUNIT_BASE), "i" (r1_OFFSET),
 			"i" (r2_OFFSET), "i" (r4_OFFSET));
 
 }		
@@ -457,7 +457,7 @@ void _CPU_Context_restore(
 			"lwc   $r1  = [ %0 + %4 ] \n\t"					//load r1
 			"lwc   $r2  = [ %0 + %5 ] \n\t"					//load r2
 			"lwc   $r3  = [ %0 + %6 ] \n\t"					//load r3
-			: : "{$r3}" (new_context), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (&_excunit_base), "i" (r1_OFFSET),
+			: : "{$r3}" (new_context), "i" (ssize_OFFSET), "i" (exc_OFFSET), "i" (__PATMOS_EXCUNIT_BASE), "i" (r1_OFFSET),
 			"i" (r2_OFFSET), "i" (r3_OFFSET));
 
 }

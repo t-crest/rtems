@@ -234,7 +234,7 @@ rtems_isr Clock_isr(
 			"i" (ISR_r30_OFFSET), "i" (ISR_ssize_OFFSET), "i" (ISR_s0_OFFSET), "i" (ISR_s1_OFFSET), "i" (ISR_s2_OFFSET),
 			"i" (ISR_s3_OFFSET), "i" (ISR_s4_OFFSET), "i" (ISR_s6_OFFSET), "i" (ISR_s7_OFFSET), "i" (ISR_s8_OFFSET),
 			"i" (ISR_s9_OFFSET), "i" (ISR_s10_OFFSET), "i" (ISR_s11_OFFSET), "i" (ISR_s12_OFFSET), "i" (ISR_s13_OFFSET),
-			"i" (ISR_s14_OFFSET), "i" (ISR_s15_OFFSET), "i" (&_excunit_base), "i" (ISR_exc_OFFSET));
+			"i" (ISR_s14_OFFSET), "i" (ISR_s15_OFFSET), "i" (__PATMOS_EXCUNIT_BASE), "i" (ISR_exc_OFFSET));
 
 
 	Clock_isr_no_inline();
@@ -320,7 +320,7 @@ rtems_isr Clock_isr(
 			"i" (ISR_s2_OFFSET), "i" (ISR_s3_OFFSET), "i" (ISR_s4_OFFSET), "i" (ISR_s6_OFFSET), "i" (ISR_s7_OFFSET),
 			"i" (ISR_s8_OFFSET), "i" (ISR_s9_OFFSET), "i" (ISR_s10_OFFSET), "i" (ISR_s11_OFFSET), "i" (ISR_s12_OFFSET),
 			"i" (ISR_s13_OFFSET), "i" (ISR_s14_OFFSET), "i" (ISR_s15_OFFSET), "i" (ISR_ssize_OFFSET), "i" (ISR_exc_OFFSET),
-			"i" (&_excunit_base), "i" (ISR_r1_OFFSET), "i" (ISR_r2_OFFSET), "i" (ISR_CONTEXT_CONTROL_SIZE));
+			"i" (__PATMOS_EXCUNIT_BASE), "i" (ISR_r1_OFFSET), "i" (ISR_r2_OFFSET), "i" (ISR_CONTEXT_CONTROL_SIZE));
 
 }
 

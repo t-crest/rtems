@@ -39,14 +39,13 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 /*
  * CPU Info Management
  */
-
-extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info */
+#define __PATMOS_CPUINFO_BASE  0xF0000000
 
 /* Address to access the CPU id */
-#define __PATMOS_CPU_ID_ADDR (&_cpuinfo_base + 0x00)
+#define __PATMOS_CPU_ID_ADDR (__PATMOS_CPUINFO_BASE + 0x00)
 
 /* Address to access the CPU frequency */
-#define __PATMOS_CPU_FREQ_ADDR (&_cpuinfo_base + 0x04)
+#define __PATMOS_CPU_FREQ_ADDR (__PATMOS_CPUINFO_BASE + 0x04)
 
 /* Macro to read the CPU id */
 #define __PATMOS_CPU_RD_ID(res) res = *((_iodev_ptr_t)__PATMOS_CPU_ID_ADDR);
@@ -62,10 +61,7 @@ extern char _cpuinfo_base; /* linker symbol giving the address of the CPU info *
 /*
  * UART Management
  */
-
-extern char _iomap_base; /* linker symbol giving the base address of the IO map address range */
-
-extern char _uart_base; /* linker symbol giving the address of the UART */
+#define __PATMOS_UART_BASE  0xF0080000
 
 /*
  *  The following defines the bits in the PASIM UART Status Registers.
@@ -79,12 +75,12 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 /*
  * Address to access the status register of the UART coming with Patmos
  */
-#define __PATMOS_UART_STATUS_ADDR (&_uart_base + 0x00)
+#define __PATMOS_UART_STATUS_ADDR (__PATMOS_UART_BASE + 0x00)
 
 /*
  * Address to access the data register of the UART coming with Patmos
  */
-#define __PATMOS_UART_DATA_ADDR (&_uart_base + 0x04)
+#define __PATMOS_UART_DATA_ADDR (__PATMOS_UART_BASE + 0x04)
 
 
 /*
@@ -111,25 +107,25 @@ extern char _uart_base; /* linker symbol giving the address of the UART */
 /*
  * RTC Management
  */
-
-extern char _timer_base; /* linker symbol giving the address of the RTC */
+#define __PATMOS_TIMER_BASE    0xF0020000
+#define __PATMOS_EXCUNIT_BASE  0xF0010000
 
 extern uint64_t get_cpu_usecs (void);
 
 /* Address to access the cycle counter low register of the RTC */
-#define __PATMOS_RTC_CYCLE_LOW_ADDR (&_timer_base + 0x04)
+#define __PATMOS_RTC_CYCLE_LOW_ADDR (__PATMOS_TIMER_BASE + 0x04)
 
 /* Address to access the cycle counter up register of the RTC */
-#define __PATMOS_RTC_CYCLE_UP_ADDR (&_timer_base + 0x00)
+#define __PATMOS_RTC_CYCLE_UP_ADDR (__PATMOS_TIMER_BASE + 0x00)
 
 /* Address to access the time in microseconds low register of the RTC */
-#define __PATMOS_RTC_TIME_LOW_ADDR (&_timer_base + 0x0C)
+#define __PATMOS_RTC_TIME_LOW_ADDR (__PATMOS_TIMER_BASE + 0x0C)
 
 /* Address to access the time in microseconds up register of the RTC */
-#define __PATMOS_RTC_TIME_UP_ADDR (&_timer_base + 0x08)
+#define __PATMOS_RTC_TIME_UP_ADDR (__PATMOS_TIMER_BASE + 0x08)
 
 /* Address to access the ISR address register of the RTC cycle timer */
-#define __PATMOS_RTC_ISR_ADDR (&_excunit_base + 0xc0)
+#define __PATMOS_RTC_ISR_ADDR (__PATMOS_EXCUNIT_BASE + 0xc0)
 
 /* Macro to read the RTC's cycle counter low register of the RTC */
 #define __PATMOS_RTC_RD_CYCLE_LOW(res) res = *((_iodev_ptr_t)__PATMOS_RTC_CYCLE_LOW_ADDR);
@@ -161,19 +157,17 @@ extern uint64_t get_cpu_usecs (void);
  * Exception Management
  */
 
-extern char _excunit_base; /* linker symbol giving the base address of the exception handling unit */
-
 /* The status register of the exception unit */
-#define EXC_STATUS (*((_iodev_ptr_t)(&_excunit_base+0x00)))
+#define EXC_STATUS (*((_iodev_ptr_t)(__PATMOS_EXCUNIT_BASE+0x00)))
 
 /* The interrupt mask register */
-#define EXC_MASK   (*((_iodev_ptr_t)(&_excunit_base+0x04)))
+#define EXC_MASK   (*((_iodev_ptr_t)(__PATMOS_EXCUNIT_BASE+0x04)))
 
 /* The pending interrupts register */
-#define EXC_PEND   (*((_iodev_ptr_t)(&_excunit_base+0x08)))
+#define EXC_PEND   (*((_iodev_ptr_t)(__PATMOS_EXCUNIT_BASE+0x08)))
 
 /* The exception source register */
-#define EXC_SOURCE (*((_iodev_ptr_t)(&_excunit_base+0x0c)))
+#define EXC_SOURCE (*((_iodev_ptr_t)(__PATMOS_EXCUNIT_BASE+0x0c)))
 
 /*
  * End of Exception Management
