@@ -37,6 +37,11 @@ extern "C" {
 #define PROM_SIZE 0K
 #define PROM_END PROM_START + PROM_SIZE
 
+#define __PATMOS_CPUINFO_BASE   0xF0000000
+#define __PATMOS_UART_BASE      0xF0080000
+#define __PATMOS_TIMER_BASE     0xF0020000
+#define __PATMOS_EXCUNIT_BASE   0xF0010000
+
 #ifndef ASM
 
 #include <bspopts.h>

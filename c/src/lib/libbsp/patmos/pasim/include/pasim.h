@@ -29,6 +29,11 @@ extern "C" {
 #define _shadow_stack_base 0x4000000
 #define _stack_cache_base 0x3000000
 
+#define __PATMOS_CPUINFO_BASE  0xF0000000
+#define __PATMOS_UART_BASE     0xF0080000
+#define __PATMOS_TIMER_BASE    0xF0020000
+#define __PATMOS_EXCUNIT_BASE  0xF0010000
+
 #ifndef ASM
 
 #define _IODEV __attribute__((address_space(1)))
@@ -39,7 +44,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 /*
  * CPU Info Management
  */
-#define __PATMOS_CPUINFO_BASE  0xF0000000
 
 /* Address to access the CPU id */
 #define __PATMOS_CPU_ID_ADDR (__PATMOS_CPUINFO_BASE + 0x00)
@@ -61,7 +65,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 /*
  * UART Management
  */
-#define __PATMOS_UART_BASE  0xF0080000
 
 /*
  *  The following defines the bits in the PASIM UART Status Registers.
@@ -107,8 +110,6 @@ typedef _IODEV unsigned int volatile * const _iodev_ptr_t;
 /*
  * RTC Management
  */
-#define __PATMOS_TIMER_BASE    0xF0020000
-#define __PATMOS_EXCUNIT_BASE  0xF0010000
 
 extern uint64_t get_cpu_usecs (void);
 
